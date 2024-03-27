@@ -1,2 +1,15 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+	export let data;
+</script>
+
+<ul>
+	{#each data.people as person}
+		<li>
+			<b>{person.name}</b>
+			<br />
+			{#each person.photos as photo}
+				<img src={photo} alt={person.name} style="width: 100px;" />
+			{/each}
+		</li>
+	{/each}
+</ul>
