@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set_title srv
+echo -ne \\ek"srv"\\e\\\\
 
 . "$HOME/.nvm/nvm.sh"
 
