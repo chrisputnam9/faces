@@ -62,8 +62,8 @@
 		<div class="quiz-content">
 			<div class="img-slider">
 				<div class="img-slider-strip">
-					{#each person.photos as photo}
-						<img src={photo} alt="A randomly selected person" />
+					{#each person.images as image}
+						<img src={image} alt="A randomly selected person" />
 					{/each}
 				</div>
 			</div>
