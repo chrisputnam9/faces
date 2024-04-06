@@ -104,7 +104,7 @@
 	}
 
 	.img-slider {
-		width: 200px;
+		width: 180px;
 		overflow: hidden;
 	}
 
@@ -113,7 +113,8 @@
 	}
 
 	.img-slider img {
-		width: 200px;
+		margin: 25px;
+		width: 130px;
 	}
 
 	input {
