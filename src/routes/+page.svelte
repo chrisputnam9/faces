@@ -3,12 +3,12 @@
 
 	export let data;
 
-	// TODO switch images to just fade out/in and only show one at a time vs. extra html
-
 	let html_feedback = 'Feedback';
 	let person = null;
 	let name_entered_by_user = '';
 	let el_input_name;
+	// Sate of guess input: in_progress, correct, incorrect
+	let stateGuess = 'in_progress';
 
 	function showRandomPerson() {
 		const randomIndex = Math.floor(Math.random() * data.people.length);
@@ -20,33 +20,40 @@
 	}
 
 	function handleInputKeys(event = {}) {
-		if (name_entered_by_user === '') {
-			return giveFeedback('Type name and press enter');
+		let feedback = 'Type name and press enter.';
+
+		if (!('key' in event) || event.key !== 'Enter') {
+			stateGuess = 'in_progress';
+			return giveFeedback(feedback);
 		}
 
-		if (!('key' in event)) {
-			return;
+		/* Enter after a correct guess */
+		if (stateGuess === 'correct') {
+			stateGuess = 'in_progress';
+			showRandomPerson();
+			name_entered_by_user = '';
+			return giveFeedback(feedback);
 		}
 
-		if (event.key === 'Esc') {
-			// TODO implement
-			return giveFeedback('Not yet implemented');
-		}
-
-		if (event.key !== 'Enter') {
-			return;
+		/* Enter after an incorrect guess */
+		if (stateGuess === 'incorrect') {
+			stateGuess = 'correct';
+			name_entered_by_user = person.name;
+			return giveFeedback('Press Enter again to continue.');
 		}
 
 		if (name_entered_by_user === person.name) {
-			return giveFeedback('Exactly!<br>Press enter again to continue.');
+			stateGuess = 'correct';
+			return giveFeedback('Exactly!<br>Press Enter again to continue.');
 		}
 
-		let feedback = 'Incorrect.';
+		stateGuess = 'incorrect';
+		feedback = 'Incorrect.';
 		if (name_entered_by_user.toLowerCase() === person.name.toLowerCase()) {
 			feedback = 'Close! But, the case is not quite right.';
 		}
 
-		giveFeedback(feedback + '<br>Try again or hit Esc to see name.');
+		giveFeedback(feedback + '<br>Try again or press Enter again to give up.');
 	}
 
 	showRandomPerson();
