@@ -1,7 +1,4 @@
-import { people } from '../../data/people.js';
-
-export function load() {
-	return {
-		people
-	};
+import { data } from '$lib/data';
+export async function load() {
+	return await data.loadPeople();
 }
