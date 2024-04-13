@@ -7,12 +7,28 @@
 	let person = null;
 	let name_entered_by_user = '';
 	let el_input_name;
+	let image_index = 0;
+	let image = null;
+
 	// Sate of guess input: in_progress, correct, incorrect
 	let stateGuess = 'in_progress';
 
 	function showRandomPerson() {
 		const randomIndex = Math.floor(Math.random() * data.people.length);
 		person = data.people[randomIndex];
+		image_index = 0;
+		image = null;
+		if (person.images.length > 0) {
+			image = person.images[image_index];
+		}
+	}
+
+	function cycleImage() {
+		if (person.images.length < 2) {
+			return;
+		}
+		image_index = (image_index + 1) % person.images.length;
+		image = person.images[image_index];
 	}
 
 	function giveFeedback(feedback = '') {
@@ -49,8 +65,13 @@
 
 		stateGuess = 'incorrect';
 		feedback = 'Incorrect.';
-		if (name_entered_by_user.toLowerCase() === person.name.toLowerCase()) {
+
+		if (name_entered_by_user.trim() === '') {
+			feedback = 'You have to actually enter something silly!';
+		} else if (name_entered_by_user.toLowerCase() === person.name.toLowerCase()) {
 			feedback = 'Close! But, the case is not quite right.';
+		} else if (person.name.toLowerCase().includes(name_entered_by_user.toLowerCase())) {
+			feedback = "That's part of it!";
 		}
 
 		giveFeedback(feedback + '<br>Try again or press Enter again to give up.');
@@ -67,13 +88,11 @@
 <div class="background">
 	<div class="quiz-container">
 		<div class="quiz-content">
-			<div class="img-slider">
-				<div class="img-slider-strip">
-					{#each person.images as image}
-						<img src={image} alt="A randomly selected person" />
-					{/each}
+			{#if image}
+				<div class="img-container">
+					<img src={image} on:click={cycleImage} alt="A randomly selected person" />
 				</div>
-			</div>
+			{/if}
 			<input
 				type="text"
 				placeholder="Type name and press enter"
@@ -97,8 +116,9 @@
 
 	.quiz-container {
 		background-color: #eee;
+		min-height: 400px;
+		min-width: 400px;
 		padding: 40px 20px;
-		width: 300px;
 		border-radius: 10px;
 		display: flex;
 		justify-content: center;
@@ -106,22 +126,24 @@
 	}
 
 	.quiz-content {
+		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 	}
 
-	.img-slider {
-		width: 180px;
-		overflow: hidden;
+	.img-container {
+		width: 300px;
+		height: 300px;
+		padding: 25px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
-	.img-slider-strip {
-		width: 9999px;
-	}
-
-	.img-slider img {
-		margin: 25px;
-		width: 130px;
+	.img-container img {
+		max-width: 300px;
+		max-height: 300px;
 	}
 
 	input {
