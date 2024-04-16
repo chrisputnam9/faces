@@ -17,7 +17,7 @@
 		const randomIndex = Math.floor(Math.random() * data.people.length);
 		person = data.people[randomIndex];
 		image_index = 0;
-		image = null;
+		image = false;
 		if (person.images.length > 0) {
 			image = person.images[image_index];
 		}
@@ -44,7 +44,11 @@
 		}
 
 		/* Enter after a correct guess */
-		if (stateGuess === 'correct') {
+		if (
+			stateGuess === 'correct' ||
+			stateGuess === 'gave_up' ||
+			stateGuess === 'impossible_no_images'
+		) {
 			stateGuess = 'in_progress';
 			showRandomPerson();
 			name_entered_by_user = '';
@@ -53,7 +57,7 @@
 
 		/* Enter after an incorrect guess */
 		if (stateGuess === 'incorrect') {
-			stateGuess = 'correct';
+			stateGuess = 'gave_up';
 			name_entered_by_user = person.name;
 			return giveFeedback('Press Enter again to continue.');
 		}
@@ -67,7 +71,7 @@
 		feedback = 'Incorrect.';
 
 		if (name_entered_by_user.trim() === '') {
-			feedback = 'You have to actually enter something silly!';
+			feedback = 'You have to actually enter something, silly!';
 		} else if (name_entered_by_user.toLowerCase() === person.name.toLowerCase()) {
 			feedback = 'Close! But, the case is not quite right.';
 		} else if (person.name.toLowerCase().includes(name_entered_by_user.toLowerCase())) {
@@ -79,6 +83,14 @@
 
 	showRandomPerson();
 	handleInputKeys();
+
+	$: person_search = person.name + ' ' + person.companies.join(' ');
+
+	$: if (!image) {
+		stateGuess = 'impossible_no_images';
+		html_feedback =
+			'Oops, no images available for this person. Maybe you can find one?<br>Otherwise, press enter to continue.';
+	}
 
 	onMount(() => {
 		el_input_name.focus();
@@ -101,6 +113,29 @@
 				bind:this={el_input_name}
 			/>
 			<div class="feedback">{@html html_feedback}</div>
+			<div class="details state-guess-{stateGuess}">
+				<h1>{person.name}</h1>
+				<b>{person.companies.join(', ')}</b><br /><br />
+				<b>Links:</b>
+				<ul>
+					{#each person.links as link}
+						<li>
+							<a href={link.url} target="_blank">{link.text}</a>
+						</li>
+					{/each}
+					<li>
+						<a
+							href="https://www.linkedin.com/search/results/all/?keywords={person_search}"
+							target="_blank">Search on LinkedIn</a
+						>
+					</li>
+					<li>
+						<a href="https://www.facebook.com/search/top/?q={person_search}" target="_blank"
+							>Search on Facebook</a
+						>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 </div>
@@ -148,5 +183,15 @@
 
 	input {
 		margin: 10px 0;
+	}
+
+	.details {
+		display: none;
+	}
+
+	.details.state-guess-correct,
+	.details.state-guess-gave_up,
+	.details.state-guess-impossible_no_images {
+		display: block;
 	}
 </style>
