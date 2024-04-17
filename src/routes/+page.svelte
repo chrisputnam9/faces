@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { data as dataInterface } from '$lib/data';
 
 	export let data;
+
+	console.log(dataInterface.loadTracking());
 
 	let html_feedback = 'Feedback';
 	let person = null;
@@ -81,16 +84,25 @@
 		giveFeedback(feedback + '<br>Try again or press Enter again to give up.');
 	}
 
+	function trackGuess(stateGuess) {
+		console.log('trackGuess', stateGuess);
+	}
+
 	showRandomPerson();
 	handleInputKeys();
 
+	// Set person search string for social sites
 	$: person_search = person.name + ' ' + person.companies.join(' ');
 
+	// Update feedback and state if there are no images
 	$: if (!image) {
 		stateGuess = 'impossible_no_images';
 		html_feedback =
 			'Oops, no images available for this person. Maybe you can find one?<br>Otherwise, press enter to continue.';
 	}
+
+	// Update tracking data if state changes
+	$: trackGuess(stateGuess);
 
 	onMount(() => {
 		el_input_name.focus();
@@ -101,9 +113,14 @@
 	<div class="quiz-container">
 		<div class="quiz-content">
 			{#if image}
-				<div class="img-container">
-					<img src={image} on:click={cycleImage} alt="A randomly selected person" />
+				<div
+					class="img-container"
+					on:click={cycleImage}
+					title="Image {image_index + 1} of {person.images.length} - click to cycle"
+				>
+					<img src={image} alt="A randomly selected person" />
 				</div>
+				<p>Image {image_index + 1} of {person.images.length}</p>
 			{/if}
 			<input
 				type="text"
@@ -168,12 +185,16 @@
 	}
 
 	.img-container {
+		border: 3px solid #ddd;
+		border-radius: 10px;
 		width: 300px;
 		height: 300px;
 		padding: 25px;
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		cursor: pointer;
 	}
 
 	.img-container img {
