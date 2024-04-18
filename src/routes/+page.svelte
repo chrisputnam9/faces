@@ -1,24 +1,26 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { data as dataInterface } from '$lib/data';
-
-	export let data;
-
-	console.log(dataInterface.loadTracking());
+	import { data } from '$lib/data';
 
 	let html_feedback = 'Feedback';
-	let person = null;
+	let people = [];
+	let person = false;
+	let person_search = '';
 	let name_entered_by_user = '';
 	let el_input_name;
 	let image_index = 0;
 	let image = null;
 
-	// Sate of guess input: in_progress, correct, incorrect
-	let stateGuess = 'in_progress';
+	// Sate of guess input
+	let stateGuess = 'loading';
 
 	function showRandomPerson() {
-		const randomIndex = Math.floor(Math.random() * data.people.length);
-		person = data.people[randomIndex];
+		if (!people) {
+			throw new Error('No people data available.');
+			return;
+		}
+		const randomIndex = Math.floor(Math.random() * people.length);
+		person = people[randomIndex];
 		image_index = 0;
 		image = false;
 		if (person.images.length > 0) {
@@ -88,14 +90,11 @@
 		console.log('trackGuess', stateGuess);
 	}
 
-	showRandomPerson();
-	handleInputKeys();
-
 	// Set person search string for social sites
-	$: person_search = person.name + ' ' + person.companies.join(' ');
+	$: person_search = person ? person.name + ' ' + person.companies.join(' ') : '';
 
 	// Update feedback and state if there are no images
-	$: if (!image) {
+	$: if (person && !image) {
 		stateGuess = 'impossible_no_images';
 		html_feedback =
 			'Oops, no images available for this person. Maybe you can find one?<br>Otherwise, press enter to continue.';
@@ -104,7 +103,10 @@
 	// Update tracking data if state changes
 	$: trackGuess(stateGuess);
 
-	onMount(() => {
+	onMount(async () => {
+		people = await data.loadPeople();
+		showRandomPerson();
+		handleInputKeys();
 		el_input_name.focus();
 	});
 </script>
@@ -129,30 +131,34 @@
 				bind:value={name_entered_by_user}
 				bind:this={el_input_name}
 			/>
-			<div class="feedback">{@html html_feedback}</div>
-			<div class="details state-guess-{stateGuess}">
-				<h1>{person.name}</h1>
-				<b>{person.companies.join(', ')}</b><br /><br />
-				<b>Links:</b>
-				<ul>
-					{#each person.links as link}
+			{#if person}
+				<div class="feedback">{@html html_feedback}</div>
+				<div class="details state-guess-{stateGuess}">
+					<h1>{person.name}</h1>
+					<b>{person.companies.join(', ')}</b><br /><br />
+					<b>Links:</b>
+					<ul>
+						{#each person.links as link}
+							<li>
+								<a href={link.url} target="_blank">{link.text}</a>
+							</li>
+						{/each}
 						<li>
-							<a href={link.url} target="_blank">{link.text}</a>
+							<a
+								href="https://www.linkedin.com/search/results/all/?keywords={person_search}"
+								target="_blank">Search on LinkedIn</a
+							>
 						</li>
-					{/each}
-					<li>
-						<a
-							href="https://www.linkedin.com/search/results/all/?keywords={person_search}"
-							target="_blank">Search on LinkedIn</a
-						>
-					</li>
-					<li>
-						<a href="https://www.facebook.com/search/top/?q={person_search}" target="_blank"
-							>Search on Facebook</a
-						>
-					</li>
-				</ul>
-			</div>
+						<li>
+							<a href="https://www.facebook.com/search/top/?q={person_search}" target="_blank"
+								>Search on Facebook</a
+							>
+						</li>
+					</ul>
+				</div>
+			{:else}
+				<p>Loading...</p>
+			{/if}
 		</div>
 	</div>
 </div>
