@@ -2,14 +2,16 @@
 	import { onMount } from 'svelte';
 	import { data } from '$lib/data';
 
-	let html_feedback = 'Feedback';
+	let htmlFeedback = 'Feedback';
 	let people = [];
 	let person = false;
 	let person_search = '';
 	let name_entered_by_user = '';
-	let el_input_name;
+	let elInputName;
 	let image_index = 0;
 	let image = null;
+	let imageButton = false;
+	let htmlImageCaption = false;
 
 	// Sate of guess input
 	let stateGuess = 'loading';
@@ -37,11 +39,13 @@
 	}
 
 	function giveFeedback(feedback = '') {
-		html_feedback = feedback;
+		htmlFeedback = feedback;
 	}
 
 	function handleInputKeys(event = {}) {
 		let feedback = 'Type name and press enter.';
+
+		console.log(event.key);
 
 		if (!('key' in event) || event.key !== 'Enter') {
 			stateGuess = 'in_progress';
@@ -87,7 +91,14 @@
 	}
 
 	function trackGuess(stateGuess) {
-		console.log('trackGuess', stateGuess);
+		console.log('trackGuess frontend', stateGuess);
+		const response = await fetch('/track', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ person, stateGuess })
+		});
 	}
 
 	// Set person search string for social sites
@@ -96,18 +107,29 @@
 	// Update feedback and state if there are no images
 	$: if (person && !image) {
 		stateGuess = 'impossible_no_images';
-		html_feedback =
+		htmlFeedback =
 			'Oops, no images available for this person. Maybe you can find one?<br>Otherwise, press enter to continue.';
 	}
 
 	// Update tracking data if state changes
 	$: trackGuess(stateGuess);
 
+	$: if (person) {
+		imageButton = false;
+		if (person.images.length > 0) {
+			htmlImageCaption = 'Image 1 of 1';
+		}
+		if (person.images.length > 1) {
+			htmlImageCaption = `Image ${image_index + 1} of ${person.images.length}`;
+			imageButton = true;
+		}
+	}
+
 	onMount(async () => {
 		people = await data.loadPeople();
 		showRandomPerson();
 		handleInputKeys();
-		el_input_name.focus();
+		elInputName.focus();
 	});
 </script>
 
@@ -115,24 +137,24 @@
 	<div class="quiz-container">
 		<div class="quiz-content">
 			{#if image}
-				<div
-					class="img-container"
-					on:click={cycleImage}
-					title="Image {image_index + 1} of {person.images.length} - click to cycle"
-				>
+				<div class="img-container" title={htmlImageCaption}>
 					<img src={image} alt="A randomly selected person" />
 				</div>
-				<p>Image {image_index + 1} of {person.images.length}</p>
+				{#if imageButton}
+					<button on:click={cycleImage}>{@html htmlImageCaption} - click to cycle &#x27AA;</button>
+				{:else}
+					<p>{@html htmlImageCaption}</p>
+				{/if}
 			{/if}
 			<input
 				type="text"
 				placeholder="Type name and press enter"
 				on:keyup={handleInputKeys}
 				bind:value={name_entered_by_user}
-				bind:this={el_input_name}
+				bind:this={elInputName}
 			/>
 			{#if person}
-				<div class="feedback">{@html html_feedback}</div>
+				<div class="feedback">{@html htmlFeedback}</div>
 				<div class="details state-guess-{stateGuess}">
 					<h1>{person.name}</h1>
 					<b>{person.companies.join(', ')}</b><br /><br />

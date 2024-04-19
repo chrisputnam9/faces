@@ -1,6 +1,6 @@
 /**
  * People Route
- * Temporary until we can start syncing with GDrive
+ * TODO Temporary until we can start syncing with GDrive
  */
 
 import { json } from '@sveltejs/kit';
