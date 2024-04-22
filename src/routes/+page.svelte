@@ -95,18 +95,10 @@
 			return;
 		}
 
-		const rawResponse = await fetch('/track', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ person, stateGuess })
+		data.trackGuess({
+			person,
+			stateGuess
 		});
-		const response = await rawResponse.json();
-
-		if (!response.success) {
-			console.error('Problem tracking guess state.', response.error);
-		}
 	}
 
 	// Set person search string for social sites
@@ -134,7 +126,7 @@
 	}
 
 	onMount(async () => {
-		people = await data.loadPeople();
+		people = await data.loadPeopleOrdered();
 		showRandomPerson();
 		handleInputKeys();
 		elInputName.focus();
