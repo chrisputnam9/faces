@@ -1,5 +1,7 @@
 <?php
 
+// TODO - if running this again, do it in a way that merges new data into existing data instead
+
 // Import people.json
 $people = json_decode(file_get_contents(__DIR__ . '/people.json'), true);
 $people = array_values($people);
