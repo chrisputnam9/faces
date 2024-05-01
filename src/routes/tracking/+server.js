@@ -10,17 +10,16 @@ import { json } from '@sveltejs/kit';
 import fs from 'fs';
 
 export async function GET() {
-	const tracking = await fs.promises.readFile('data/tracking.json', 'utf8');
-	return json(JSON.parse(tracking));
+	const data = await fs.promises.readFile('data/tracking.json', 'utf8');
+	return json(JSON.parse(data));
 }
 
 export async function POST({ request }) {
-	const tracking = await request.json();
+	const data = await request.json();
 
-	console.log(tracking);
-
+	await fs.promises.writeFile('data/tracking.json', JSON.stringify(data, null, 2));
 	// https://nodejs.org/en/learn/manipulating-files/writing-files-with-nodejs
 	// TODO TODO write to file
 
-	return json({ tracking, success: false, error: 'Not fully implemented' });
+	return json({ data, success: true, error: false });
 }

@@ -11,13 +11,25 @@ export const data = {
 
 		return people;
 	},
-	trackGuess: async function (new_tracking) {
-		const tracking = await this.loadTracking();
+	trackGuess: async function ({person, state_guess}) {
+		const data = await this.loadTracking();
+		const id = person.id;
 
-		console.log({tracking, new_tracking});
+		if ( ! (id in data.tracking) ) {
+			data.tracking[id] = {
+				'guesses': {},
+			};
+		}
 
-		await this.saveTracking(tracking);
+		if ( ! (state_guess in data.tracking[id].guesses) ) {
+			data.tracking[id].guesses[state_guess] = [];
+		}
 
+		data.tracking[id].guesses[state_guess].push(new Date().toISOString());
+
+		console.log(data);
+
+		await this.saveTracking(data);
 	},
 
 	// Load from API route for now
@@ -25,7 +37,7 @@ export const data = {
 	loadPeople: async function () {
 		const response = await fetch('/people');
 		const people = await response.json();
-		return people;
+		return Object.values(people.people);
 	},
 
 	// Load from API route for now
