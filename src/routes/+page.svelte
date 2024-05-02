@@ -14,7 +14,8 @@
 	let image_button = false;
 	let html_image_caption = false;
 
-	// Sate of guess input
+	// State of guess input
+	// Must be one of the values defined in data.state_guess_weights
 	let state_guess = 'loading';
 
 	function showNextPerson() {
@@ -64,7 +65,7 @@
 		}
 
 		/* Enter after an incorrect guess */
-		if (state_guess === 'incorrect') {
+		if (state_guess === 'incorrect' || state_guess === 'partially_correct') {
 			state_guess = 'gave_up';
 			name_entered_by_user = person.name;
 			return giveFeedback('Press Enter again to continue.');
@@ -81,6 +82,7 @@
 		if (name_entered_by_user.trim() === '') {
 			feedback = 'You have to actually enter something, silly!';
 		} else if (name_entered_by_user.toLowerCase() === person.name.toLowerCase()) {
+			state_guess = 'partially_correct';
 			feedback = 'Close! But, the case is not quite right.';
 		} else if (person.name.toLowerCase().includes(name_entered_by_user.toLowerCase())) {
 			feedback = "That's part of it!";
@@ -90,6 +92,13 @@
 	}
 
 	async function trackGuess(state_guess) {
+		if (!(state_guess in data.state_guess_weights)) {
+			throw new Error(
+				'Invalid state_guess value: ' + state_guess,
+				'not defined in data.state_guess_weights'
+			);
+		}
+
 		if (state_guess === 'loading') {
 			return;
 		}
