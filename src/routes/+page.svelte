@@ -6,6 +6,7 @@
 	let people = [];
 	let person_index = -1;
 	let person = false;
+	let person_company_search = '';
 	let person_search = '';
 	let name_entered_by_user = '';
 	let el_input_name;
@@ -110,7 +111,8 @@
 	}
 
 	// Set person search string for social sites
-	$: person_search = person ? person.name + ' ' + person.companies.join(' ') : '';
+	$: person_company_search = person ? person.name + ' ' + person.companies.join(' ') : '';
+	$: person_search = person ? person.name : '';
 
 	// Update feedback and state if there are no images
 	$: if (person && !image) {
@@ -176,13 +178,31 @@
 						{/each}
 						<li>
 							<a
-								href="https://www.linkedin.com/search/results/all/?keywords={person_search}"
+								href="https://www.linkedin.com/search/results/all/?keywords={person_company_search}"
 								target="_blank">Search on LinkedIn</a
 							>
 						</li>
 						<li>
-							<a href="https://www.facebook.com/search/top/?q={person_search}" target="_blank"
-								>Search on Facebook</a
+							<a
+								href="https://www.facebook.com/search/top/?q={person_company_search}"
+								target="_blank">Search on Facebook</a
+							>
+						</li>
+						<li>
+							<a
+								href="https://mail.google.com/mail/u/0/#search/in%3Aanywhere {person_search}"
+								target="_blank">Search in Gmail</a
+							>
+						</li>
+						<li>
+							<a href="https://contacts.google.com/search/{person_search}" target="_blank"
+								>Search in Directory</a
+							>
+						</li>
+						<li>
+							<a
+								href="https://webpagefx.mangoapps.com/ce/pulse/user/content/search?search_page=beta_search_home_page&keyword={person_search}&isSearchFullNetwork=true"
+								target="_blank">Search in Mango</a
 							>
 						</li>
 					</ul>
