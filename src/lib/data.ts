@@ -48,8 +48,6 @@ export const data = {
 			return a.order_weight - b.order_weight;
 		});
 
-		console.log(people);
-
 		return people;
 	},
 	trackGuess: async function ({person, state_guess}) {

@@ -46,6 +46,12 @@
 	}
 
 	function handleInputKeys(event = {}) {
+		// Maybe cycle image
+		if (event.key === 'i' && event.altKey) {
+			cycleImage();
+			return;
+		}
+
 		let feedback = 'Type name and press enter.';
 
 		if (!('key' in event) || event.key !== 'Enter') {
@@ -151,8 +157,10 @@
 					<img src={image} alt="A randomly selected person" />
 				</div>
 				{#if image_button}
-					<button on:click={cycleImage}>{@html html_image_caption} - click to cycle &#x27AA;</button
-					>
+					<button on:click={cycleImage}>
+						{@html html_image_caption}
+						- click or alt-i to cycle &#x27AA;
+					</button>
 				{:else}
 					<p>{@html html_image_caption}</p>
 				{/if}
@@ -168,7 +176,8 @@
 				<div class="feedback">{@html html_feedback}</div>
 				<div class="details state-guess-{state_guess}">
 					<h1>{person.name}</h1>
-					<b>{person.companies.join(', ')}</b><br /><br />
+					<p><b>{person.companies.join(', ')}</b></p>
+					<p>{@html person.description.replace(/\n/g, '<br />')}</p>
 					<b>Links:</b>
 					<ul>
 						{#each person.links as link}
@@ -192,6 +201,12 @@
 							<a
 								href="https://mail.google.com/mail/u/0/#search/in%3Aanywhere {person_search}"
 								target="_blank">Search in Gmail</a
+							>
+						</li>
+						<li>
+							<a
+								href="https://drive.google.com/drive/search?q=type:folder%20{person_search}"
+								target="_blank">Search in Google Drive</a
 							>
 						</li>
 						<li>

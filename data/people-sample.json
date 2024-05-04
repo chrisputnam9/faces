@@ -4,7 +4,7 @@
 		"first_name": "John",
 		"middle_name": "",
 		"last_name": "Smith",
-		"aliases": ["Jo-Jo", "Jay", "The Smithster"],
+		"aliases": ["Jo-Jo", "Jay",],
 		"images": ["http://example.com/john.jpg", "http://example.com/john2.jpg"],
 		"links": [
 			{
@@ -19,6 +19,7 @@
 		"companies": ["Acme", "Globex"],
 		"emails": ["jsmith@example.com", "john@example.com"],
 		"phones": ["555-555-5555", "555-555-5556"]
+		"description": "John is a great person. They like tomtatoes."
 	},
 	{
 		"name": "Jane Doe",
@@ -40,5 +41,6 @@
 		"companies": ["BCD Inc.", "Globex"],
 		"emails": ["jdoe@example.com"],
 		"phones": ["555-555-5557", "555-555-5558"]
+		"description": "Jane is a great person. They have a cat named Fluffy."
 	}
 ]
