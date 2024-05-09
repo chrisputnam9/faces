@@ -9,8 +9,8 @@ export const data = {
 		'in_progress': -10,
 		'correct': 100,
 		'partially_correct': 10,
-		'incorrect': -300,
-		'gave_up': -300,
+		'incorrect': -5,
+		'gave_up': -200,
 		'impossible_no_images': -10, // Because ideally want to find images or *something*
 	},
 
@@ -47,6 +47,8 @@ export const data = {
 		people.sort((a, b) => {
 			return a.order_weight - b.order_weight;
 		});
+
+		console.log(people);
 
 		return people;
 	},
