@@ -234,14 +234,15 @@
 		background-color: #111;
 		height: 100%;
 		display: flex;
+		padding: 50px;
+		align-items: start;
+		/*
 		justify-content: center;
-		align-items: center;
+		*/
 	}
 
 	.quiz-container {
 		background-color: #eee;
-		min-height: 400px;
-		min-width: 400px;
 		padding: 40px 20px;
 		border-radius: 10px;
 		display: flex;
@@ -259,8 +260,8 @@
 	.img-container {
 		border: 3px solid #ddd;
 		border-radius: 10px;
-		width: 300px;
-		height: 300px;
+		width: 500px;
+		height: 500px;
 		padding: 25px;
 		display: flex;
 		flex-direction: column;
