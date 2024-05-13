@@ -234,7 +234,7 @@
 		background-color: #111;
 		height: 100%;
 		display: flex;
-		padding: 50px;
+		padding: 20px;
 		align-items: start;
 		/*
 		justify-content: center;
@@ -243,7 +243,7 @@
 
 	.quiz-container {
 		background-color: #eee;
-		padding: 40px 20px;
+		padding: 10px;
 		border-radius: 10px;
 		display: flex;
 		justify-content: center;
@@ -260,19 +260,20 @@
 	.img-container {
 		border: 3px solid #ddd;
 		border-radius: 10px;
-		width: 500px;
-		height: 500px;
-		padding: 25px;
+		width: 350px;
+		height: 350px;
+		margin-bottom: 10px;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		cursor: pointer;
+		overflow: hidden;
 	}
 
 	.img-container img {
-		max-width: 300px;
-		max-height: 300px;
+		width: 101%;
+		height: 101%;
 	}
 
 	input {

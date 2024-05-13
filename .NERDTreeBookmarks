@@ -1,1 +1,4 @@
++page.svelte ~/dev/personal/faces/src/routes/+page.svelte
+people.json ~/dev/personal/faces/data/people.json
+data.ts ~/dev/personal/faces/src/lib/data.ts
 
