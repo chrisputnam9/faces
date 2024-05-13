@@ -23,11 +23,20 @@ export const data = {
 		for (const person of people) {
 			const id = person.id;
 			const guesses = tracking[id]?.guesses ?? {};
+
 			person.order_weight = 0;
+			person.tracking = {
+				guesses,
+				totals: {},
+			}
 			for (const guess in guesses) {
 				const guessCount = guesses[guess].length;
 				const weight = this.state_guess_weights[guess] ?? 0;
 				person.order_weight += guessCount * weight;
+				person.tracking.totals[guess] = {
+					guess,
+					guessCount,
+				};
 			}
 
 			// Multiply by a factor of 1000
