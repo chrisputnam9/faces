@@ -5,6 +5,7 @@
 /.svelte-kit
 /build
 /package
+data
 dircolors
 node_modules
 vite.config.js.timestamp-*
