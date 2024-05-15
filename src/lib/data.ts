@@ -6,7 +6,7 @@ export const data = {
 
 	state_guess_weights: {
 		'loading': 0,
-		'in_progress': -10,
+		'in_progress': 0,
 		'correct': 100,
 		'partially_correct': 10,
 		'incorrect': -5,
