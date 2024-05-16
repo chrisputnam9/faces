@@ -188,36 +188,48 @@
 						<li>
 							<a
 								href="https://www.linkedin.com/search/results/all/?keywords={person_company_search}"
-								target="_blank">Search on LinkedIn</a
+								target="_blank">LinkedIn</a
+							>
+						</li>
+						<li>
+							<a
+								href="https://www.google.com/search?q=name meaning {person.first_name}"
+								target="_blank">Meaning of name "{person.first_name}"</a
+							>
+						</li>
+						<li>
+							<a
+								href="https://www.google.com/search?q=name meaning {person.last_name}"
+								target="_blank">Meaning of name "{person.last_name}"</a
 							>
 						</li>
 						<li>
 							<a
 								href="https://www.facebook.com/search/top/?q={person_company_search}"
-								target="_blank">Search on Facebook</a
+								target="_blank">Facebook</a
 							>
 						</li>
 						<li>
 							<a
 								href="https://mail.google.com/mail/u/0/#search/in%3Aanywhere {person_search}"
-								target="_blank">Search in Gmail</a
+								target="_blank">Gmail</a
 							>
 						</li>
 						<li>
 							<a
 								href="https://drive.google.com/drive/search?q=type:folder%20{person_search}"
-								target="_blank">Search in Google Drive</a
+								target="_blank">Google Drive</a
 							>
 						</li>
 						<li>
 							<a href="https://contacts.google.com/search/{person_search}" target="_blank"
-								>Search in Directory</a
+								>Directory</a
 							>
 						</li>
 						<li>
 							<a
 								href="https://webpagefx.mangoapps.com/ce/pulse/user/content/search?search_page=beta_search_home_page&keyword={person_search}&isSearchFullNetwork=true"
-								target="_blank">Search in Mango</a
+								target="_blank">Mango</a
 							>
 						</li>
 					</ul>

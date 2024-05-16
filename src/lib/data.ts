@@ -3,15 +3,14 @@
  */
 
 export const data = {
-
 	state_guess_weights: {
-		'loading': 0,
-		'in_progress': 0,
-		'correct': 100,
-		'partially_correct': 10,
-		'incorrect': -5,
-		'gave_up': -200,
-		'impossible_no_images': -10, // Because ideally want to find images or *something*
+		loading: 0,
+		in_progress: 0,
+		correct: 100,
+		partially_correct: 10,
+		incorrect: -5,
+		gave_up: -200,
+		impossible_no_images: -10 // Because ideally want to find images or *something*
 	},
 
 	loadPeopleOrdered: async function () {
@@ -27,16 +26,21 @@ export const data = {
 			person.order_weight = 0;
 			person.tracking = {
 				guesses,
-				totals: {},
-			}
+				totals: []
+			};
 			for (const guess in guesses) {
 				const guessCount = guesses[guess].length;
 				const weight = this.state_guess_weights[guess] ?? 0;
 				person.order_weight += guessCount * weight;
-				person.tracking.totals[guess] = {
+				person.tracking.totals.push({
 					guess,
-					guessCount,
-				};
+					guessCount
+				});
+			}
+
+			// Prioritize brand new people
+			if (!('gave_up' in guesses) && !('correct' in guesses)) {
+				person.order_weight = -1000;
 			}
 
 			// Multiply by a factor of 1000
@@ -46,8 +50,7 @@ export const data = {
 			const random_factor = Math.floor(Math.random() * 1000);
 			if (person.order_weight > 0) {
 				person.order_weight += random_factor;
-			}
-			else {
+			} else {
 				person.order_weight -= random_factor;
 			}
 		}
@@ -61,17 +64,17 @@ export const data = {
 
 		return people;
 	},
-	trackGuess: async function ({person, state_guess}) {
+	trackGuess: async function ({ person, state_guess }) {
 		const tracking_data = await this.loadTracking();
 		const id = person.id;
 
-		if ( ! (id in tracking_data.tracking) ) {
+		if (!(id in tracking_data.tracking)) {
 			tracking_data.tracking[id] = {
-				'guesses': {},
+				guesses: {}
 			};
 		}
 
-		if ( ! (state_guess in tracking_data.tracking[id].guesses) ) {
+		if (!(state_guess in tracking_data.tracking[id].guesses)) {
 			tracking_data.tracking[id].guesses[state_guess] = [];
 		}
 
@@ -112,5 +115,4 @@ export const data = {
 			console.error('Problem tracking guess state.', response.error);
 		}
 	}
-
-}
+};
