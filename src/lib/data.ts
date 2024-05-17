@@ -26,16 +26,19 @@ export const data = {
 			person.order_weight = 0;
 			person.tracking = {
 				guesses,
-				totals: []
+				totals: [],
+				totalsObject: {}
 			};
-			for (const guess in guesses) {
-				const guessCount = guesses[guess].length;
-				const weight = this.state_guess_weights[guess] ?? 0;
+			for (const guess in this.state_guess_weights) {
+				const guessCount = guesses[guess]?.length ?? 0;
+				const weight = this.state_guess_weights[guess];
 				person.order_weight += guessCount * weight;
-				person.tracking.totals.push({
+				const totals = {
 					guess,
 					guessCount
-				});
+				}
+				person.tracking.totals.push(totals);
+				person.tracking.totalsObject[guess] = guessCount;
 			}
 
 			// Prioritize brand new people
@@ -64,6 +67,51 @@ export const data = {
 
 		return people;
 	},
+
+	loadMetrics: async function () {
+		const people = await this.loadPeopleOrdered();
+		const totals = {
+			'all': people.length,
+			'new': 0,
+			'need_photo': 0,
+			'learning': 0,
+			'known': 0,
+		};
+
+		for (const person of people) {
+			const guesses = person.tracking.totalsObject;
+
+			if (person.order_weight > 0) {
+				totals.known++;
+			} else if (guesses.correct === 0 && guesses.incorrect === 0) {
+				totals.new++;
+			} else if (guesses.impossible_no_images > 0) {
+				totals.need_photo++;
+			} else {
+				totals.learning++;
+			}
+
+		}
+
+		const percents = {
+			'all': 100,
+			'new': this.percent(totals.new, totals.all),
+			'need_photo': this.percent(totals.need_photo, totals.all),
+			'learning': this.percent(totals.learning, totals.all),
+			'known': this.percent(totals.known, totals.all),
+		};
+
+		return {
+			people,
+			totals,
+			percents
+		};
+	},
+
+	percent: function (num, total) {
+		return Math.round((num / total) * 10000) / 100;
+	},
+
 	trackGuess: async function ({ person, state_guess }) {
 		const tracking_data = await this.loadTracking();
 		const id = person.id;

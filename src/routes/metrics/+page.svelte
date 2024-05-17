@@ -3,15 +3,37 @@
 	import { data } from '$lib/data';
 
 	let people = [];
+	let totals = false;
+	let percents = {};
 
 	onMount(async () => {
-		people = await data.loadPeopleOrdered();
-		console.log(people);
+		const metrics = await data.loadMetrics();
+		people = metrics.people;
+		totals = metrics.totals;
+		percents = metrics.percents;
 	});
 </script>
 
 <div class="container">
 	<h1>Metrics</h1>
+
+	<h2>Overall</h2>
+	<p>
+		{#if totals}
+			<b>Total:</b>
+			{totals.all}<br />
+			<b>New:</b>
+			{totals.new} ({percents.new}%)<br />
+			<b>Need Photo</b>
+			{totals.need_photo} ({percents.need_photo}%)<br />
+			<b>Learning</b>
+			{totals.learning} ({percents.learning}%)<br />
+			<b>Known</b>
+			{totals.known} ({percents.known}%)<br />
+		{:else}
+			Loading...
+		{/if}
+	</p>
 
 	<details>
 		<summary><h2>Full List With Tracking Data</h2></summary>
