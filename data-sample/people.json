@@ -6,6 +6,16 @@
 		"last_name": "Smith",
 		"aliases": ["Jo-Jo", "Jay",],
 		"images": ["http://example.com/john.jpg", "http://example.com/john2.jpg"],
+		"facts": [
+			{
+				"fact": "Born",
+				"value": "January 1, 1970"
+			},
+			{
+				"fact": "Height",
+				"value": "6'0"
+			}
+		],
 		"links": [
 			{
 				"url": "http://example.com/john",
@@ -28,6 +38,16 @@
 		"last_name": "Doe",
 		"aliases": ["Janey", "Doe-Doe"],
 		"images": ["http://example.com/jane.jpg", "http://example.com/jane2.jpg"],
+		"facts": [
+			{
+				"fact": "Born",
+				"value": "January 2, 1971"
+			},
+			{
+				"fact": "Height",
+				"value": "5'5"
+			}
+		],
 		"links": [
 			{
 				"url": "http://example.com/jane",
