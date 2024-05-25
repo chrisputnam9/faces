@@ -92,6 +92,7 @@
 			state_guess = 'partially_correct';
 			feedback = 'Close! But, the case is not quite right.';
 		} else if (person.name.toLowerCase().includes(name_entered_by_user.toLowerCase())) {
+			state_guess = 'partially_correct';
 			feedback = "That's part of it!";
 		}
 

@@ -74,6 +74,7 @@ export const data = {
 			'all': people.length,
 			'new': 0,
 			'need_photo': 0,
+			'unknown': 0,
 			'learning': 0,
 			'known': 0,
 		};
@@ -82,13 +83,20 @@ export const data = {
 			const guesses = person.tracking.totalsObject;
 
 			if (person.order_weight > 0) {
+				// Positive = well-known
 				totals.known++;
-			} else if (guesses.correct === 0 && guesses.incorrect === 0) {
-				totals.new++;
+			} else if (guesses.partially_correct > 0 || guesses.correct > 0) {
+				// Got right or close at least once = we're getting there
+				totals.learning++;
+			} else if (guesses.incorrect > 0) {
+				// Haven't even gotten close yet, and wrong at least once
+				totals.unknown++;
 			} else if (guesses.impossible_no_images > 0) {
+				// Need to track down a photo
 				totals.need_photo++;
 			} else {
-				totals.learning++;
+				// Otherwise, they're brand new - untested
+				totals.new++;
 			}
 
 		}
@@ -97,6 +105,7 @@ export const data = {
 			'all': 100,
 			'new': this.percent(totals.new, totals.all),
 			'need_photo': this.percent(totals.need_photo, totals.all),
+			'unknown': this.percent(totals.unknown, totals.all),
 			'learning': this.percent(totals.learning, totals.all),
 			'known': this.percent(totals.known, totals.all),
 		};

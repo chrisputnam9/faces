@@ -26,6 +26,8 @@
 			{totals.new} ({percents.new}%)<br />
 			<b>Need Photo</b>
 			{totals.need_photo} ({percents.need_photo}%)<br />
+			<b>Unknown</b>
+			{totals.unknown} ({percents.unknown}%)<br />
 			<b>Learning</b>
 			{totals.learning} ({percents.learning}%)<br />
 			<b>Known</b>
@@ -65,5 +67,13 @@
 	summary h2 {
 		display: inline;
 		margin: 0;
+	}
+	table {
+		border-collapse: collapse;
+	}
+	td,
+	th {
+		border: 1px solid black;
+		padding: 5px 10px;
 	}
 </style>
