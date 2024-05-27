@@ -176,9 +176,16 @@
 			{#if person}
 				<div class="feedback">{@html html_feedback}</div>
 				<div class="details state-guess-{state_guess}">
-					<h1>{person.name}</h1>
-					<p><b>{person.companies.join(', ')}</b></p>
+					<h1>{person.name}<br /><small>({person.companies.join(', ')})</small></h1>
+
+					<p>
+						{#each person.facts as fact}
+							<br /><b>{fact.name}:</b> {fact.value}
+						{/each}
+					</p>
+
 					<p>{@html person.description.replace(/\n/g, '<br />')}</p>
+
 					<b>Links:</b>
 					<ul>
 						{#each person.links as link}
@@ -206,10 +213,22 @@
 						</li>
 						<li>
 							<a
+								href="https://webpagefx.mangoapps.com/ce/pulse/user/content/search?search_page=beta_search_home_page&keyword={person_search}&isSearchFullNetwork=true"
+								target="_blank">Mango</a
+							>
+						</li>
+						<li>
+							<a
 								href="https://www.facebook.com/search/top/?q={person_company_search}"
 								target="_blank">Facebook</a
 							>
 						</li>
+						<li>
+							<a href="https://contacts.google.com/search/{person_search}" target="_blank"
+								>Directory</a
+							>
+						</li>
+						<!--
 						<li>
 							<a
 								href="https://mail.google.com/mail/u/0/#search/in%3Aanywhere {person_search}"
@@ -222,17 +241,7 @@
 								target="_blank">Google Drive</a
 							>
 						</li>
-						<li>
-							<a href="https://contacts.google.com/search/{person_search}" target="_blank"
-								>Directory</a
-							>
-						</li>
-						<li>
-							<a
-								href="https://webpagefx.mangoapps.com/ce/pulse/user/content/search?search_page=beta_search_home_page&keyword={person_search}&isSearchFullNetwork=true"
-								target="_blank">Mango</a
-							>
-						</li>
+						-->
 					</ul>
 				</div>
 			{:else}

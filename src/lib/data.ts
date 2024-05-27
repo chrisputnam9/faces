@@ -10,7 +10,7 @@ export const data = {
 		partially_correct: 10,
 		incorrect: -5,
 		gave_up: -200,
-		impossible_no_images: -10 // Because ideally want to find images or *something*
+		impossible_no_images: -10 // Because ideally want to find images
 	},
 
 	loadPeopleOrdered: async function () {
@@ -22,6 +22,11 @@ export const data = {
 		for (const person of people) {
 			const id = person.id;
 			const guesses = tracking[id]?.guesses ?? {};
+
+			const fact_object = {};
+			for (const fact of person.facts) {
+				fact_object[fact.name] = fact.value;
+			}
 
 			person.order_weight = 0;
 			person.tracking = {
@@ -41,9 +46,15 @@ export const data = {
 				person.tracking.totalsObject[guess] = guessCount;
 			}
 
-			// Prioritize brand new people
-			if (!('gave_up' in guesses) && !('correct' in guesses)) {
+			// Prioritize brand new people that haven't been guessed at all
+			if (!('gave_up' in guesses) && !('correct' in guesses) && !('impossible_no_images' in guesses)) {
 				person.order_weight = -1000;
+			}
+
+			// Prioritize high tenure
+			if ('Tenure' in fact_object) {
+				const tenure_years = fact_object['Tenure'].replace(/^(\d+).*/, "$1");
+				person.order_weight -= (tenure_years * 10);
 			}
 
 			// Multiply by a factor of 1000
