@@ -4,15 +4,20 @@
 		"first_name": "John",
 		"middle_name": "",
 		"last_name": "Smith",
+		"location": {
+			"country": "USA",
+			"region": "Colorado",
+			"city": "Boulder"
+		},
 		"aliases": ["Jo-Jo", "Jay",],
 		"images": ["http://example.com/john.jpg", "http://example.com/john2.jpg"],
 		"facts": [
 			{
-				"fact": "Born",
+				"name": "Born",
 				"value": "January 1, 1970"
 			},
 			{
-				"fact": "Height",
+				"name": "Height",
 				"value": "6'0"
 			}
 		],
@@ -29,22 +34,26 @@
 		"companies": ["Acme", "Globex"],
 		"emails": ["jsmith@example.com", "john@example.com"],
 		"phones": ["555-555-5555", "555-555-5556"]
-		"description": "John is a great person. They like tomtatoes."
+		"description": "John is a great person. They like tomatoes."
 	},
 	{
 		"name": "Jane Doe",
 		"first_name": "Jane",
 		"middle_name": "",
 		"last_name": "Doe",
+		"location": {
+			"country": "Peru",
+			"city": "Lima"
+		},
 		"aliases": ["Janey", "Doe-Doe"],
 		"images": ["http://example.com/jane.jpg", "http://example.com/jane2.jpg"],
 		"facts": [
 			{
-				"fact": "Born",
+				"name": "Born",
 				"value": "January 2, 1971"
 			},
 			{
-				"fact": "Height",
+				"name": "Height",
 				"value": "5'5"
 			}
 		],
