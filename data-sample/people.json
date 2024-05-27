@@ -4,11 +4,6 @@
 		"first_name": "John",
 		"middle_name": "",
 		"last_name": "Smith",
-		"location": {
-			"country": "USA",
-			"region": "Colorado",
-			"city": "Boulder"
-		},
 		"aliases": ["Jo-Jo", "Jay",],
 		"images": ["http://example.com/john.jpg", "http://example.com/john2.jpg"],
 		"facts": [
@@ -41,10 +36,6 @@
 		"first_name": "Jane",
 		"middle_name": "",
 		"last_name": "Doe",
-		"location": {
-			"country": "Peru",
-			"city": "Lima"
-		},
 		"aliases": ["Janey", "Doe-Doe"],
 		"images": ["http://example.com/jane.jpg", "http://example.com/jane2.jpg"],
 		"facts": [
