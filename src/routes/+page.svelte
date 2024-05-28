@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { data } from '$lib/data';
+	import { Person } from '$lib/components';
 
 	let html_feedback = 'Feedback';
 	let people = [];
