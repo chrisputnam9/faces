@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { data } from '$lib/data';
-	import { Person } from '$lib/components';
+	import { PersonImages } from '$lib/components';
 
 	let html_feedback = 'Feedback';
+	let image = null;
 	let people = [];
 	let person_index = -1;
 	let person = false;
@@ -11,10 +12,6 @@
 	let person_search = '';
 	let name_entered_by_user = '';
 	let el_input_name;
-	let image_index = 0;
-	let image = null;
-	let image_button = false;
-	let html_image_caption = false;
 
 	// State of guess input
 	// Must be one of the values defined in data.state_guess_weights
@@ -27,19 +24,6 @@
 		}
 		person_index++;
 		person = people[person_index];
-		image_index = 0;
-		image = false;
-		if (person.images.length > 0) {
-			image = person.images[image_index];
-		}
-	}
-
-	function cycleImage() {
-		if (person.images.length < 2) {
-			return;
-		}
-		image_index = (image_index + 1) % person.images.length;
-		image = person.images[image_index];
 	}
 
 	function giveFeedback(feedback = '') {
@@ -132,17 +116,6 @@
 	// Update tracking data if state changes
 	$: trackGuess(state_guess);
 
-	$: if (person) {
-		image_button = false;
-		if (person.images.length > 0) {
-			html_image_caption = 'Image 1 of 1';
-		}
-		if (person.images.length > 1) {
-			html_image_caption = `Image ${image_index + 1} of ${person.images.length}`;
-			image_button = true;
-		}
-	}
-
 	onMount(async () => {
 		people = await data.loadPeopleOrdered();
 		showNextPerson();
@@ -154,19 +127,7 @@
 <div class="background">
 	<div class="quiz-container">
 		<div class="quiz-content">
-			{#if image}
-				<div class="img-container" title={html_image_caption}>
-					<img src={image} alt="A randomly selected person" />
-				</div>
-				{#if image_button}
-					<button on:click={cycleImage}>
-						{@html html_image_caption}
-						- click or alt-i to cycle &#x27AA;
-					</button>
-				{:else}
-					<p>{@html html_image_caption}</p>
-				{/if}
-			{/if}
+			<PersonImages {person} bind:image />
 			<input
 				type="text"
 				placeholder="Type name and press enter"

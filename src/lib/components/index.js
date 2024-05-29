@@ -1,1 +1,1 @@
-export {default as Person} from ./Person.svelte
+export { default as PersonImages } from './PersonImages.svelte';
