@@ -1,27 +1,33 @@
 <script lang="ts">
 	export let person = null;
-	export let image = null;
-
-	let image_index = 0;
-	let image_button = false;
-	let html_image_caption = false;
-
-	function cycleImage() {
+	export let state_guess = false;
+	export const cycleImage = function () {
 		if (person.images.length < 2) {
 			return;
 		}
 		image_index = (image_index + 1) % person.images.length;
 		image = person.images[image_index];
-	}
+	};
+
+	let image = false;
+	let image_index = 0;
+	let image_button = false;
+	let html_image_caption = false;
 
 	$: if (person) {
 		image_index = 0;
 		image = false;
 		image_button = false;
+
+		if (person.images.length < 1) {
+			state_guess = 'impossible_no_images';
+		}
+
 		if (person.images.length > 0) {
 			image = person.images[image_index];
 			html_image_caption = 'Image 1 of 1';
 		}
+
 		if (person.images.length > 1) {
 			html_image_caption = `Image ${image_index + 1} of ${person.images.length}`;
 			image_button = true;
@@ -44,3 +50,30 @@
 		{/if}
 	{/if}
 </div>
+
+<style>
+	.img-component {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	.img-container {
+		border: 3px solid #ddd;
+		border-radius: 10px;
+		width: 350px;
+		height: 350px;
+		margin-bottom: 10px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		cursor: pointer;
+		overflow: hidden;
+	}
+
+	.img-container img {
+		width: 101%;
+		height: 101%;
+	}
+</style>

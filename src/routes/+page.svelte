@@ -3,8 +3,8 @@
 	import { data } from '$lib/data';
 	import { PersonImages } from '$lib/components';
 
+	let cycleImage;
 	let html_feedback = 'Feedback';
-	let image = null;
 	let people = [];
 	let person_index = -1;
 	let person = false;
@@ -33,6 +33,7 @@
 	function handleInputKeys(event = {}) {
 		// Maybe cycle image
 		if (event.key === 'i' && event.altKey) {
+			console.log('Cycle image');
 			cycleImage();
 			return;
 		}
@@ -96,6 +97,11 @@
 			return;
 		}
 
+		if (state_guess == 'impossible_no_images') {
+			html_feedback =
+				'Oops, no images available for this person. Maybe you can find one?<br>Otherwise, press enter to continue.';
+		}
+
 		data.trackGuess({
 			person,
 			state_guess
@@ -105,13 +111,6 @@
 	// Set person search string for social sites
 	$: person_company_search = person ? person.name + ' ' + person.companies.join(' ') : '';
 	$: person_search = person ? person.name : '';
-
-	// Update feedback and state if there are no images
-	$: if (person && !image) {
-		state_guess = 'impossible_no_images';
-		html_feedback =
-			'Oops, no images available for this person. Maybe you can find one?<br>Otherwise, press enter to continue.';
-	}
 
 	// Update tracking data if state changes
 	$: trackGuess(state_guess);
@@ -127,7 +126,7 @@
 <div class="background">
 	<div class="quiz-container">
 		<div class="quiz-content">
-			<PersonImages {person} bind:image />
+			<PersonImages {person} bind:state_guess bind:cycleImage />
 			<input
 				type="text"
 				placeholder="Type name and press enter"
@@ -239,25 +238,6 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.img-container {
-		border: 3px solid #ddd;
-		border-radius: 10px;
-		width: 350px;
-		height: 350px;
-		margin-bottom: 10px;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		cursor: pointer;
-		overflow: hidden;
-	}
-
-	.img-container img {
-		width: 101%;
-		height: 101%;
 	}
 
 	input {
