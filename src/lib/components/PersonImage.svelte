@@ -1,38 +1,45 @@
 <script lang="ts">
 	export let person = null;
 	export let state_guess = false;
-	export const cycleImage = function () {
-		if (person.images.length < 2) {
-			return;
-		}
-		image_index = (image_index + 1) % person.images.length;
-		image = person.images[image_index];
-	};
 
 	let image = false;
 	let image_index = 0;
 	let image_button = false;
 	let html_image_caption = false;
 
-	$: if (person) {
+	export function cycleImage() {
+		if (person.images.length < 2) {
+			return;
+		}
+		image_index = (image_index + 1) % person.images.length;
+		image = person.images[image_index];
+	}
+
+	function updatePerson(person) {
+		if (!person) return;
+
 		image_index = 0;
 		image = false;
 		image_button = false;
 
 		if (person.images.length < 1) {
 			state_guess = 'impossible_no_images';
+			return;
 		}
 
 		if (person.images.length > 0) {
 			image = person.images[image_index];
-			html_image_caption = 'Image 1 of 1';
+			return;
 		}
 
-		if (person.images.length > 1) {
-			html_image_caption = `Image ${image_index + 1} of ${person.images.length}`;
-			image_button = true;
-		}
+		image_button = true;
 	}
+
+	$: updatePerson(person);
+
+	$: html_image_caption = person?.images?.length
+		? `Image ${image_index + 1} of ${person.images.length}`
+		: false;
 </script>
 
 <div class="img-component">

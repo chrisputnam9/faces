@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { data } from '$lib/data';
-	import { PersonImages } from '$lib/components';
+	import { PersonImage } from '$lib/components';
 
-	let cycleImage;
+	let personImage;
 	let html_feedback = 'Feedback';
 	let people = [];
 	let person_index = -1;
@@ -33,8 +33,7 @@
 	function handleInputKeys(event = {}) {
 		// Maybe cycle image
 		if (event.key === 'i' && event.altKey) {
-			console.log('Cycle image');
-			cycleImage();
+			personImage.cycleImage();
 			return;
 		}
 
@@ -126,7 +125,7 @@
 <div class="background">
 	<div class="quiz-container">
 		<div class="quiz-content">
-			<PersonImages {person} bind:state_guess bind:cycleImage />
+			<PersonImage {person} bind:state_guess bind:this={personImage} />
 			<input
 				type="text"
 				placeholder="Type name and press enter"
