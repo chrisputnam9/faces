@@ -202,6 +202,11 @@
 							>
 						</li>
 						-->
+						<li>
+							<a href="https://artofmemory.com/wiki/Memorizing_Names_and_Faces/" target="_blank"
+								>Techniques: Memorizing Names & Faces</a
+							>
+						</li>
 					</ul>
 				</div>
 			{:else}
