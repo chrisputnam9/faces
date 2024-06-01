@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { data } from '$lib/data';
-	import { PersonImage } from '$lib/components';
+	import { PersonDetails, PersonImage } from '$lib/components';
 
 	let personImage;
 	let html_feedback = 'Feedback';
 	let people = [];
 	let person_index = -1;
 	let person = false;
-	let person_company_search = '';
-	let person_search = '';
 	let name_entered_by_user = '';
 	let el_input_name;
 
@@ -107,10 +105,6 @@
 		});
 	}
 
-	// Set person search string for social sites
-	$: person_company_search = person ? person.name + ' ' + person.companies.join(' ') : '';
-	$: person_search = person ? person.name : '';
-
 	// Update tracking data if state changes
 	$: trackGuess(state_guess);
 
@@ -135,80 +129,7 @@
 			/>
 			{#if person}
 				<div class="feedback">{@html html_feedback}</div>
-				<div class="details state-guess-{state_guess}">
-					<h1>{person.name}<br /><small>({person.companies.join(', ')})</small></h1>
-
-					<p>
-						{#each person.facts as fact}
-							<br /><b>{fact.name}:</b> {fact.value}
-						{/each}
-					</p>
-
-					<p>{@html person.description.replace(/\n/g, '<br />')}</p>
-
-					<b>Links:</b>
-					<ul>
-						{#each person.links as link}
-							<li>
-								<a href={link.url} target="_blank">{link.text}</a>
-							</li>
-						{/each}
-						<li>
-							<a
-								href="https://www.linkedin.com/search/results/all/?keywords={person_company_search}"
-								target="_blank">LinkedIn</a
-							>
-						</li>
-						<li>
-							<a
-								href="https://www.google.com/search?q=name meaning {person.first_name}"
-								target="_blank">Meaning of name "{person.first_name}"</a
-							>
-						</li>
-						<li>
-							<a
-								href="https://www.google.com/search?q=name meaning {person.last_name}"
-								target="_blank">Meaning of name "{person.last_name}"</a
-							>
-						</li>
-						<li>
-							<a
-								href="https://webpagefx.mangoapps.com/ce/pulse/user/content/search?search_page=beta_search_home_page&keyword={person_search}&isSearchFullNetwork=true"
-								target="_blank">Mango</a
-							>
-						</li>
-						<li>
-							<a
-								href="https://www.facebook.com/search/top/?q={person_company_search}"
-								target="_blank">Facebook</a
-							>
-						</li>
-						<li>
-							<a href="https://contacts.google.com/search/{person_search}" target="_blank"
-								>Directory</a
-							>
-						</li>
-						<!--
-						<li>
-							<a
-								href="https://mail.google.com/mail/u/0/#search/in%3Aanywhere {person_search}"
-								target="_blank">Gmail</a
-							>
-						</li>
-						<li>
-							<a
-								href="https://drive.google.com/drive/search?q=type:folder%20{person_search}"
-								target="_blank">Google Drive</a
-							>
-						</li>
-						-->
-						<li>
-							<a href="https://artofmemory.com/wiki/Memorizing_Names_and_Faces/" target="_blank"
-								>Techniques: Memorizing Names & Faces</a
-							>
-						</li>
-					</ul>
-				</div>
+				<PersonDetails {person} {state_guess} />
 			{:else}
 				<p>Loading...</p>
 			{/if}
@@ -246,15 +167,5 @@
 
 	input {
 		margin: 10px 0;
-	}
-
-	.details {
-		display: none;
-	}
-
-	.details.state-guess-correct,
-	.details.state-guess-gave_up,
-	.details.state-guess-impossible_no_images {
-		display: block;
 	}
 </style>
