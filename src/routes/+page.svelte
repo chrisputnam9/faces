@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { data } from '$lib/data';
-	import { PersonDetails, PersonImage } from '$lib/components';
+	import { PersonDetails, PersonImage, QuizSessionMetrics } from '$lib/components';
 
 	let personImage;
+	let quizSessionmetrics;
+
 	let html_feedback = 'Feedback';
 	let people = [];
 	let person_index = -1;
@@ -90,6 +92,8 @@
 			);
 		}
 
+		quizSessionmetrics?.trackGuess(person, state_guess);
+
 		if (state_guess === 'loading') {
 			return;
 		}
@@ -135,6 +139,7 @@
 			{/if}
 		</div>
 	</div>
+	<QuizSessionMetrics bind:this={quizSessionmetrics} />
 </div>
 
 <style>
@@ -144,9 +149,7 @@
 		display: flex;
 		padding: 20px;
 		align-items: start;
-		/*
-		justify-content: center;
-		*/
+		gap: 20px;
 	}
 
 	.quiz-container {
