@@ -1,38 +1,50 @@
 <script lang="ts">
-	let tracked = {
+	let total = 0;
+
+	const tracked = {
 		known: [],
 		learning: [],
-		no_images: []
+		unknown: [],
+		no_images: [],
+		total: []
 	};
 
 	export function trackGuess(person, state_guess) {
 		const id = person.id;
 
-		let key = 'learning';
-		if (state_guess == 'impossible_no_images') {
+		let key = false;
+
+		if (state_guess === 'impossible_no_images') {
 			key = 'no_images';
-		} else if (state_guess == 'correct') {
+		} else if (state_guess === 'correct') {
 			key = 'known';
+		} else if (state_guess === 'partially_correct') {
+			key = 'learning';
+		} else if (state_guess === 'incorrect') {
+			key = 'unknown';
 		}
 
-		if (tracked[key].includes(id)) {
-			return;
+		if (key && !tracked[key].includes(id)) {
+			tracked[key].push(id);
 		}
 
-		tracked[key].push(id);
+		if (!tracked.total.includes(id)) {
+			tracked.total.push(id);
+		}
+
+		// Trigger reactions
+		tracked = tracked;
 	}
-
-	$: total = tracked.known.length + tracked.learning.length + tracked.no_images.length;
 </script>
 
 <section>
-	<h1>Quiz Session Metrics</h1>
-	<ul>
-		<li><b>Known:</b> {tracked.known.length}</li>
-		<li><b>Learning:</b> {tracked.learning.length}</li>
-		<li><b>No Images:</b> {tracked.no_images.length}</li>
-		<li><b>Total:</b> {total}</li>
-	</ul>
+	<h1>This Session</h1>
+	<table>
+		<tr><th>Known:</th> <td>{tracked.known.length}</td></tr>
+		<tr><th>Learning:</th> <td>{tracked.learning.length}</td></tr>
+		<tr><th>No Images:</th> <td>{tracked.no_images.length}</td></tr>
+		<tr><th>Total:</th> <td>{tracked.total.length}</td></tr>
+	</table>
 </section>
 
 <style>
@@ -44,5 +56,8 @@
 		justify-content: center;
 		align-items: start;
 		flex-direction: column;
+	}
+	table th {
+		text-align: right;
 	}
 </style>
