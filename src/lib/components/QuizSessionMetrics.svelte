@@ -9,6 +9,8 @@
 		total: []
 	};
 
+	let learning_total = 0;
+
 	export function trackGuess(person, state_guess) {
 		const id = person.id;
 
@@ -34,6 +36,8 @@
 
 		// Trigger reactions
 		tracked = tracked;
+
+		learning_total = tracked.learning.length + tracked.unknown.length * 2;
 	}
 </script>
 
@@ -42,9 +46,16 @@
 	<table>
 		<tr><th>Known:</th> <td>{tracked.known.length}</td></tr>
 		<tr><th>Learning:</th> <td>{tracked.learning.length}</td></tr>
+		<tr><th>Unknown:</th> <td>{tracked.unknown.length}</td></tr>
 		<tr><th>No Images:</th> <td>{tracked.no_images.length}</td></tr>
 		<tr><th>Total:</th> <td>{tracked.total.length}</td></tr>
 	</table>
+	{#if learning_total > 20}
+		<p class="learning">
+			You've hit {tracked.unknown.length} unknown, and {tracked.learning.length} learning.
+			<br />Consider a <a href="/">refresh</a>.
+		</p>
+	{/if}
 </section>
 
 <style>
@@ -59,5 +70,9 @@
 	}
 	table th {
 		text-align: right;
+	}
+	p.learning {
+		font-weight: bold;
+		color: orange;
 	}
 </style>

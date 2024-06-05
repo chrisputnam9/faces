@@ -100,7 +100,7 @@
 
 		if (state_guess == 'impossible_no_images') {
 			html_feedback =
-				'Oops, no images available for this person. Maybe you can find one?<br>Otherwise, press enter to continue.';
+				'Oops, no images available for this person. Maybe you can find one?<br>LinkedIn, Facebook, and other search links below might help.<br>Otherwise, press enter to continue.';
 		}
 
 		data.trackGuess({
