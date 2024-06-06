@@ -62,7 +62,9 @@
 
 <style>
 	.container {
-		padding: 20px;
+		background-color: #eee;
+		padding: 10px;
+		border-radius: 10px;
 	}
 	summary h2 {
 		display: inline;

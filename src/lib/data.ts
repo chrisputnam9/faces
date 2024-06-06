@@ -154,7 +154,7 @@ export const data = {
 	// Load from API route for now
 	// TODO: Will read from Google Drive sync in the future
 	loadPeople: async function () {
-		const response = await fetch('/people');
+		const response = await fetch('/api/people');
 		const people = await response.json();
 		return Object.values(people.people);
 	},
@@ -162,7 +162,7 @@ export const data = {
 	// Load from API route for now
 	// TODO: Will read from Google Drive sync in the future
 	loadTracking: async function () {
-		const response = await fetch('/tracking');
+		const response = await fetch('/api/tracking');
 		const tracking_data = await response.json();
 		return tracking_data;
 	},
@@ -170,7 +170,7 @@ export const data = {
 	// Post to API route for now
 	// TODO: Will write to Google Drive sync in the future
 	saveTracking: async function (tracking) {
-		const rawResponse = await fetch('/tracking', {
+		const rawResponse = await fetch('/api/tracking', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

@@ -120,7 +120,7 @@
 	});
 </script>
 
-<div class="background">
+<section>
 	<div class="quiz-container">
 		<div class="quiz-content">
 			<PersonImage {person} bind:state_guess bind:this={personImage} />
@@ -139,19 +139,19 @@
 			{/if}
 		</div>
 	</div>
+
 	<QuizSessionMetrics bind:this={quizSessionmetrics} />
-</div>
+</section>
 
 <style>
-	.background {
-		background-color: #111;
-		height: 100%;
+	section {
 		display: flex;
-		padding: 20px;
+		justify-content: center;
+		align-items: center;
+		padding: 0;
 		align-items: start;
 		gap: 20px;
 	}
-
 	.quiz-container {
 		background-color: #eee;
 		padding: 10px;
