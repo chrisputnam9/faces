@@ -1,6 +1,8 @@
 <script lang="ts">
 	let total = 0;
 
+	const LEARNING_THRESHOLD = 40;
+
 	const tracked = {
 		known: [],
 		learning: [],
@@ -50,10 +52,10 @@
 		<tr><th>No Images:</th> <td>{tracked.no_images.length}</td></tr>
 		<tr><th>Total:</th> <td>{tracked.total.length}</td></tr>
 	</table>
-	{#if learning_total > 20}
+	{#if learning_total > LEARNING_THRESHOLD}
 		<p class="learning">
 			You've hit {tracked.unknown.length} unknown, and {tracked.learning.length} learning.
-			<br />Consider a <a href="/">refresh</a>.
+			<br />Consider a <a href="#" on:click={location.reload}>refresh</a>.
 		</p>
 	{/if}
 </section>
