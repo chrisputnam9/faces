@@ -29,10 +29,9 @@
 
 		if (person.images.length > 0) {
 			image = person.images[image_index];
+			image_button = true;
 			return;
 		}
-
-		image_button = true;
 	}
 
 	$: updatePerson(person);
@@ -68,8 +67,10 @@
 	.img-container {
 		border: 3px solid #ddd;
 		border-radius: 10px;
+		aspect-ratio: 1 / 1;
 		width: 350px;
-		height: 350px;
+		height: auto;
+		max-width: 100%;
 		margin-bottom: 10px;
 		display: flex;
 		flex-direction: column;

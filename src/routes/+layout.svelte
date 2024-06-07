@@ -8,8 +8,6 @@
 
 <style>
 	.background {
-		background-color: #111;
-		height: 100%;
 		display: flex;
 		padding: 20px;
 		align-items: start;

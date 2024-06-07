@@ -90,4 +90,10 @@
 	.details.state-guess-impossible_no_images {
 		display: block;
 	}
+
+	h1 {
+		font-size: 1.2em;
+		margin: 0;
+		padding: 0;
+	}
 </style>
