@@ -123,7 +123,7 @@
 <section>
 	<div class="quiz-container">
 		<div class="quiz-content">
-			<PersonImage {person} bind:state_guess bind:this={personImage} />
+			<PersonImage {person} key_available="1" bind:state_guess bind:this={personImage} />
 			<input
 				type="text"
 				placeholder="Type name and press enter"

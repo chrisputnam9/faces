@@ -1,6 +1,9 @@
 <script lang="ts">
+	import generic_person_img from '$lib/img/generic_person.jpg';
+
 	export let person = null;
 	export let state_guess = false;
+	export let key_available = false;
 
 	let image = false;
 	let image_index = 0;
@@ -38,22 +41,21 @@
 
 	$: html_image_caption = person?.images?.length
 		? `Image ${image_index + 1} of ${person.images.length}`
-		: false;
+		: `No image available`;
 </script>
 
 <div class="img-component">
-	{#if image}
-		<div class="img-container" title={html_image_caption}>
-			<img src={image} alt="A randomly selected person" />
-		</div>
-		{#if image_button}
-			<button on:click={cycleImage}>
-				{@html html_image_caption}
-				- click or alt-i to cycle &#x27AA;
-			</button>
-		{:else}
-			<p>{@html html_image_caption}</p>
-		{/if}
+	<div class="img-container" title={html_image_caption}>
+		<img src={image ? image : generic_person_img} alt="A randomly selected person" />
+	</div>
+	{#if image_button}
+		<button on:click={cycleImage}>
+			{@html html_image_caption}
+			{#if key_available}- click or alt-i to cycle{/if}
+			&#x27AA;
+		</button>
+	{:else}
+		<button disabled="disabled">{@html html_image_caption}</button>
 	{/if}
 </div>
 
