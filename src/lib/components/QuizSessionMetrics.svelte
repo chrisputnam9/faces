@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
+
 	let total = 0;
 
-	const LEARNING_THRESHOLD = 40;
+	const LEARNING_THRESHOLD = -1;
 
 	const tracked = {
 		known: [],
@@ -55,7 +57,7 @@
 	{#if learning_total > LEARNING_THRESHOLD}
 		<p class="learning">
 			You've hit {tracked.unknown.length} unknown, and {tracked.learning.length} learning.
-			<br />Consider a <a href="#" on:click={location.reload}>refresh</a>.
+			<br />Consider a <a href="#reload" on:click|preventDefault={invalidateAll}>refresh</a>.
 		</p>
 	{/if}
 </section>
