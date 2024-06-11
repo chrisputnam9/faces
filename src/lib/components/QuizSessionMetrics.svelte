@@ -57,7 +57,7 @@
 	{#if learning_total > LEARNING_THRESHOLD}
 		<p class="learning">
 			You've hit {tracked.unknown.length} unknown, and {tracked.learning.length} learning.
-			<br />Consider a <a href="#reload" on:click|preventDefault={invalidateAll}>refresh</a>.
+			<br />Consider refreshing the page to review.
 		</p>
 	{/if}
 </section>

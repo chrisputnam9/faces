@@ -156,7 +156,14 @@ export const data = {
 	loadPeople: async function () {
 		const response = await fetch('/api/people');
 		const people = await response.json();
-		return Object.values(people.people);
+		const people_processed = [];
+		for (const id in people.people) {
+			const person_processed = people.people[id];
+			person_processed.json = JSON.stringify(person_processed);
+			people_processed.push(person_processed);
+		}
+
+		return Object.values(people_processed);
 	},
 
 	// Load from API route for now
