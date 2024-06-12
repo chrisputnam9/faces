@@ -43,7 +43,7 @@
 	<div class="container-people">
 		{#each filter_people as person}
 			<div class="person">
-				<h1>{person.name}</h1>
+				<h1><button>✏️</button>{person.name}</h1>
 				<PersonImage {person} bind:state_guess bind:this={personImage} />
 			</div>
 		{/each}
@@ -72,6 +72,12 @@
 	}
 	h1 {
 		font-size: 1em;
-		text-align: center;
+		display: block;
+		width: 100%;
+		overflow: hidden;
+	}
+	button {
+		float: left;
+		margin-right: 10px;
 	}
 </style>
