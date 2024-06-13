@@ -11,8 +11,8 @@
 		display: flex;
 		padding: 20px;
 		align-items: start;
-		flex-direction: column;
 		gap: 20px;
+		flex-wrap: wrap;
 	}
 
 	nav {

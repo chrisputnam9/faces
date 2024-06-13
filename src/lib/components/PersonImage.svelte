@@ -4,6 +4,7 @@
 	export let person = null;
 	export let state_guess = false;
 	export let key_available = false;
+	export let show_button = true;
 
 	let image = false;
 	let image_index = 0;
@@ -30,11 +31,11 @@
 			return;
 		}
 
-		if (person.images.length > 0) {
-			image = person.images[image_index];
+		if (person.images.length > 1) {
 			image_button = true;
-			return;
 		}
+
+		image = person.images[image_index];
 	}
 
 	$: updatePerson(person);
@@ -48,14 +49,16 @@
 	<div class="img-container" title={html_image_caption}>
 		<img src={image ? image : generic_person_img} alt="A randomly selected person" />
 	</div>
-	{#if image_button}
-		<button on:click={cycleImage}>
-			{@html html_image_caption}
-			{#if key_available}- click or alt-i to cycle{/if}
-			&#x27AA;
-		</button>
-	{:else}
-		<button disabled="disabled">{@html html_image_caption}</button>
+	{#if show_button}
+		{#if image_button}
+			<button on:click={cycleImage}>
+				{@html html_image_caption}
+				{#if key_available}- click or alt-i to cycle{/if}
+				&#x27AA;
+			</button>
+		{:else}
+			<button disabled="disabled">{@html html_image_caption}</button>
+		{/if}
 	{/if}
 </div>
 
@@ -78,12 +81,19 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		cursor: pointer;
 		overflow: hidden;
 	}
 
 	.img-container img {
 		width: 101%;
 		height: 101%;
+	}
+
+	button {
+		cursor: pointer;
+	}
+
+	button:disabled {
+		cursor: not-allowed;
 	}
 </style>
