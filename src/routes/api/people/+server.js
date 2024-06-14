@@ -13,3 +13,11 @@ export async function GET() {
 	const people = await fs.promises.readFile('data/people.json', 'utf8');
 	return json(JSON.parse(people));
 }
+
+export async function POST({ request }) {
+	const data = await request.json();
+
+	await fs.promises.writeFile('data/people.json', JSON.stringify(data, null, 2));
+
+	return json({ data, success: true, error: false });
+}

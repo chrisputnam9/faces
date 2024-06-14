@@ -37,6 +37,12 @@
 			return;
 		}
 
+		// Maybe add image
+		if (event.key === 'a' && event.altKey) {
+			personImage.addImage();
+			return;
+		}
+
 		let feedback = 'Type name and press enter.';
 
 		if (!('key' in event) || event.key !== 'Enter') {
@@ -123,7 +129,7 @@
 <section>
 	<div class="quiz-container">
 		<div class="quiz-content">
-			<PersonImage {person} key_available="1" bind:state_guess bind:this={personImage} />
+			<PersonImage bind:person keys_available="1" bind:state_guess bind:this={personImage} />
 			<input
 				type="text"
 				placeholder="Type name and press enter"

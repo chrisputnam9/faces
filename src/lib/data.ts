@@ -151,19 +151,44 @@ export const data = {
 		await this.saveTracking(tracking_data);
 	},
 
-	// Load from API route for now
-	// TODO: Will read from Google Drive sync in the future
 	loadPeople: async function () {
-		const response = await fetch('/api/people');
-		const people = await response.json();
+		const people_raw = await this.loadRawPeople();
 		const people_processed = [];
-		for (const id in people.people) {
-			const person_processed = people.people[id];
+		for (const id in people_raw) {
+			const person_processed = people_raw[id];
 			person_processed.json = JSON.stringify(person_processed);
 			people_processed.push(person_processed);
 		}
-
 		return Object.values(people_processed);
+	},
+
+	savePerson: async function (person) {
+		const people = await this.loadRawPeople();
+		people[person.id] = person;
+		await this.saveRawPeople({ people });
+	},
+
+	// Load from API route for now
+	// TODO: Will read from Google Drive sync in the future
+	loadRawPeople: async function () {
+		const response = await fetch('/api/people');
+		const people = await response.json();
+		return people.people;
+	},
+
+	saveRawPeople: async function (people) {
+		const rawResponse = await fetch('/api/people', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(people)
+		});
+		const response = await rawResponse.json();
+
+		if (!response.success) {
+			console.error('Problem saving people data.', response.error);
+		}
 	},
 
 	// Load from API route for now

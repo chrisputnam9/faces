@@ -18,8 +18,6 @@ export async function POST({ request }) {
 	const data = await request.json();
 
 	await fs.promises.writeFile('data/tracking.json', JSON.stringify(data, null, 2));
-	// https://nodejs.org/en/learn/manipulating-files/writing-files-with-nodejs
-	// TODO TODO write to file
 
 	return json({ data, success: true, error: false });
 }

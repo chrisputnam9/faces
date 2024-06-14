@@ -32,7 +32,6 @@
 	}
 
 	function select(person) {
-		console.log('select', person);
 		person_selected = person;
 	}
 
@@ -44,8 +43,6 @@
 	});
 
 	$: filter(keywords);
-
-	$: console.log('person_selected', person_selected);
 </script>
 
 <nav>
@@ -65,7 +62,7 @@
 			{#each filter_people as person}
 				<div class="person" on:click={select(person)}>
 					<button class="name" title={person.name}><span>✏️ {person.name}</span></button>
-					<PersonImage {person} show_button={false} bind:state_guess />
+					<PersonImage bind:person show_buttons={false} bind:state_guess />
 				</div>
 			{/each}
 		</div>
