@@ -53,6 +53,11 @@
 	/>
 </nav>
 
+<nav>
+	<button>Export to CSV</button>
+	<button>Import CSV</button>
+</nav>
+
 <main>
 	<section>
 		<div class="section-inner">
@@ -98,6 +103,7 @@
 		padding: 10px;
 		border-radius: 10px;
 		display: flex;
+		gap: 10px;
 	}
 	section {
 		padding: 20px;

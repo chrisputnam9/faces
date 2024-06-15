@@ -57,7 +57,7 @@
 
 	$: updatePerson(person);
 
-	$: html_image_caption = person.images.length
+	$: html_image_caption = person?.images?.length
 		? `${image_index + 1}/${person.images.length}`
 		: 'No images';
 </script>
