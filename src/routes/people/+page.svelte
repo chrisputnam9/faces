@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Papa from 'papaparse';
 	import { onMount } from 'svelte';
 	import { data } from '$lib/data';
 	import { PersonDetails, PersonImage } from '$lib/components';
@@ -35,6 +36,16 @@
 		person_selected = person;
 	}
 
+	function exportCSV() {
+		alert('exportCSV - see console');
+		const csv = Papa.unparse(filter_people);
+		console.log(csv);
+	}
+
+	function importCSV() {
+		alert('importCSV');
+	}
+
 	onMount(async () => {
 		all_people = await data.loadPeople();
 		all_people.sort((a, b) => a.name.localeCompare(b.name));
@@ -54,8 +65,8 @@
 </nav>
 
 <nav>
-	<button>Export to CSV</button>
-	<button>Import CSV</button>
+	<button on:click={exportCSV}>Export to CSV</button>
+	<button on:click={importCSV}>Import CSV</button>
 </nav>
 
 <main>
