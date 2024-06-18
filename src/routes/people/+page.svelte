@@ -37,8 +37,29 @@
 	}
 
 	function exportCSV() {
-		alert('exportCSV - see console');
-		const csv = Papa.unparse(filter_people);
+		const people_prepared = [];
+		for (const person of filter_people) {
+			const person_prepared = {};
+			for (const key in person) {
+				if (key === 'json') continue;
+				const value = person[key];
+				let value_prepared = value;
+				if (value === null) {
+					value_prepared = '';
+				} else if (Array.isArray(value)) {
+					// If it's an array of Objects - change each Object to JSON
+					// TODO
+					// Otherwise, good to go - leave it as-is and parser will take care of it
+				} else {
+					throw new Error('Unexpected value type for key: ' + key + ' of person: ' + person.id);
+				}
+				console.log(key, '|', value, '|', value_prepared);
+				person_prepared[key] = value_prepared;
+			}
+			people_prepared.push(person_prepared);
+			break;
+		}
+		const csv = Papa.unparse(people_prepared);
 		console.log(csv);
 	}
 
