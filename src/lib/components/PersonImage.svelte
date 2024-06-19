@@ -65,7 +65,11 @@
 <div class="img-component">
 	<div class="img-btn-container" title={html_image_caption}>
 		<div class="img-container" title={html_image_caption}>
-			<img src={image ? image : generic_person_img} alt="A randomly selected person" />
+			<img
+				src={image ? image : generic_person_img}
+				alt="A randomly selected person"
+				loading="lazy"
+			/>
 		</div>
 		{#if show_buttons}
 			<div class="btn-container" title={html_image_caption}>
@@ -118,7 +122,8 @@
 	.img-container img {
 		width: 101%;
 		height: 101%;
-		filter: grayscale(100%) contrast(130%);
+		/*filter: grayscale(100%) contrast(130%);*/
+		filter: contrast(130%);
 	}
 
 	.btn-container {
@@ -139,11 +144,11 @@
 	}
 
 	button:nth-child(1) {
-		border-radius: 0 0 0 10px;
+		border-radius: 0 0 0 8px;
 	}
 
 	button:nth-child(2) {
-		border-radius: 0 0 10px 0;
+		border-radius: 0 0 8px 0;
 	}
 
 	button:hover {

@@ -37,30 +37,48 @@
 	}
 
 	function exportCSV() {
+		const errors = [];
 		const people_prepared = [];
 		for (const person of filter_people) {
 			const person_prepared = {};
 			for (const key in person) {
 				if (key === 'json') continue;
 				const value = person[key];
+				const type = typeof value;
 				let value_prepared = value;
 				if (value === null) {
 					value_prepared = '';
 				} else if (Array.isArray(value)) {
 					// If it's an array of Objects - change each Object to JSON
-					// TODO
+					if (typeof value[0] === 'object') {
+						value_prepared = JSON.stringify(value);
+					}
 					// Otherwise, good to go - leave it as-is and parser will take care of it
+				} else if (['number', 'string', 'boolean'].includes(type)) {
+					// Good to go - leave it as-is and parser will take care of it
 				} else {
-					throw new Error('Unexpected value type for key: ' + key + ' of person: ' + person.id);
+					errors.push('Unexpected value type for key:"' + key + '" of person:' + person.id);
 				}
-				console.log(key, '|', value, '|', value_prepared);
 				person_prepared[key] = value_prepared;
 			}
 			people_prepared.push(person_prepared);
-			break;
 		}
+		if (errors.length > 0) {
+			alert('Error: Issues with data need to be resolved - see console');
+			throw new Error('Issues with data need to be resolved:\n - ' + errors.join('\n - '));
+		}
+
+		// Generate the CSV contents
 		const csv = Papa.unparse(people_prepared);
-		console.log(csv);
+
+		// Download the CSV file
+		const csvContent = 'data:text/csv;charset=utf-8,' + csv;
+		const encodedUri = encodeURI(csvContent);
+		const link = document.createElement('a');
+		link.setAttribute('href', encodedUri);
+		link.setAttribute('download', 'people.csv');
+		document.body.appendChild(link); // Required for Firefox
+		link.click();
 	}
 
 	function importCSV() {
@@ -147,7 +165,7 @@
 		padding: 20px;
 		display: flex;
 		min-width: 300px;
-		max-width: 50%;
+		width: 49%;
 		height: calc(100vh - 170px);
 	}
 	section.edit {
@@ -200,7 +218,7 @@
 		display: block;
 		width: 100%;
 		border: 0;
-		border-radius: 0 0 10px 10px;
+		border-radius: 0 0 8px 8px;
 		padding: 5px;
 		cursor: pointer;
 		text-align: left;
