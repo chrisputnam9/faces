@@ -96,6 +96,11 @@
 		max-width: 100%;
 	}
 
+	.img-container,
+	.btn-container {
+		border: 2px solid #ddd;
+	}
+
 	.img-container {
 		border-bottom: 0;
 		border-radius: 10px 10px 0 0;
@@ -113,11 +118,7 @@
 	.img-container img {
 		width: 101%;
 		height: 101%;
-	}
-
-	.img-container,
-	.btn-container {
-		border: 2px solid #ddd;
+		filter: grayscale(100%) contrast(130%);
 	}
 
 	.btn-container {
@@ -130,11 +131,19 @@
 	button {
 		display: block;
 		width: auto;
-		height: 20px;
 		cursor: pointer;
 		border: 0;
 		border-radius: 0;
 		flex-basis: 50%;
+		padding: 5px;
+	}
+
+	button:nth-child(1) {
+		border-radius: 0 0 0 10px;
+	}
+
+	button:nth-child(2) {
+		border-radius: 0 0 10px 0;
 	}
 
 	button:hover {

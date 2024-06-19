@@ -97,9 +97,15 @@
 				<p>No people...</p>
 			{/if}
 			{#each filter_people as person}
-				<div class="person" on:click={select(person)}>
-					<button class="name" title={person.name}><span>✏️ {person.name}</span></button>
-					<PersonImage bind:person show_buttons={false} bind:state_guess />
+				<div class="person">
+					<button class="a11y" on:click={select(person)}>
+						<PersonImage bind:person show_buttons={false} bind:state_guess />
+					</button>
+					<div class="btn-container">
+						<button class="name" title={person.name} on:click={select(person)}>
+							<span>✏️ {person.name}</span>
+						</button>
+					</div>
 				</div>
 			{/each}
 		</div>
@@ -169,14 +175,38 @@
 		min-width: 150px;
 		cursor: pointer;
 	}
+	.btn-container {
+		width: 100%;
+		border: 2px solid #ddd;
+		border-radius: 0 0 10px 10px;
+		display: flex;
+		flex-direction: row;
+	}
+	button.a11y {
+		border: 0;
+		display: 0;
+		display: block;
+		width: 100%;
+		padding: 0;
+		margin: 0;
+		cursor: pointer;
+	}
+	button.a11y:hover {
+		opacity: 0.8;
+	}
 	button.name {
+		cursor: pointer;
 		font-size: 0.9em;
 		display: block;
 		width: 100%;
+		border: 0;
+		border-radius: 0 0 10px 10px;
 		padding: 5px;
-		margin-bottom: 5px;
 		cursor: pointer;
 		text-align: left;
+	}
+	button.name:hover {
+		background-color: #ddd;
 	}
 	button.name span {
 		display: block;
