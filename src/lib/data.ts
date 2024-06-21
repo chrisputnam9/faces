@@ -28,8 +28,8 @@ export const data = {
 				fact_object[fact.name] = fact.value;
 			}
 
-			person.order_weight = 0;
-			person.tracking = {
+			person.__order_weight = 0;
+			person.__tracking = {
 				guesses,
 				totals: [],
 				totalsObject: {}
@@ -37,41 +37,41 @@ export const data = {
 			for (const guess in this.state_guess_weights) {
 				const guessCount = guesses[guess]?.length ?? 0;
 				const weight = this.state_guess_weights[guess];
-				person.order_weight += guessCount * weight;
+				person.__order_weight += guessCount * weight;
 				const totals = {
 					guess,
 					guessCount
 				}
-				person.tracking.totals.push(totals);
-				person.tracking.totalsObject[guess] = guessCount;
+				person.__tracking.totals.push(totals);
+				person.__tracking.totalsObject[guess] = guessCount;
 			}
 
 			// Prioritize brand new people that haven't been guessed at all
 			if (!('gave_up' in guesses) && !('correct' in guesses) && !('impossible_no_images' in guesses)) {
-				person.order_weight = -1000;
+				person.__order_weight = -1000;
 			}
 
 			// Prioritize high tenure
 			if ('Tenure' in fact_object) {
 				const tenure_years = fact_object['Tenure'].replace(/^(\d+).*/, "$1");
-				person.order_weight -= (tenure_years * 10);
+				person.__order_weight -= (tenure_years * 10);
 			}
 
 			// Multiply by a factor of 1000
-			person.order_weight = person.order_weight * 1000;
+			person.__order_weight = person.__order_weight * 1000;
 
 			// Then add or subtract a random number from 0-999 to shuffle and break ties
 			const random_factor = Math.floor(Math.random() * 1000);
-			if (person.order_weight > 0) {
-				person.order_weight += random_factor;
+			if (person.__order_weight > 0) {
+				person.__order_weight += random_factor;
 			} else {
-				person.order_weight -= random_factor;
+				person.__order_weight -= random_factor;
 			}
 		}
 
 		// Sort by order weight with lowest weight first
 		people.sort((a, b) => {
-			return a.order_weight - b.order_weight;
+			return a.__order_weight - b.__order_weight;
 		});
 
 		console.log(people);
@@ -91,9 +91,9 @@ export const data = {
 		};
 
 		for (const person of people) {
-			const guesses = person.tracking.totalsObject;
+			const guesses = person.__tracking.totalsObject;
 
-			if (person.order_weight > 0) {
+			if (person.__order_weight > 0) {
 				// Positive = well-known
 				totals.known++;
 			} else if (guesses.partially_correct > 0 || guesses.correct > 0) {
@@ -156,7 +156,7 @@ export const data = {
 		const people_processed = [];
 		for (const id in people_raw) {
 			const person_processed = people_raw[id];
-			person_processed.json = JSON.stringify(person_processed);
+			person_processed.__json = JSON.stringify(person_processed);
 			people_processed.push(person_processed);
 		}
 		return Object.values(people_processed);
@@ -164,7 +164,13 @@ export const data = {
 
 	savePerson: async function (person) {
 		const people = await this.loadRawPeople();
-		people[person.id] = person;
+		const person_raw = {};
+		for (const key in person) {
+			// By convention __ prefixed keys are not part of the actual 'data'
+			if (key.substr(0, 2) === '__') continue;
+			person_raw[key] = person[key];
+		}
+		people[person_raw.id] = person_raw;
 		await this.saveRawPeople({ people });
 	},
 

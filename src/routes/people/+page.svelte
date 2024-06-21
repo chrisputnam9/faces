@@ -21,7 +21,7 @@
 		try {
 			const regex = new RegExp(keywords, 'i');
 			filter_people = all_people.filter((person) => {
-				return person.json.match(regex);
+				return person.__json.match(regex);
 			});
 		} catch (e) {
 			filter_people = all_people;
@@ -42,7 +42,8 @@
 		for (const person of filter_people) {
 			const person_prepared = {};
 			for (const key in person) {
-				if (key === 'json') continue;
+				// By convention __ prefixed keys are not part of the actual 'data'
+				if (key.substr(0, 2) === '__') continue;
 				const value = person[key];
 				const type = typeof value;
 				let value_prepared = value;

@@ -48,9 +48,9 @@
 			{#each people as person}
 				<tr>
 					<td>{person.name}</td>
-					<td>{person.order_weight}</td>
+					<td>{person.__order_weight}</td>
 					<td>
-						{#each person.tracking.totals as total}
+						{#each person.__tracking.totals as total}
 							<b>{total.guess}: </b>{total.guessCount}<br />
 						{/each}
 					</td>
