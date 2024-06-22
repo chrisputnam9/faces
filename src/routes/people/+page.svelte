@@ -8,8 +8,10 @@
 	let filter_people = [];
 	let state_guess = 'correct';
 	let keywords = '';
-	let el_input_search = '';
+	let el_input_search;
 	let person_selected = false;
+	let el_file_csv_import;
+	let files_csv_import;
 
 	function filter(keywords) {
 		person_selected = false;
@@ -65,7 +67,7 @@
 			people_prepared.push(person_prepared);
 		}
 		if (errors.length > 0) {
-			alert('Error: Issues with data need to be resolved - see console');
+			alert('Error 101: Issues with data need to be resolved - see console');
 			throw new Error('Issues with data need to be resolved:\n - ' + errors.join('\n - '));
 		}
 
@@ -82,8 +84,106 @@
 		link.click();
 	}
 
-	function importCSV() {
-		alert('importCSV');
+	function importCSVClick() {
+		el_file_csv_import.value = null;
+		el_file_csv_import.click();
+	}
+
+	function importCSV(event) {
+		if (!event?.target?.files?.length) {
+			alert('Unexpected Error 102: something went wrong with the file selection.');
+			throw new Error('No files found in event: ', event);
+		}
+
+		const file = event.target.files[0];
+		if (file.type !== 'text/csv') {
+			alert('Unexpected Error 103: Only CSV files are supported by import at this time.');
+			throw new Error('Unexpected file type: ', file);
+		}
+
+		const errors = [];
+		const regex_json = /^\[.*\]$/i;
+
+		const data = Papa.parse(file, {
+			header: true,
+			skipEmptyLines: true,
+			encoding: 'utf-8',
+			worker: false,
+
+			transform: function (value, header) {
+				value = value.trim();
+
+				// Convert comma separated strings to arrays
+				if (['aliases', 'companies', 'emails', 'phones', 'images'].includes(header)) {
+					value = value.split(',').filter((v) => v.trim() !== '');
+				}
+
+				// Convert JSON strings
+				if (['facts', 'links'].includes(header)) {
+					let error = false;
+					let parsed_value = '';
+
+					if (!value.match(regex_json)) error = 'Does not look like JSON array';
+
+					if (!error) {
+						try {
+							parsed_value = JSON.parse(value);
+						} catch (e) {
+							error = 'Failed to parse JSON';
+						}
+					}
+
+					if (!error) {
+						if (!Array.isArray(parsed_value)) error = 'Parsed result was not an array';
+					}
+
+					if (!error) {
+						return parsed_value;
+					}
+
+					errors.push(`Unexpected value for ${header} (${error}): ${value}`);
+
+					return value;
+				}
+
+				return value;
+			},
+
+			complete: function (results, file) {
+				if (errors.length > 0) {
+					alert('Error 105: Issues with some CSV data need to be resolved - see console');
+					throw new Error(
+						'Issues with some CSV data need to be resolved:\n - ' + errors.join('\n - ')
+					);
+				}
+
+				// TODO
+				// alert('Successfully imported ' + results.data.length + ' people from CSV file.');
+
+				// Test
+				console.clear();
+				console.log('Success!');
+				console.log(results);
+				const imported_string = JSON.stringify(results.data[0]);
+				console.log(imported_string);
+
+				const temp_compare = structuredClone(all_people[0]);
+				delete temp_compare.__json;
+				const existing_string = JSON.stringify(temp_compare);
+				console.log(existing_string);
+
+				if (imported_string === existing_string) {
+					console.log('SUCCESS!');
+				} else {
+					throw new Error('Imported data does not match existing data');
+				}
+			},
+
+			error: function (error, file) {
+				alert('Error 104: There was an issue parsing the CSV file.');
+				console.error('Error parsing CSV file: ', error);
+			}
+		});
 	}
 
 	onMount(async () => {
@@ -105,8 +205,19 @@
 </nav>
 
 <nav>
-	<button on:click={exportCSV}>Export to CSV</button>
-	<button on:click={importCSV}>Import CSV</button>
+	<button on:click={exportCSV}>Export CSV</button>
+	<input
+		type="file"
+		id="file_csv_import"
+		name="file_csv_import"
+		placeholder="CSV File"
+		accept="text/csv"
+		style="display: none;"
+		on:change={importCSV}
+		bind:this={el_file_csv_import}
+		bind:files={files_csv_import}
+	/>
+	<button on:click={importCSVClick}>Import CSV File</button>
 </nav>
 
 <main>
