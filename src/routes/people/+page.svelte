@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { data } from '$lib/data';
-	import { csv } from '$lib/csv';
+	import { csvInterface } from '$lib/csv';
 	import { PersonDetails, PersonImage } from '$lib/components';
 
 	let all_people = [];
@@ -35,10 +35,10 @@
 	}
 
 	function exportCSV() {
-		const csv = csv.exportPeople(filter_people);
+		const csv_rows = csvInterface.export(filter_people);
 
 		// Download the CSV file
-		const csvContent = 'data:text/csv;charset=utf-8,' + csv;
+		const csvContent = 'data:text/csv;charset=utf-8,' + csv_rows;
 		const encodedUri = encodeURI(csvContent);
 		const link = document.createElement('a');
 		link.setAttribute('href', encodedUri);
@@ -59,7 +59,7 @@
 		}
 
 		const file = event.target.files[0];
-		return csv.importCSV(file);
+		return csvInterface.import(file, all_people);
 	}
 
 	function select(person) {

@@ -4,9 +4,9 @@
 
 import Papa from 'papaparse';
 
-export const csv = {
+export const csvInterface = {
 
-	exportCSV: function (people) {
+	export: function (people) {
 		const errors = [];
 		const people_prepared = [];
 		for (const person of people) {
@@ -43,13 +43,14 @@ export const csv = {
 		return Papa.unparse(people_prepared);
 	},
 
-	importCSV: function (file) {
+	import: function (file, all_people) {
 		if (file.type !== 'text/csv') {
 			alert('Unexpected Error 103: Only CSV files are supported by import at this time.');
 			throw new Error('Unexpected file type: ', file);
 		}
 
 		const errors = [];
+		const warnings = [];
 		const regex_json = /^\[.*\]$/i;
 
 		const data = Papa.parse(file, {
@@ -98,12 +99,39 @@ export const csv = {
 			},
 
 			complete: function (results, file) {
+
+				if (results?.data?.length < 1) {
+					errors.push('No data was read from file. The file may be empty or other errors prevented reading data.');
+				}
+
+				// Warnings - see https://www.papaparse.com/docs#errors
+				// TODO - Test this
+				if (results?.errors?.length > 0) {
+					for (const error of results.errors) {
+						warnings.push(`Parsing error ${error.code} at row ${error.row}: ${error.message}`);
+					}
+				}
+
 				if (errors.length > 0) {
 					alert('Error 105: Issues with some CSV data need to be resolved - see console');
+
+					if (warnings.length > 0) {
+						console.warn('CSV Data Warnings:\n - ', warnings.join('\n - '));
+					}
+
 					throw new Error(
 						'Issues with some CSV data need to be resolved:\n - ' + errors.join('\n - ')
 					);
 				}
+
+				if (warnings.length > 0) {
+					alert('Warning: Although data was imported, there were some issues that might have caused unexpected results; review your CSV file carefully or see console for more details.');
+					console.warn('CSV Data Warnings:\n - ', warnings.join('\n - '));
+				}
+
+				const new_people = results.data;
+
+				const counts = csvInterface.import_compare(new_people, all_people);
 
 				// TODO
 				// alert('Successfully imported ' + results.data.length + ' people from CSV file.');
@@ -132,6 +160,10 @@ export const csv = {
 				console.error('Error parsing CSV file: ', error);
 			}
 		});
+	},
+
+	import_compare: function (new_people, old_people) {
+		console.log('Compare');
 	}
 
 };
