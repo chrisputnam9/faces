@@ -85,6 +85,15 @@
 </nav>
 
 <nav>
+	Quick Filter:
+	<button
+		on:click={() => {
+			keywords = '"images":\\[\\]';
+		}}>Missing Images</button
+	>
+</nav>
+
+<nav>
 	<button on:click={exportCSV}>Export CSV</button>
 	<input
 		type="file"
