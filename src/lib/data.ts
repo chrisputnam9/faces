@@ -152,7 +152,8 @@ export const data = {
 	},
 
 	loadPeople: async function () {
-		const people_raw = await this.loadRawPeople();
+		const data_people_raw = await this.loadRawPeople();
+		const people_raw = data_people_raw.people;
 		const people_processed = [];
 		for (const id in people_raw) {
 			const person_processed = people_raw[id];
@@ -163,7 +164,9 @@ export const data = {
 	},
 
 	savePerson: async function (person) {
-		const people = await this.loadRawPeople();
+		const data_people = await this.loadRawPeople();
+		const _autoincrement_id = data_people._autoincrement_id;
+		const people = data_people.people;
 		const person_raw = {};
 		for (const key in person) {
 			// By convention __ prefixed keys are not part of the actual 'data'
@@ -171,24 +174,24 @@ export const data = {
 			person_raw[key] = person[key];
 		}
 		people[person_raw.id] = person_raw;
-		await this.saveRawPeople({ people });
+		await this.saveRawPeople({ people, _autoincrement_id});
 	},
 
 	// Load from API route for now
 	// TODO: Will read from Google Drive sync in the future
 	loadRawPeople: async function () {
 		const response = await fetch('/api/people');
-		const people = await response.json();
-		return people.people;
+		const data_people = await response.json();
+		return data_people;
 	},
 
-	saveRawPeople: async function (people) {
+	saveRawPeople: async function (data_people) {
 		const rawResponse = await fetch('/api/people', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(people)
+			body: JSON.stringify(data_people)
 		});
 		const response = await rawResponse.json();
 

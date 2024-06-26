@@ -106,7 +106,7 @@
 			{#if filter_people.length === 0}
 				<p>No people...</p>
 			{/if}
-			{#each filter_people as person}
+			{#each filter_people as person (person.id)}
 				<div class="person">
 					<button class="a11y" on:click={select(person)}>
 						<PersonImage bind:person show_buttons={false} bind:state_guess />
@@ -129,7 +129,7 @@
 				<PersonDetails person={person_selected} bind:state_guess />
 				<details>
 					<summary>Raw JSON</summary>
-					<textarea>{person_selected.json}</textarea>
+					<textarea>{person_selected.__json}</textarea>
 				</details>
 			</div>
 		</section>
@@ -138,7 +138,7 @@
 
 <style>
 	main {
-		width: 100%;
+		width: 100vw;
 		display: flex;
 		gap: 20px;
 		flex-wrap: nowrap;
