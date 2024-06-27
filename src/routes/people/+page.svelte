@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { data } from '$lib/data';
+	import { dataInterface } from '$lib/data';
 	import { csvInterface } from '$lib/csv';
 	import { PersonDetails, PersonImage } from '$lib/components';
 
@@ -58,6 +58,8 @@
 			throw new Error('No files found in event: ', event);
 		}
 
+		console.log(event.target);
+
 		const file = event.target.files[0];
 		return csvInterface.import(file, all_people);
 	}
@@ -67,7 +69,7 @@
 	}
 
 	onMount(async () => {
-		all_people = await data.loadPeople();
+		all_people = await dataInterface.loadPeople();
 		all_people.sort((a, b) => a.name.localeCompare(b.name));
 		filter_people = all_people;
 		el_input_search.focus();

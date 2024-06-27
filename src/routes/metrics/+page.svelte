@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { data } from '$lib/data';
+	import { dataInterface } from '$lib/data';
 
 	let people = [];
 	let totals = false;
 	let percents = {};
 
 	onMount(async () => {
-		const metrics = await data.loadMetrics();
+		const metrics = await dataInterface.loadMetrics();
 		people = metrics.people;
 		totals = metrics.totals;
 		percents = metrics.percents;

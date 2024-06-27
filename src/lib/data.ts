@@ -2,7 +2,7 @@
  * Data Interface
  */
 
-export const data = {
+export const dataInterface = {
 	state_guess_weights: {
 		loading: 0,
 		in_progress: 0,
@@ -223,5 +223,37 @@ export const data = {
 		if (!response.success) {
 			console.error('Problem tracking guess state.', response.error);
 		}
-	}
+	},
+
+	getPersonSlug: function (person) {
+		// TODO
+	},
+
+	// Merge new people from import into existing data
+	importMerge: function (new_people) {
+		const data_people_old = this.loadRawPeople();
+		const people_old = data_people_old.people;
+		const autoincrement_id = data_people_old._autoincrement_id;
+		const people_new_by_slug = {};
+		const people_old_by_slug = {};
+		for (const new_person of new_people) {
+			const slug = dataInterface.getPersonSlug(new_person);
+			people_new_by_slug[person.slug] = new_person;
+		}
+		// TODO
+	},
+
+	// Compare new people from import to existing data and list differences
+	importCompare: function (new_people) {
+		const data_people_old = this.loadRawPeople();
+		const counts = {
+			'same': 0,
+			'create': 0,
+			'update': 0,
+			'delete': 0,
+		};
+		// TODO
+
+		return counts;
+	},
 };

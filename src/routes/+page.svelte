@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { data } from '$lib/data';
+	import { dataInterface } from '$lib/data';
 	import { PersonDetails, PersonImage, QuizSessionMetrics } from '$lib/components';
 
 	let personImage;
@@ -14,7 +14,7 @@
 	let el_input_name;
 
 	// State of guess input
-	// Must be one of the values defined in data.state_guess_weights
+	// Must be one of the values defined in dataInterface.state_guess_weights
 	let state_guess = 'loading';
 
 	function showNextPerson() {
@@ -91,10 +91,10 @@
 	}
 
 	async function trackGuess(state_guess) {
-		if (!(state_guess in data.state_guess_weights)) {
+		if (!(state_guess in dataInterface.state_guess_weights)) {
 			throw new Error(
 				'Invalid state_guess value: ' + state_guess,
-				'not defined in data.state_guess_weights'
+				'not defined in dataInterface.state_guess_weights'
 			);
 		}
 
@@ -109,7 +109,7 @@
 				'Oops, no images available for this person. Maybe you can find one?<br>LinkedIn, Facebook, and other search links below might help.<br>Otherwise, press enter to continue.';
 		}
 
-		data.trackGuess({
+		dataInterface.trackGuess({
 			person,
 			state_guess
 		});
@@ -119,7 +119,7 @@
 	$: trackGuess(state_guess);
 
 	onMount(async () => {
-		people = await data.loadPeopleOrdered();
+		people = await dataInterface.loadPeopleOrdered();
 		showNextPerson();
 		handleInputKeys();
 		el_input_name.focus();

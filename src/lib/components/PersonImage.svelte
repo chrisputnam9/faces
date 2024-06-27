@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { data } from '$lib/data';
+	import { dataInterface } from '$lib/data';
 	import generic_person_img from '$lib/img/generic_person.jpg';
 
 	export let person = null;
@@ -25,7 +25,7 @@
 		if (!new_image) return;
 
 		person.images.unshift(new_image);
-		data.savePerson(person);
+		dataInterface.savePerson(person);
 		updatePerson(person);
 	}
 

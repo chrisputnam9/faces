@@ -3,6 +3,7 @@
  */
 
 import Papa from 'papaparse';
+import { dataInterface } from '$lib/data';
 
 export const csvInterface = {
 
@@ -43,7 +44,7 @@ export const csvInterface = {
 		return Papa.unparse(people_prepared);
 	},
 
-	import: function (file, all_people) {
+	import: function (file) {
 		if (file.type !== 'text/csv') {
 			alert('Unexpected Error 103: Only CSV files are supported by import at this time.');
 			throw new Error('Unexpected file type: ', file);
@@ -129,15 +130,17 @@ export const csvInterface = {
 					console.warn('CSV Data Warnings:\n - ', warnings.join('\n - '));
 				}
 
-				const new_people = results.data;
+				const new_people_raw = results.data;
 
-				const counts = csvInterface.import_compare(new_people, all_people);
+				const new_people_merged = dataInterface.importMerge(new_people_raw);
+
+				const counts = dataInterface.importCompare(new_people_merged);
 
 				// TODO
 				// alert('Successfully imported ' + results.data.length + ' people from CSV file.');
 
+				/*
 				// Test
-				console.clear();
 				console.log('Success!');
 				console.log(results);
 				const imported_string = JSON.stringify(results.data[0]);
@@ -147,6 +150,7 @@ export const csvInterface = {
 				delete temp_compare.__json;
 				const existing_string = JSON.stringify(temp_compare);
 				console.log(existing_string);
+				*/
 
 				if (imported_string === existing_string) {
 					console.log('SUCCESS!');
@@ -161,9 +165,5 @@ export const csvInterface = {
 			}
 		});
 	},
-
-	import_compare: function (new_people, old_people) {
-		console.log('Compare');
-	}
 
 };
