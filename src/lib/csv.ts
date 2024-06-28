@@ -136,6 +136,9 @@ export const csvInterface = {
 
 				const counts = dataInterface.importCompare(new_people_merged);
 
+				console.log('Import processing complete');
+				console.log(counts);
+
 				// TODO
 				// alert('Successfully imported ' + results.data.length + ' people from CSV file.');
 
@@ -150,13 +153,13 @@ export const csvInterface = {
 				delete temp_compare.__json;
 				const existing_string = JSON.stringify(temp_compare);
 				console.log(existing_string);
-				*/
 
 				if (imported_string === existing_string) {
 					console.log('SUCCESS!');
 				} else {
 					throw new Error('Imported data does not match existing data');
 				}
+				*/
 			},
 
 			error: function (error, file) {

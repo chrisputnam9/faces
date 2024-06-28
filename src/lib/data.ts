@@ -225,8 +225,26 @@ export const dataInterface = {
 		}
 	},
 
+	person_slug_uniqueness: {},
 	getPersonSlug: function (person) {
-		// TODO
+		let slug = dataInterface.slugify(person.name);
+
+		// If empty or non-unique slug, try email
+		if (slug === '' || slug in dataInterface.person_slug_uniqueness) {
+			slug = dataInterface.slugify(person.emails[0] ?? '');
+		}
+
+		// If still empty or non-unique slug, throw error
+		if (slug === '' || slug in dataInterface.person_slug_uniqueness) {
+			const error = `Person may have duplicate, empty or otherwise problematic name and email (${person.name} - ${person.emails[0]}).`
+			alert(`Error: ${error}`);
+			throw new Error(error);
+		}
+
+		return slug;
+	},
+	slugify: function (text) {
+		return text.toLowerCase().replace(/[^a-z]+/g, '-').trim();
 	},
 
 	// Merge new people from import into existing data
@@ -238,7 +256,7 @@ export const dataInterface = {
 		const people_old_by_slug = {};
 		for (const new_person of new_people) {
 			const slug = dataInterface.getPersonSlug(new_person);
-			people_new_by_slug[person.slug] = new_person;
+			people_new_by_slug[slug] = new_person;
 		}
 		// TODO
 	},
