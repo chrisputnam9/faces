@@ -58,8 +58,6 @@
 			throw new Error('No files found in event: ', event);
 		}
 
-		console.log(event.target);
-
 		const file = event.target.files[0];
 		return csvInterface.import(file, all_people);
 	}

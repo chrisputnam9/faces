@@ -99,7 +99,7 @@ export const csvInterface = {
 				return value;
 			},
 
-			complete: function (results, file) {
+			complete: async function (results, file) {
 
 				if (results?.data?.length < 1) {
 					errors.push('No data was read from file. The file may be empty or other errors prevented reading data.');
@@ -132,12 +132,10 @@ export const csvInterface = {
 
 				const new_people_raw = results.data;
 
-				const new_people_merged = dataInterface.importMerge(new_people_raw);
-
-				const counts = dataInterface.importCompare(new_people_merged);
+				const {data_merged, stats} = await dataInterface.importMerge(new_people_raw);
 
 				console.log('Import processing complete');
-				console.log(counts);
+				console.log(data_merged, stats);
 
 				// TODO
 				// alert('Successfully imported ' + results.data.length + ' people from CSV file.');

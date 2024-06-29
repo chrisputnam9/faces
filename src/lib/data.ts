@@ -231,6 +231,7 @@ export const dataInterface = {
 
 		// If empty or non-unique slug, try email
 		if (slug === '' || slug in dataInterface.person_slug_uniqueness) {
+			console.log(`Using email to avoid duplicate slug for ${person.name}`);
 			slug = dataInterface.slugify(person.emails[0] ?? '');
 		}
 
@@ -241,6 +242,8 @@ export const dataInterface = {
 			throw new Error(error);
 		}
 
+		dataInterface.person_slug_uniqueness[slug] = 1;
+
 		return slug;
 	},
 	slugify: function (text) {
@@ -248,30 +251,88 @@ export const dataInterface = {
 	},
 
 	// Merge new people from import into existing data
-	importMerge: function (new_people) {
-		const data_people_old = this.loadRawPeople();
-		const people_old = data_people_old.people;
+	importMerge: async function (people_new) {
+		const data_people_old = await this.loadRawPeople();
+		const people_old = Object.values(data_people_old.people);
 		const autoincrement_id = data_people_old._autoincrement_id;
 		const people_new_by_slug = {};
 		const people_old_by_slug = {};
-		for (const new_person of new_people) {
-			const slug = dataInterface.getPersonSlug(new_person);
-			people_new_by_slug[slug] = new_person;
+
+		const people_merged = {};
+
+		// Reset uniqueness tracker
+		dataInterface.person_slug_uniqueness = {};
+		for (const person_new of people_new) {
+			const slug = dataInterface.getPersonSlug(person_new);
+			people_new_by_slug[slug] = person_new;
 		}
-		// TODO
+
+		// Reset uniqueness tracker
+		dataInterface.person_slug_uniqueness = {};
+		for (const person_old of people_old) {
+			const slug = dataInterface.getPersonSlug(person_old);
+			people_old_by_slug[slug] = person_old;
+		}
+
+		// Loop through existing people
+		for (const slug in people_old_by_slug) {
+			const person_old = people_old_by_slug[slug];
+
+			// - if person exists in new data, add new data into existing data
+			if (slug in people_new_by_slug) {
+				// TODO change this to a merge function
+				people_merged[person_old.id] = {...person_old, ...people_new_by_slug[slug]};
+			} else {
+        // - if person does not exist in new data, we'll drop them
+        // - eg. just don't add them to people_merged
+			}
+			// - either way, remove them from new data so we know who's left
+			delete people_new_by_slug[slug];
+		}
+
+		// Loop through remaining new data (truly new people to add)
+		for (const slug in people_new_by_slug) {
+			const person_new = people_new_by_slug[slug];
+			autoincrement_id++;
+			const id = `${autoincrement_id}-${slug}`;
+			person_new.id = id;
+			people_merged[id] = person_new;
+		}
+
+		const data_merged = {
+			people: people_merged,
+			_autoincrement_id: autoincrement_id
+		};
+
+		const stats = dataInterface.importCompare(data_people_old.people, people_merged);
+
+		return data_merged;
 	},
 
 	// Compare new people from import to existing data and list differences
-	importCompare: function (new_people) {
-		const data_people_old = this.loadRawPeople();
-		const counts = {
-			'same': 0,
-			'create': 0,
-			'update': 0,
-			'delete': 0,
+	importCompare: function (_people_old, _people_merged) {
+		const people_old = structuredClone(_people_old);
+		const people_merged = structuredClone(_people_merged);
+		const stats = {
+			'same': 0, // Old and merged identical
+			'create': 0, // Only in merged
+			'update': 0, // In both but different
+			'delete': 0, // Only in old
 		};
-		// TODO
 
-		return counts;
+		// Add JSON strings for comparison
+		for (const id in people_old) {
+			// TODO
+		}
+		for (const id in people_merged) {
+			// TODO
+		}
+
+		// Compare all scenarios
+		for (const id in people_old) {
+			// TODO
+		}
+
+		return stats;
 	},
 };
