@@ -74,8 +74,6 @@ export const dataInterface = {
 			return a.__order_weight - b.__order_weight;
 		});
 
-		console.log(people);
-
 		return people;
 	},
 
@@ -231,7 +229,6 @@ export const dataInterface = {
 
 		// If empty or non-unique slug, try email
 		if (slug === '' || slug in dataInterface.person_slug_uniqueness) {
-			console.log(`Using email to avoid duplicate slug for ${person.name}`);
 			slug = dataInterface.slugify(person.emails[0] ?? '');
 		}
 
@@ -254,7 +251,7 @@ export const dataInterface = {
 	importMerge: async function (people_new) {
 		const data_people_old = await this.loadRawPeople();
 		const people_old = Object.values(data_people_old.people);
-		const autoincrement_id = data_people_old._autoincrement_id;
+		let autoincrement_id = data_people_old._autoincrement_id;
 		const people_new_by_slug = {};
 		const people_old_by_slug = {};
 
@@ -280,11 +277,10 @@ export const dataInterface = {
 
 			// - if person exists in new data, add new data into existing data
 			if (slug in people_new_by_slug) {
-				// TODO change this to a merge function
-				people_merged[person_old.id] = {...person_old, ...people_new_by_slug[slug]};
+				people_merged[person_old.id] = dataInterface.importMergePerson(person_old,people_new_by_slug[slug]);
 			} else {
-        // - if person does not exist in new data, we'll drop them
-        // - eg. just don't add them to people_merged
+				// - if person does not exist in new data, we'll drop them
+				// - eg. just don't add them to people_merged
 			}
 			// - either way, remove them from new data so we know who's left
 			delete people_new_by_slug[slug];
@@ -306,7 +302,24 @@ export const dataInterface = {
 
 		const stats = dataInterface.importCompare(data_people_old.people, people_merged);
 
-		return data_merged;
+		return {data_merged, stats};
+	},
+
+	// Merge new person from import into existing data with some special logic
+	importMergePerson: function (person_old, person_new) {
+		const person_merged = structuredClone(person_old);
+		for (const key in person_new) {
+			// Some fields are special and need to be merged
+			if (['images'].includes(key)) {
+				// Merge and make unique
+				person_merged[key] = [...new Set(person_old[key].concat(person_new[key]))];
+				continue;
+			}
+
+			// If no special logic, just use the new value
+			person_merged[key] = person_new[key];
+		}
+		return person_merged;
 	},
 
 	// Compare new people from import to existing data and list differences
@@ -314,25 +327,130 @@ export const dataInterface = {
 		const people_old = structuredClone(_people_old);
 		const people_merged = structuredClone(_people_merged);
 		const stats = {
-			'same': 0, // Old and merged identical
-			'create': 0, // Only in merged
-			'update': 0, // In both but different
-			'delete': 0, // Only in old
+			'delete': [], // Only in old
+			'update': [], // In both but different
+			'create': [], // Only in merged
+			'same': [], // Old and merged identical
 		};
 
-		// Add JSON strings for comparison
 		for (const id in people_old) {
-			// TODO
-		}
-		for (const id in people_merged) {
-			// TODO
+			const stat_object = {
+				id,
+				old: people_old[id],
+				new: null,
+				diffs: [],
+			};
+			if (id in people_merged) {
+
+				stat_object.new = people_merged[id];
+
+				// JSON for comparison
+				const people_old_json = JSON.stringify(people_old[id]);
+				const people_merged_json = JSON.stringify(people_merged[id]);
+
+				// Compare JSON see if same or updated
+				if (people_old_json === people_merged_json) {
+					stats.same.push(stat_object);
+				} else {
+					stats.update.push(stat_object);
+					// Add diffs
+					for (const key in people_old[id]) {
+						const value_old_json = JSON.stringify(people_old[id][key]);
+						const value_merged_json = JSON.stringify(people_merged[id][key]);
+						if (value_old_json !== value_merged_json) {
+							stat_object.diffs.push({
+								key,
+								old: people_old[id][key],
+								new: people_merged[id][key],
+							});
+						}
+					}
+				}
+
+				// Either way, remove so we know what's brand-new
+				delete people_merged[id];
+				continue;
+			}
+
+			// If not in merged, it's being deleted
+			stats.delete.push(stat_object);
 		}
 
-		// Compare all scenarios
-		for (const id in people_old) {
-			// TODO
+		// Anything left in merged is brand new
+		for (const id in people_merged) {
+			stats.create.push({
+				id,
+				old: null,
+				new: people_merged[id],
+				diffs: [],
+			});
+		}
+
+		for (const stat in stats) {
+			const stat_object = {
+				count: stats[stat].length,
+				detail: stats[stat],
+			};
+			stats[stat] = stat_object;
 		}
 
 		return stats;
 	},
+
+	// Generate explanatiosn of import comparison stats
+	explainImportStats: function (stats) {
+
+		const explain = {
+			delete: {summary: '', details: []},
+			update: {summary: '', details: []},
+			create: {summary: '', details: []},
+			same: {summary: '', details: []},
+		};
+
+		if (stats.same.count > 0) {
+			const p_noun = stats.same.count === 1 ? 'person' : 'people';
+			explain.same.summary = `${stats.same.count} ${p_noun} will be unaffected.`;
+			explain.same.details = stats.same.detail.map(detail => {
+				return `${detail.old.name} will be unaffected.`;
+			});
+		}
+
+		if (stats.create.count > 0) {
+			const p_noun = stats.create.count === 1 ? 'person' : 'people';
+			explain.create.summary = `${stats.create.count} new ${p_noun} will be created.`;
+			explain.create.details = stats.create.detail.map(detail => {
+				return `${detail.new.name} will be created.`;
+			});
+		}
+
+		if (stats.delete.count > 0) {
+			const p_noun = stats.delete.count === 1 ? 'person' : 'people';
+			explain.delete.summary = `${stats.delete.count} ${p_noun} will be deleted.`;
+			explain.delete.details = stats.delete.detail.map(detail => {
+				return `${detail.old.name} will be deleted.`;
+			});
+		}
+
+		if (stats.update.count > 0) {
+			const diff_fields_object = {};
+			for (const detail of stats.update.detail) {
+				for (const diff of detail.diffs) {
+					if ( ! (diff.key in diff_fields_object)) {
+						diff_fields_object[diff.key] = 0;
+					}
+					explain.update.details.push(`${detail.old.name} - ${diff.key} changing from "${JSON.stringify(diff.old)}" to "${JSON.stringify(diff.new)}"`);
+					diff_fields_object[diff.key]++;
+				}
+			}
+			const diff_fields = JSON.stringify(diff_fields_object)
+				.replace(/[\{\}]/g, '')
+				.replaceAll(',', ', ')
+				.replaceAll('"', '');
+			const p_noun = stats.update.count === 1 ? 'person' : 'people';
+			explain.update.summary = `${stats.update.count} existing ${p_noun} will be updated.
+   --- Fields updated: ${diff_fields}`;
+		}
+
+		return explain;
+	}
 };

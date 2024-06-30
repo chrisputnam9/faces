@@ -26,6 +26,10 @@
 
 		person.images.unshift(new_image);
 		dataInterface.savePerson(person);
+
+		// Uniqify images
+		person.images = [...new Set(person.images)];
+
 		updatePerson(person);
 	}
 

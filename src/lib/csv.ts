@@ -65,7 +65,9 @@ export const csvInterface = {
 
 				// Convert comma separated strings to arrays
 				if (['aliases', 'companies', 'emails', 'phones', 'images'].includes(header)) {
-					value = value.split(',').filter((v) => v.trim() !== '');
+					value = value.split(',')
+						.map(v => v.trim())
+						.filter(v => v !== '');
 				}
 
 				// Convert JSON strings
@@ -106,7 +108,6 @@ export const csvInterface = {
 				}
 
 				// Warnings - see https://www.papaparse.com/docs#errors
-				// TODO - Test this
 				if (results?.errors?.length > 0) {
 					for (const error of results.errors) {
 						warnings.push(`Parsing error ${error.code} at row ${error.row}: ${error.message}`);
@@ -134,30 +135,48 @@ export const csvInterface = {
 
 				const {data_merged, stats} = await dataInterface.importMerge(new_people_raw);
 
-				console.log('Import processing complete');
-				console.log(data_merged, stats);
+				console.groupCollapsed(`Import data merge results`);
+				console.log({data_merged, stats});
+				console.groupEnd();
 
-				// TODO
-				// alert('Successfully imported ' + results.data.length + ' people from CSV file.');
+				const total_change_count = stats.create.count + stats.update.count + stats.delete.count;
 
-				/*
-				// Test
-				console.log('Success!');
-				console.log(results);
-				const imported_string = JSON.stringify(results.data[0]);
-				console.log(imported_string);
-
-				const temp_compare = structuredClone(all_people[0]);
-				delete temp_compare.__json;
-				const existing_string = JSON.stringify(temp_compare);
-				console.log(existing_string);
-
-				if (imported_string === existing_string) {
-					console.log('SUCCESS!');
-				} else {
-					throw new Error('Imported data does not match existing data');
+				if (total_change_count < 1) {
+					alert('No changes found in CSV compared to existing data.');
+					return;
 				}
-				*/
+
+				const explain = dataInterface.explainImportStats(stats);
+
+				let message_confirm = 'Do you want to continue with import?';
+				for (const key in explain) {
+					if (stats[key].count < 1) continue;
+					message_confirm += `\n - ${explain[key].summary}`;
+					console.groupCollapsed(`Import details: '${key}' (${stats[key].count})`);
+					console.log(' - ' + explain[key].details.join('\n - '));
+					console.groupEnd();
+				}
+
+				const total_old_plus_new = total_change_count + stats.same.count;
+				const total_change_percentage = total_old_plus_new > 0 ? Math.round((total_change_count / total_old_plus_new) * 10000, 2)/100 : 0;
+				message_confirm += '\n';
+				if (total_change_percentage > 50) {
+					message_confirm += `\nWARNING - REVIEW CLOSELY. This is a large change. `;
+				}
+				message_confirm += `\nTotal changes: ${total_change_count} of ${total_old_plus_new} (${total_change_percentage}%)`;
+				message_confirm += `\n\nCompare with export or view details in console if needed.`;
+
+				const continue_import = confirm(
+					message_confirm
+				);
+
+				if ( ! continue_import) {
+					console.log('Import cancelled by user');
+					return;
+				}
+
+				dataInterface.saveRawPeople(data_merged);
+				console.log('Import complete! Refresh page to see new data.');
 			},
 
 			error: function (error, file) {
