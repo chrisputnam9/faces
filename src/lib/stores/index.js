@@ -1,1 +1,1 @@
-export { default as PeopleStore } from './PeopleStore.ts';
+export { PeopleStore } from './PeopleStore.ts';

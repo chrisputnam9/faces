@@ -2,11 +2,11 @@
  * People Store
  */
 
-import { readable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { dataInterface } from '$lib/data';
 import { page } from '$app/stores';
 
-const {subscribe, set, update} = readable({
+const {subscribe, set, update} = writable({
 	people_all: null,
 	people_filtered: null,
 });
@@ -21,7 +21,7 @@ export const PeopleStore = {
 	},
 	load: async function () {
 		this.loaded++;
-		const people_all = dataInterface.loadPeople();
+		const people_all = await dataInterface.loadPeople();
 		people_all.sort((a, b) => a.name.localeCompare(b.name));
 		set({people_all, people_filtered: people_all});
 		page.subscribe((page) => {
