@@ -4,6 +4,7 @@
 
 import { readable } from 'svelte/store';
 import { dataInterface } from '$lib/data';
+import { page } from '$app/stores';
 
 const {subscribe, set, update} = readable({
 	people_all: null,
@@ -15,9 +16,18 @@ export const people = {
 	load: async function () {
 		const people_all = dataInterface.loadPeople();
 		people_all.sort((a, b) => a.name.localeCompare(b.name));
-		set({people_all, people_filtered: people_all})
+		set({people_all, people_filtered: people_all});
+		page.subscribe((page) => {
+			// Filter on 'pq' query string
+			const keywords = page.query.get('pq');
+			if (keywords) {
+				this.filter(keywords);
+			}
+		});
+
 	},
 	filter: function (keywords) {
+		console.log(keywords);
 		update((data) => {
 			const people_all = data.people_all;
 			let people_filtered = data.people_filtered;
