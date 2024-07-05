@@ -3,9 +3,8 @@
 	import { dataInterface } from '$lib/data';
 	import { csvInterface } from '$lib/csv';
 	import { PersonDetails, PersonImage } from '$lib/components';
+	import { PeopleStore } from '$lib/stores';
 
-	let all_people = [];
-	let filter_people = [];
 	let state_guess = 'correct';
 	let keywords = '';
 	let el_input_search;
@@ -14,28 +13,11 @@
 	let files_csv_import;
 
 	function filter(keywords) {
-		person_selected = false;
-		if (keywords === '') {
-			filter_people = all_people;
-			return;
-		}
-
-		try {
-			const regex = new RegExp(keywords, 'i');
-			filter_people = all_people.filter((person) => {
-				return person.__json.match(regex);
-			});
-		} catch (e) {
-			filter_people = all_people;
-		}
-
-		if (filter_people.length === 1) {
-			select(filter_people[0]);
-		}
+		PeopleStore.filter(keywords);
 	}
 
 	function exportCSV() {
-		const csv_rows = csvInterface.export(filter_people);
+		const csv_rows = csvInterface.export(PeopleStore.get().people_filtered);
 
 		// Download the CSV file
 		const csvContent = 'data:text/csv;charset=utf-8,' + csv_rows;
@@ -59,7 +41,7 @@
 		}
 
 		const file = event.target.files[0];
-		return csvInterface.import(file, all_people);
+		return csvInterface.import(file, PeopleStore.get().people_all);
 	}
 
 	function select(person) {
@@ -67,13 +49,21 @@
 	}
 
 	onMount(async () => {
-		all_people = await dataInterface.loadPeople();
-		all_people.sort((a, b) => a.name.localeCompare(b.name));
-		filter_people = all_people;
 		el_input_search.focus();
+
+		PeopleStore.subscribe((data) => {
+			person_selected = false;
+			if (data.people_filtered.length === 1) {
+				select(data.people_filtered[0]);
+			}
+		});
 	});
 
 	$: filter(keywords);
+
+	// TODO
+	/*
+	 */
 </script>
 
 <nav>
@@ -112,10 +102,10 @@
 <main>
 	<section>
 		<div class="section-inner">
-			{#if filter_people.length === 0}
+			{#if $PeopleStore.people_filtered.length === 0}
 				<p>No people...</p>
 			{/if}
-			{#each filter_people as person (person.id)}
+			{#each $PeopleStore.people_filtered as person (person.id)}
 				<div class="person">
 					<button class="a11y" on:click={select(person)}>
 						<PersonImage bind:person show_buttons={false} bind:state_guess />

@@ -11,9 +11,16 @@ const {subscribe, set, update} = readable({
 	people_filtered: null,
 });
 
-export const people = {
-	subscribe,
+export const PeopleStore = {
+	loaded: 0,
+	subscribe: function (callback){
+		if (this.loaded < 1) {
+			this.load();
+		}
+		return subscribe(callback);
+	},
 	load: async function () {
+		this.loaded++;
 		const people_all = dataInterface.loadPeople();
 		people_all.sort((a, b) => a.name.localeCompare(b.name));
 		set({people_all, people_filtered: people_all});
@@ -24,7 +31,6 @@ export const people = {
 				this.filter(keywords);
 			}
 		});
-
 	},
 	filter: function (keywords) {
 		console.log(keywords);
