@@ -5,51 +5,72 @@
 import { writable } from 'svelte/store';
 import { dataInterface } from '$lib/data';
 import { page } from '$app/stores';
+import { goto } from '$app/navigation';
 
-const {subscribe, set, update} = writable({
-	people_all: null,
-	people_filtered: null,
+const { subscribe:people_subscribe, set:people_set, update:people_update } = writable({
+	all: [],
+	filtered: []
 });
 
+const { subscribe:filter_keywords_subscribe, set:filter_keywords_set } = writable('');
+
+let url_search_params = null;
+let url_keywords = '';
+let filter_keywords = '';
+
 export const PeopleStore = {
-	loaded: 0,
-	subscribe: function (callback){
-		if (this.loaded < 1) {
-			this.load();
-		}
-		return subscribe(callback);
-	},
+	subscribe: people_subscribe,
 	load: async function () {
-		this.loaded++;
-		const people_all = await dataInterface.loadPeople();
-		people_all.sort((a, b) => a.name.localeCompare(b.name));
-		set({people_all, people_filtered: people_all});
+		const all = await dataInterface.loadPeople();
+		all.sort((a, b) => a.name.localeCompare(b.name));
+		people_set({ all, filtered: all });
+
+		// Listen for URL change and filter
 		page.subscribe((page) => {
 			// Filter on 'pq' query string
-			const keywords = page.query.get('pq');
-			if (keywords) {
-				this.filter(keywords);
+			url_search_params = page.url.searchParams;
+			url_keywords = url_search_params.get('pq');
+			if (url_keywords === null) {
+				url_keywords = '';
+			}
+			if (url_keywords !== filter_keywords) {
+				this.filter_keywords.set(url_keywords);
 			}
 		});
 	},
-	filter: function (keywords) {
-		console.log(keywords);
-		update((data) => {
-			const people_all = data.people_all;
-			let people_filtered = data.people_filtered;
-			try {
-				const regex = new RegExp(keywords, 'i');
-				people_filtered = people_all.filter((person) => {
-					return person.__json.match(regex);
-				});
-			} catch (e) {
-				// Error is probably bad regex - use exact match instead
-				people_filtered = people_all.filter((person) => {
-					return person.__json.match(keywords);
-				});
+	filter_keywords: {
+		subscribe: filter_keywords_subscribe,
+		set: function (keywords) {
+			filter_keywords = keywords;
+
+			filter_keywords_set(keywords);
+
+			// Update Page URL if keywords have changed
+			if (keywords !== url_keywords) {
+				const query = new URLSearchParams(url_search_params.toString());
+				query.set('pq', keywords);
+				goto(`?${query.toString()}`, {keepFocus: true});
 			}
 
-			return data;
-		});
-	},
-}
+			people_update((data) => {
+				data.filtered = data.filtered;
+				if (keywords === '') {
+					return data;
+				}
+				try {
+					const regex = new RegExp(keywords, 'i');
+					data.filtered = data.all.filter((person) => {
+						return person.__json.match(regex);
+					});
+				} catch (e) {
+					// Error is probably bad regex - use exact match instead
+					data.filtered = data.all.filter((person) => {
+						return person.__json.match(keywords);
+					});
+				}
+
+				return data;
+			});
+		},
+	}
+};

@@ -11,13 +11,10 @@
 	let person_selected = false;
 	let el_file_csv_import;
 	let files_csv_import;
-
-	function filter(keywords) {
-		PeopleStore.filter(keywords);
-	}
+	const filter_keywords = PeopleStore.filter_keywords;
 
 	function exportCSV() {
-		const csv_rows = csvInterface.export(PeopleStore.get().people_filtered);
+		const csv_rows = csvInterface.export($PeopleStore.filtered);
 
 		// Download the CSV file
 		const csvContent = 'data:text/csv;charset=utf-8,' + csv_rows;
@@ -41,7 +38,7 @@
 		}
 
 		const file = event.target.files[0];
-		return csvInterface.import(file, PeopleStore.get().people_all);
+		return csvInterface.import(file, $PeopleStore.all);
 	}
 
 	function select(person) {
@@ -51,15 +48,15 @@
 	onMount(async () => {
 		el_input_search.focus();
 
+		await PeopleStore.load();
+
 		PeopleStore.subscribe((data) => {
 			person_selected = false;
-			if (data.people_filtered.length === 1) {
-				select(data.people_filtered[0]);
+			if (data.filtered.length === 1) {
+				select(data.filtered[0]);
 			}
 		});
 	});
-
-	$: filter(keywords);
 
 	// TODO
 	/*
@@ -68,7 +65,7 @@
 
 <nav>
 	<input
-		bind:value={keywords}
+		bind:value={$filter_keywords}
 		placeholder="Type search/filter keywords"
 		bind:this={el_input_search}
 	/>
@@ -102,13 +99,13 @@
 <main>
 	<section>
 		<div class="section-inner">
-			{#if $PeopleStore.people_filtered.length === 0}
+			{#if $PeopleStore.filtered.length === 0}
 				<p>No people...</p>
 			{/if}
-			{#each $PeopleStore.people_filtered as person (person.id)}
+			{#each $PeopleStore.filtered as person (person.id)}
 				<div class="person">
 					<button class="a11y" on:click={select(person)}>
-						<PersonImage bind:person show_buttons={false} bind:state_guess />
+						<PersonImage {person} show_buttons={false} bind:state_guess />
 					</button>
 					<div class="btn-container">
 						<button class="name" title={person.name} on:click={select(person)}>
