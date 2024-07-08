@@ -77,8 +77,8 @@ export const dataInterface = {
 		return people;
 	},
 
-	loadMetrics: async function () {
-		const people = await this.loadPeopleOrdered();
+	calculateMetrics: function (_people) {
+		const people = structuredClone(_people);
 		const totals = {
 			'all': people.length,
 			'new': 0,
@@ -127,6 +127,7 @@ export const dataInterface = {
 	},
 
 	percent: function (num, total) {
+		if (total === 0) return 0;
 		return Math.round((num / total) * 10000) / 100;
 	},
 

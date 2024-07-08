@@ -48,6 +48,7 @@
 	onMount(async () => {
 		el_input_search.focus();
 
+		PeopleStore.alphabetical = true;
 		await PeopleStore.load();
 
 		PeopleStore.subscribe((data) => {

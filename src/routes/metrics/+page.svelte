@@ -1,16 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { dataInterface } from '$lib/data';
+	import { PeopleStore } from '$lib/stores';
 
-	let people = [];
-	let totals = false;
-	let percents = {};
-
-	onMount(async () => {
-		const metrics = await dataInterface.loadMetrics();
-		people = metrics.people;
-		totals = metrics.totals;
-		percents = metrics.percents;
+	onMount(() => {
+		PeopleStore.load();
 	});
 </script>
 
@@ -19,19 +13,23 @@
 
 	<h2>Overall</h2>
 	<p>
-		{#if totals}
+		{#if $PeopleStore.filtered_metrics.totals}
 			<b>Total:</b>
-			{totals.all}<br />
+			{$PeopleStore.filtered_metrics.totals.all}<br />
 			<b>New:</b>
-			{totals.new} ({percents.new}%)<br />
+			{$PeopleStore.filtered_metrics.totals.new} ({$PeopleStore.filtered_metrics.percents.new}%)<br
+			/>
 			<b>Need Photo</b>
-			{totals.need_photo} ({percents.need_photo}%)<br />
+			{$PeopleStore.filtered_metrics.totals.need_photo} ({$PeopleStore.filtered_metrics.percents
+				.need_photo}%)<br />
 			<b>Unknown</b>
-			{totals.unknown} ({percents.unknown}%)<br />
+			{$PeopleStore.filtered_metrics.totals.unknown} ({$PeopleStore.filtered_metrics.percents
+				.unknown}%)<br />
 			<b>Learning</b>
-			{totals.learning} ({percents.learning}%)<br />
-			<b>Known</b>
-			{totals.known} ({percents.known}%)<br />
+			{$PeopleStore.filtered_metrics.totals.learning} ({$PeopleStore.filtered_metrics.percents
+				.learning}%)<br /> <b>Known</b>
+			{$PeopleStore.filtered_metrics.totals.known} ({$PeopleStore.filtered_metrics.percents
+				.known}%)<br />
 		{:else}
 			Loading...
 		{/if}
@@ -45,7 +43,7 @@
 				<th>Order Weight<br /><small>(How Well Known)</small></th>
 				<th>Tracking</th>
 			</tr>
-			{#each people as person}
+			{#each $PeopleStore.filtered as person (person.id)}
 				<tr>
 					<td>{person.name}</td>
 					<td>{person.__order_weight}</td>
