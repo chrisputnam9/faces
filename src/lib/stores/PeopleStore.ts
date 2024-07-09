@@ -61,7 +61,7 @@ export const PeopleStore = {
 			}
 
 			people_update((data) => {
-				data.filtered = data.filtered;
+				data.filtered = data.all;
 				if (keywords !== '') {
 					try {
 						const regex = new RegExp(keywords, 'i');

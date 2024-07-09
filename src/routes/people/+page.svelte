@@ -76,7 +76,12 @@
 	Quick Filter:
 	<button
 		on:click={() => {
-			keywords = '"images":\\[\\]';
+			$filter_keywords = '';
+		}}>All</button
+	>
+	<button
+		on:click={() => {
+			$filter_keywords = '"images":\\[\\]';
 		}}>Missing Images</button
 	>
 </nav>

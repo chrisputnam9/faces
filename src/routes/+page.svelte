@@ -2,12 +2,12 @@
 	import { onMount } from 'svelte';
 	import { dataInterface } from '$lib/data';
 	import { PersonDetails, PersonImage, QuizSessionMetrics } from '$lib/components';
+	import { PeopleStore } from '$lib/stores';
 
 	let personImage;
 	let quizSessionmetrics;
 
 	let html_feedback = 'Feedback';
-	let people = [];
 	let person_index = -1;
 	let person = false;
 	let name_entered_by_user = '';
@@ -18,7 +18,8 @@
 	let state_guess = 'loading';
 
 	function showNextPerson() {
-		if (!people) {
+		const people = $PeopleStore.filtered;
+		if (people.length < 1) {
 			throw new Error('No people data available.');
 			return;
 		}
@@ -119,7 +120,7 @@
 	$: trackGuess(state_guess);
 
 	onMount(async () => {
-		people = await dataInterface.loadPeopleOrdered();
+		await PeopleStore.load();
 		showNextPerson();
 		handleInputKeys();
 		el_input_name.focus();
