@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { dataInterface } from '$lib/data';
 	import { csvInterface } from '$lib/csv';
+	import { utilsFrontend } from '$lib/utilsFrontend';
 	import { PersonDetails, PersonImage } from '$lib/components';
 	import { PeopleStore } from '$lib/stores';
 
@@ -9,29 +10,25 @@
 	let keywords = '';
 	let el_input_search;
 	let person_selected = false;
-	let el_file_csv_import;
-	let files_csv_import;
+	let el_people_csv_import;
+	let files_people_csv_import;
+	let el_tracking_json_import;
+	let files_tracking_json_import;
 	const filter_keywords = PeopleStore.filter_keywords;
 
-	function exportCSV() {
+	function exportPeopleCSV() {
 		const csv_rows = csvInterface.export($PeopleStore.filtered);
 
-		// Download the CSV file
-		const csvContent = 'data:text/csv;charset=utf-8,' + csv_rows;
-		const encodedUri = encodeURI(csvContent);
-		const link = document.createElement('a');
-		link.setAttribute('href', encodedUri);
-		link.setAttribute('download', 'people.csv');
-		document.body.appendChild(link); // Required for Firefox
-		link.click();
+		// TODO
+		utilsFrontend.downloadFile('people.csv', csv_rows, 'text/csv');
 	}
 
-	function importCSVClick() {
-		el_file_csv_import.value = null;
-		el_file_csv_import.click();
+	function importPeopleCSVClick() {
+		el_people_csv_import.value = null;
+		el_people_csv_import.click();
 	}
 
-	function importCSV(event) {
+	function importPeopleCSV(event) {
 		if (!event?.target?.files?.length) {
 			alert('Unexpected Error 102: something went wrong with the file selection.');
 			throw new Error('No files found in event: ', event);
@@ -39,6 +36,33 @@
 
 		const file = event.target.files[0];
 		return csvInterface.import(file, $PeopleStore.all);
+	}
+
+	async function exportTrackingJson() {
+		const tracking = await dataInterface.loadTracking();
+
+		utilsFrontend.downloadFile('tracking.json', JSON.stringify(tracking), 'application/json');
+	}
+
+	function importTrackingJSONClick() {
+		el_tracking_json_import.value = null;
+		el_tracking_json_import.click();
+	}
+
+	function importTrackingJSON(event) {
+		if (!event?.target?.files?.length) {
+			alert('Unexpected Error 103: something went wrong with the file selection.');
+			throw new Error('No files found in event: ', event);
+		}
+
+		const file = event.target.files[0];
+		console.log(file);
+
+		// TODO
+
+		return;
+
+		return dataInterface.saveTracking(tracking_content);
 	}
 
 	function select(person) {
@@ -87,19 +111,35 @@
 </nav>
 
 <nav>
-	<button on:click={exportCSV}>Export CSV</button>
+	<button on:click={exportPeopleCSV}>Export People to CSV</button>
 	<input
 		type="file"
-		id="file_csv_import"
-		name="file_csv_import"
-		placeholder="CSV File"
+		id="people_csv_import"
+		name="people_csv_import"
+		placeholder="People CSV File"
 		accept="text/csv"
 		style="display: none;"
-		on:change={importCSV}
-		bind:this={el_file_csv_import}
-		bind:files={files_csv_import}
+		on:change={importPeopleCSV}
+		bind:this={el_people_csv_import}
+		bind:files={files_people_csv_import}
 	/>
-	<button on:click={importCSVClick}>Import CSV File</button>
+	<button on:click={importPeopleCSVClick}>Import People from CSV File</button>
+</nav>
+
+<nav>
+	<button on:click={exportTrackingJson}>Export Tracking to JSON</button>
+	<input
+		type="file"
+		id="file_tracking_json_import"
+		name="file_tracking_json_import"
+		placeholder="Tracking JSON File"
+		accept="application/json"
+		style="display: none;"
+		on:change={importTrackingJSON}
+		bind:this={el_tracking_json_import}
+		bind:files={files_tracking_json_import}
+	/>
+	<button on:click={importTrackingJSONClick}>Import Tracking from JSON File</button>
 </nav>
 
 <main>
