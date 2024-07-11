@@ -10,8 +10,17 @@ import { json } from '@sveltejs/kit';
 import fs from 'fs';
 
 export async function GET() {
-	const people = await fs.promises.readFile('data/people.json', 'utf8');
-	return json(JSON.parse(people));
+	let return_data = {
+		people: [],
+		_autoincrement_id: 0
+	};
+	try {
+		const people = await fs.promises.readFile('data/people.json', 'utf8');
+		return_data = JSON.parse(people);
+	} catch (e) {
+		// Ignore error, just return empty data
+	}
+	return json(return_data);
 }
 
 export async function POST({ request }) {

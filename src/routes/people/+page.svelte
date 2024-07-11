@@ -56,13 +56,27 @@
 		}
 
 		const file = event.target.files[0];
-		console.log(file);
 
-		// TODO
-
-		return;
-
-		return dataInterface.saveTracking(tracking_content);
+		var reader = new FileReader();
+		reader.onload = function (evt) {
+			let tracking;
+			try {
+				tracking = JSON.parse(evt.target.result);
+			} catch (e) {
+				const message = 'Error 105 - unable to parse file - it may be corrupted';
+				alert(message);
+				console.error(message, e);
+				return;
+			}
+			dataInterface.saveTracking(tracking);
+			alert('Tracking imported successfully - now saving');
+		};
+		reader.onerror = function (evt) {
+			const message = 'Error 104 - unable to read file';
+			alert(message);
+			console.error(message, evt);
+		};
+		reader.readAsText(file, 'UTF-8');
 	}
 
 	function select(person) {

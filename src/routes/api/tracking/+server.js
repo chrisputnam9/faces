@@ -10,8 +10,16 @@ import { json } from '@sveltejs/kit';
 import fs from 'fs';
 
 export async function GET() {
-	const data = await fs.promises.readFile('data/tracking.json', 'utf8');
-	return json(JSON.parse(data));
+	let return_data = {
+		tracking: {}
+	};
+	try {
+		const data = await fs.promises.readFile('data/tracking.json', 'utf8');
+		return_data = JSON.parse(data);
+	} catch (e) {
+		// Ignore error, just return empty data
+	}
+	return json(return_data);
 }
 
 export async function POST({ request }) {

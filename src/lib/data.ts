@@ -226,14 +226,25 @@ export const dataInterface = {
 
 	person_slug_uniqueness: {},
 	getPersonSlug: function (person) {
-		let slug = dataInterface.slugify(person.name);
 
-		// If empty or non-unique slug, try email
+		let slug = '';
+
+		// If they already have an ID, backtrack slug from that to stay consistent
+		if ('id' in person) {
+			slug = person.id.replace(/^\d+-(.*)$/, '$1');
+		};
+
+		// If empty or non-unique slug, create a new one
+		if (slug === '' || slug in dataInterface.person_slug_uniqueness) {
+			slug = dataInterface.slugify(person.name);
+		}
+
+		// If still empty or non-unique slug, try email
 		if (slug === '' || slug in dataInterface.person_slug_uniqueness) {
 			slug = dataInterface.slugify(person.emails[0] ?? '');
 		}
 
-		// If still empty or non-unique slug, throw error
+		// If still empty or non-unique slug, throw an error
 		if (slug === '' || slug in dataInterface.person_slug_uniqueness) {
 			const error = `Person may have duplicate, empty or otherwise problematic name and email (${person.name} - ${person.emails[0]}).`
 			alert(`Error: ${error}`);
@@ -258,18 +269,22 @@ export const dataInterface = {
 
 		const people_merged = {};
 
-		// Reset uniqueness tracker
+		// Process new people and align autoincrement_id
+		// - Reset uniqueness tracker for new people
 		dataInterface.person_slug_uniqueness = {};
 		for (const person_new of people_new) {
 			const slug = dataInterface.getPersonSlug(person_new);
 			people_new_by_slug[slug] = person_new;
+			autoincrement_id = dataInterface.alignAutoincrementIdToPerson(autoincrement_id, person_new);
 		}
 
-		// Reset uniqueness tracker
+		// Process existing people and align autoincrement_id
+		// - Reset uniqueness tracker for old people
 		dataInterface.person_slug_uniqueness = {};
 		for (const person_old of people_old) {
 			const slug = dataInterface.getPersonSlug(person_old);
 			people_old_by_slug[slug] = person_old;
+			autoincrement_id = dataInterface.alignAutoincrementIdToPerson(autoincrement_id, person_new);
 		}
 
 		// Loop through existing people
@@ -290,10 +305,11 @@ export const dataInterface = {
 		// Loop through remaining new data (truly new people to add)
 		for (const slug in people_new_by_slug) {
 			const person_new = people_new_by_slug[slug];
-			autoincrement_id++;
-			const id = `${autoincrement_id}-${slug}`;
-			person_new.id = id;
-			people_merged[id] = person_new;
+			if ( ! ('id' in person_new)) {
+				autoincrement_id++;
+				person_new.id = `${autoincrement_id}-${slug}`;
+			}
+			people_merged[person_new.id] = person_new;
 		}
 
 		const data_merged = {
@@ -304,6 +320,16 @@ export const dataInterface = {
 		const stats = dataInterface.importCompare(data_people_old.people, people_merged);
 
 		return {data_merged, stats};
+	},
+
+	// Check a set of people against autoincrement_id and update if needed
+	alignAutoincrementIdToPerson: function (autoincrement_id, person) {
+		const id_parts = person.id.split('-');
+		const id_number = parseInt(id_parts[0]);
+		if (id_number > autoincrement_id) {
+			autoincrement_id = id_number;
+		}
+		return autoincrement_id;
 	},
 
 	// Merge new person from import into existing data with some special logic
