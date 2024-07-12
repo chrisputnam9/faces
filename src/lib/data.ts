@@ -176,15 +176,15 @@ export const dataInterface = {
 		await this.saveRawPeople({ people, _autoincrement_id});
 	},
 
-	// Load from API route for now
-	// TODO: Will read from Google Drive sync in the future
 	loadRawPeople: async function () {
+		// TODO - Switch to load from local storage
 		const response = await fetch('/api/people');
 		const data_people = await response.json();
 		return data_people;
 	},
 
 	saveRawPeople: async function (data_people) {
+		// TODO - Remove when fully switched to local storage
 		const rawResponse = await fetch('/api/people', {
 			method: 'POST',
 			headers: {
@@ -199,17 +199,15 @@ export const dataInterface = {
 		}
 	},
 
-	// Load from API route for now
-	// TODO: Will read from Google Drive sync in the future
 	loadTracking: async function () {
+		// TODO - Switch to load from local storage
 		const response = await fetch('/api/tracking');
 		const tracking_data = await response.json();
 		return tracking_data;
 	},
 
-	// Post to API route for now
-	// TODO: Will write to Google Drive sync in the future
 	saveTracking: async function (tracking) {
+		// TODO - Remove when fully switched to local storage
 		const rawResponse = await fetch('/api/tracking', {
 			method: 'POST',
 			headers: {
