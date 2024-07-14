@@ -2,7 +2,20 @@
  * Data Interface
  */
 
+import { createLocalStore } from '$lib/stores';
+
 export const dataInterface = {
+
+	peopleLocalStore: null,
+	trackingLocalStore: null,
+
+	initLocalStores: function () {
+		if (this.peopleLocalStore !== null) return;
+
+		this.peopleLocalStore = createLocalStore('people', {});
+		this.trackingLocalStore = createLocalStore('tracking', {});
+	},
+
 	state_guess_weights: {
 		loading: 0,
 		in_progress: 0,
@@ -177,6 +190,7 @@ export const dataInterface = {
 	},
 
 	loadRawPeople: async function () {
+		this.initLocalStores();
 		// TODO - Switch to load from local storage
 		const response = await fetch('/api/people');
 		const data_people = await response.json();
@@ -184,6 +198,11 @@ export const dataInterface = {
 	},
 
 	saveRawPeople: async function (data_people) {
+		this.initLocalStores();
+
+		// Save to local storage
+		this.peopleLocalStore.set(data_people);
+
 		// TODO - Remove when fully switched to local storage
 		const rawResponse = await fetch('/api/people', {
 			method: 'POST',
@@ -200,6 +219,7 @@ export const dataInterface = {
 	},
 
 	loadTracking: async function () {
+		this.initLocalStores();
 		// TODO - Switch to load from local storage
 		const response = await fetch('/api/tracking');
 		const tracking_data = await response.json();
@@ -207,6 +227,7 @@ export const dataInterface = {
 	},
 
 	saveTracking: async function (tracking) {
+		this.initLocalStores();
 		// TODO - Remove when fully switched to local storage
 		const rawResponse = await fetch('/api/tracking', {
 			method: 'POST',
@@ -282,7 +303,7 @@ export const dataInterface = {
 		for (const person_old of people_old) {
 			const slug = dataInterface.getPersonSlug(person_old);
 			people_old_by_slug[slug] = person_old;
-			autoincrement_id = dataInterface.alignAutoincrementIdToPerson(autoincrement_id, person_new);
+			autoincrement_id = dataInterface.alignAutoincrementIdToPerson(autoincrement_id, person_old);
 		}
 
 		// Loop through existing people
