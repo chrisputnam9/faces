@@ -120,6 +120,7 @@
 	$: trackGuess(state_guess);
 
 	onMount(async () => {
+		PeopleStore.alphabetical = false;
 		await PeopleStore.load();
 		showNextPerson();
 		handleInputKeys();

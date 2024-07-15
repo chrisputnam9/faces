@@ -3,6 +3,7 @@
  */
 
 import { createLocalStore } from '$lib/stores';
+import { get } from 'svelte/store';
 
 export const dataInterface = {
 
@@ -191,10 +192,9 @@ export const dataInterface = {
 
 	loadRawPeople: async function () {
 		this.initLocalStores();
-		// TODO - Switch to load from local storage
-		const response = await fetch('/api/people');
-		const data_people = await response.json();
-		return data_people;
+
+		// Fetch from local storage
+		return get(this.peopleLocalStore);
 	},
 
 	saveRawPeople: async function (data_people) {
@@ -202,45 +202,20 @@ export const dataInterface = {
 
 		// Save to local storage
 		this.peopleLocalStore.set(data_people);
-
-		// TODO - Remove when fully switched to local storage
-		const rawResponse = await fetch('/api/people', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data_people)
-		});
-		const response = await rawResponse.json();
-
-		if (!response.success) {
-			console.error('Problem saving people data.', response.error);
-		}
 	},
 
 	loadTracking: async function () {
 		this.initLocalStores();
-		// TODO - Switch to load from local storage
-		const response = await fetch('/api/tracking');
-		const tracking_data = await response.json();
-		return tracking_data;
+
+		// Fetch from local storage
+		return get(this.trackingLocalStore);
 	},
 
 	saveTracking: async function (tracking) {
 		this.initLocalStores();
-		// TODO - Remove when fully switched to local storage
-		const rawResponse = await fetch('/api/tracking', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(tracking)
-		});
-		const response = await rawResponse.json();
 
-		if (!response.success) {
-			console.error('Problem tracking guess state.', response.error);
-		}
+		// Save to local storage
+		this.trackingLocalStore.set(tracking);
 	},
 
 	person_slug_uniqueness: {},

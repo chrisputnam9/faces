@@ -4,6 +4,7 @@
 	import { PeopleStore } from '$lib/stores';
 
 	onMount(() => {
+		PeopleStore.alphabetical = false;
 		PeopleStore.load();
 	});
 </script>
