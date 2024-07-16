@@ -318,6 +318,7 @@ export const dataInterface = {
 
 	// Check a set of people against autoincrement_id and update if needed
 	alignAutoincrementIdToPerson: function (autoincrement_id, person) {
+		if ( ! ('id' in person)) return autoincrement_id;
 		const id_parts = person.id.split('-');
 		const id_number = parseInt(id_parts[0]);
 		if (id_number > autoincrement_id) {
