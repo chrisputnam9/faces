@@ -8,20 +8,43 @@ import { writable } from 'svelte/store';
 
 export async function createIndexedDBStore (key, identifier='id', default_value=null) {
 
-	const { subscribe, set, update } = writable(default_value);
-
 	if (typeof window === 'undefined') {
 		throw new Error('IndexedDB storage can only be used in the browser');
 	}
+
+	const { subscribe, set, update } = writable(default_value);
+	let db;
 	
+	// Generic Error Handler
 	function error_handler(event) {
 		const message = 'Error 201: Problem with IndexedDB database - see console for more details');
 		alert(message);
 		console.error(message, event);
 	}
 
-	// Open IndexedDB database and set up error handling
-	const db = await new Promise(function (resolve) {
+	// Promisified Transactions
+	// - action should be a callback which
+	//   -- takes the object store as an argument and
+	//   -- returns a request or null
+	function transaction (action, readwrite='readonly') {
+		return new Promise(function (resolve) {
+			const transaction = db.transaction([key], readwrite);
+			const object_store = transaction.objectStore(key);
+			const request = action(object_store);
+			if (request === null) {
+				transaction.oncomplete = function (event) {
+					resolve(event);
+				};
+				return;
+			}
+			request.onsuccess = function (event) {
+				resolve(event.target.result);
+			}
+		});
+	}
+
+	// Open IndexedDB database and set up top-level error handling
+	db = await new Promise(function (resolve) {
 		const db_open_request = window.indexedDB.open('application', 1);
 		db_open_request.onerror = error_handler;
 		db_open_request.onsuccess = (event) => {
@@ -30,24 +53,10 @@ export async function createIndexedDBStore (key, identifier='id', default_value=
 	});
 	db.onerror = error_handler;
 
-	// Initialize Object Store and wait for that to be complete
-	const object_store = new Promise(function (resolve) {
-		db.createObjectStore(key, { keyPath: identifier });
-		transaction.oncomplete = resolve;
-	});
+	// Initialize the object store
+	const object_store = db.createObjectStore(key, { keyPath: identifier });
 
-	function transation_promise () {
-		return new Promise((resolve) => {
-			const transaction = db.transaction([key], 'readwrite');
-			transaction.onerror = error_handler;
-			transaction.oncomplete = () => {
-				resolve();
-			};
-		});
-	
-	}
-
-	// Prime the store with the value from local storage, if any
+	// Prime the store with existing data if any
 	const local_value = localStorage.getItem(key);
 	if (local_value !== null) {
 		set(JSON.parse(local_value));
