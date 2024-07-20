@@ -1,5 +1,5 @@
 <div class="background">
-	<nav>
+	<nav data-sveltekit-reload>
 		<a href="/">Quiz</a> | <a href="/metrics">Metrics</a> | <a href="/people">Manage People</a>
 	</nav>
 

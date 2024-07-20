@@ -8,14 +8,16 @@ import { get } from 'svelte/store';
 
 export const dataInterface = {
 
-	peopleLocalStore: null,
-	trackingLocalStore: null,
+	peopleAutoincrementLocalStore: null,
+	peopleIndexedDBStore: null,
+	trackingIndexedDBStore: null,
 
-	initLocalStores: function () {
-		if (this.peopleLocalStore !== null) return;
+	initLocalStores: async function () {
+		if (this.peopleIndexedDBStore !== null) return;
 
-		this.peopleLocalStore = createLocalStore('people', {});
-		this.trackingLocalStore = createLocalStore('tracking', {});
+		this.peopleAutoincrementLocalStore = createLocalStore('people_autoincrement', 0);
+		this.peopleIndexedDBStore = await createIndexedDBStore('people');
+		this.trackingIndexedDBStore = await createIndexedDBStore('tracking');
 	},
 
 	state_guess_weights: {
@@ -192,28 +194,38 @@ export const dataInterface = {
 	},
 
 	loadRawPeople: async function () {
-		this.initLocalStores();
+		await this.initLocalStores();
 
-		// Fetch from local storage
-		return get(this.peopleLocalStore);
+		const people = await get(this.peopleIndexedDBStore);
+		const autoincrement_id = await get(this.peopleAutoincrementLocalStore);
+
+		return {
+			people,
+			_autoincrement_id: autoincrement_id
+		};
 	},
 
 	saveRawPeople: async function (data_people) {
-		this.initLocalStores();
+		await this.initLocalStores();
 
-		// Save to local storage
-		this.peopleLocalStore.set(data_people);
+		// Save to IndexedDB
+		this.peopleIndexedDBStore.set(data_people.people);
+		this.peopleAutoincrementLocalStore.set(data_people._autoincrement_id);
 	},
 
 	loadTracking: async function () {
-		this.initLocalStores();
+		await this.initLocalStores();
 
-		// Fetch from local storage
-		return get(this.trackingLocalStore);
+		const tracking = await get(this.trackingIndexedDBStore);
+
+		return {tracking};
 	},
 
 	saveTracking: async function (tracking) {
-		this.initLocalStores();
+		await this.initLocalStores();
+
+		// Save to IndexedDB
+		this.trackingIndexedDBStore.set(tracking.tracking);
 
 		// Save to local storage
 		this.trackingLocalStore.set(tracking);
