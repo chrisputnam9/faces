@@ -19,9 +19,8 @@
 		{/each}
 	</p>
 
-	<!-- We are OK with HTML here because it's trusted user input only used by themselves -->
-	<!--  -->
 	<p>
+		<!-- Trusted user input only used by the user -->
 		<!-- eslint-disable svelte/no-at-html-tags -->
 		{@html person.description.replace(/\n/g, '<br />')}
 	</p>
