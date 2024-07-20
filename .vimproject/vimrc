@@ -1,0 +1,2 @@
+let g:syntastic_typescript_eslint_exec="./node_modules/.bin/eslint"
+let g:syntastic_javacript_eslint_exec="./node_modules/.bin/eslint"

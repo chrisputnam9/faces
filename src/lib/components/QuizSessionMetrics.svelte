@@ -1,11 +1,7 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
-
-	let total = 0;
-
 	const LEARNING_THRESHOLD = 40;
 
-	const tracked = {
+	let tracked = {
 		known: [],
 		learning: [],
 		unknown: [],

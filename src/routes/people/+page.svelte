@@ -7,7 +7,6 @@
 	import { PeopleStore } from '$lib/stores';
 
 	let state_guess = 'correct';
-	let keywords = '';
 	let el_input_search;
 	let person_selected = false;
 	let el_people_csv_import;

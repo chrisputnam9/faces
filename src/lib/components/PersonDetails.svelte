@@ -19,7 +19,12 @@
 		{/each}
 	</p>
 
-	<p>{@html person.description.replace(/\n/g, '<br />')}</p>
+	<!-- We are OK with HTML here because it's trusted user input only used by themselves -->
+	<!--  -->
+	<p>
+		<!-- eslint-disable svelte/no-at-html-tags -->
+		{@html person.description.replace(/\n/g, '<br />')}
+	</p>
 
 	<b>Links:</b>
 	<ul>

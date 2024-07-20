@@ -17,7 +17,7 @@ export async function createIndexedDBStore (key, identifier='id', default_value=
 	
 	// Generic Error Handler
 	function error_handler(event) {
-		const message = 'Error 201: Problem with IndexedDB database - see console for more details');
+		const message = 'Error 201: Problem with IndexedDB database - see console for more details';
 		alert(message);
 		console.error(message, event);
 	}

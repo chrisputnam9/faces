@@ -9,7 +9,7 @@ import { writable } from 'svelte/store';
 
 export function createLocalStore (key, default_value=null) {
 
-	const { subscribe, set, update } = writable(default_value);
+	const { subscribe, set } = writable(default_value);
 
 	if (typeof window === 'undefined') {
 		throw new Error('Local storage can only be used in the browser');

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { dataInterface } from '$lib/data';
 	import { PeopleStore } from '$lib/stores';
 
 	onMount(() => {

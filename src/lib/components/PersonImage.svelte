@@ -79,11 +79,11 @@
 			<div class="btn-container" title={html_image_caption}>
 				{#if image_button}
 					<button title={title_button_image_cycle} on:click={cycleImage}>
-						{@html html_image_caption}
+						{html_image_caption}
 						&#x27AA;
 					</button>
 				{:else}
-					<button disabled="disabled">{@html html_image_caption}</button>
+					<button disabled="disabled">{html_image_caption}</button>
 				{/if}
 				<button title={title_button_image_add} on:click={addImage}>Add &#8853;</button>
 			</div>

@@ -2,6 +2,7 @@
  * Data Interface
  */
 
+import { createIndexedDBStore } from '$lib/stores';
 import { createLocalStore } from '$lib/stores';
 import { get } from 'svelte/store';
 
@@ -465,7 +466,7 @@ export const dataInterface = {
 				}
 			}
 			const diff_fields = JSON.stringify(diff_fields_object)
-				.replace(/[\{\}]/g, '')
+				.replace(/[{}]/g, '')
 				.replaceAll(',', ', ')
 				.replaceAll('"', '');
 			const p_noun = stats.update.count === 1 ? 'person' : 'people';

@@ -21,7 +21,6 @@
 		const people = $PeopleStore.filtered;
 		if (people.length < 1) {
 			throw new Error('No people data available.');
-			return;
 		}
 		person_index++;
 		person = people[person_index];
@@ -140,6 +139,8 @@
 				bind:this={el_input_name}
 			/>
 			{#if person}
+				<!-- Static HTML - safe to use -->
+				<!-- eslint-disable svelte/no-at-html-tags -->
 				<div class="feedback">{@html html_feedback}</div>
 				<PersonDetails {person} {state_guess} />
 			{:else}

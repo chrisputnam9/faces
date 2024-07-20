@@ -54,7 +54,7 @@ export const csvInterface = {
 		const warnings = [];
 		const regex_json = /^\[.*\]$/i;
 
-		const data = Papa.parse(file, {
+		Papa.parse(file, {
 			header: true,
 			skipEmptyLines: true,
 			encoding: 'utf-8',
@@ -101,7 +101,7 @@ export const csvInterface = {
 				return value;
 			},
 
-			complete: async function (results, file) {
+			complete: async function (results) {
 
 				if (results?.data?.length < 1) {
 					errors.push('No data was read from file. The file may be empty or other errors prevented reading data.');
@@ -179,7 +179,7 @@ export const csvInterface = {
 				console.log('Import complete! Refresh page to see new data.');
 			},
 
-			error: function (error, file) {
+			error: function (error) {
 				alert('Error 104: There was an issue parsing the CSV file.');
 				console.error('Error parsing CSV file: ', error);
 			}
