@@ -226,9 +226,6 @@ export const dataInterface = {
 
 		// Save to IndexedDB
 		this.trackingIndexedDBStore.set(tracking.tracking);
-
-		// Save to local storage
-		this.trackingLocalStore.set(tracking);
 	},
 
 	person_slug_uniqueness: {},
