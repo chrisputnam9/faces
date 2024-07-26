@@ -5,6 +5,7 @@
 import { createIndexedDBStore } from '$lib/stores';
 import { createLocalStore } from '$lib/stores';
 import { get } from 'svelte/store';
+import { google_drive } from '$lib/google_drive';
 
 export const dataInterface = {
 
@@ -12,8 +13,10 @@ export const dataInterface = {
 	peopleIndexedDBStore: null,
 	trackingIndexedDBStore: null,
 
-	initLocalStores: async function () {
+	init: async function () {
 		if (this.peopleIndexedDBStore !== null) return;
+
+		google_drive.init();
 
 		this.peopleAutoincrementLocalStore = createLocalStore('people_autoincrement', 0);
 		this.peopleIndexedDBStore = await createIndexedDBStore('people');
@@ -194,7 +197,7 @@ export const dataInterface = {
 	},
 
 	loadRawPeople: async function () {
-		await this.initLocalStores();
+		await this.init();
 
 		const people = await get(this.peopleIndexedDBStore);
 		const autoincrement_id = await get(this.peopleAutoincrementLocalStore);
@@ -206,7 +209,7 @@ export const dataInterface = {
 	},
 
 	saveRawPeople: async function (data_people) {
-		await this.initLocalStores();
+		await this.init();
 
 		// Save to IndexedDB
 		this.peopleIndexedDBStore.set(data_people.people);
@@ -214,7 +217,7 @@ export const dataInterface = {
 	},
 
 	loadTracking: async function () {
-		await this.initLocalStores();
+		await this.init();
 
 		const tracking = await get(this.trackingIndexedDBStore);
 
@@ -222,7 +225,7 @@ export const dataInterface = {
 	},
 
 	saveTracking: async function (tracking) {
-		await this.initLocalStores();
+		await this.init();
 
 		// Save to IndexedDB
 		this.trackingIndexedDBStore.set(tracking.tracking);
