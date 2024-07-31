@@ -30,6 +30,7 @@ export function createLocalStore (key, default_value=null) {
 	return {
 		subscribe,
 		set: function (value) {
+			console.log('LocalStore.set:', key, value);
 			localStorage.setItem(key, JSON.stringify(value));
 			set(value);
 		},

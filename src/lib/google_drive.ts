@@ -53,6 +53,8 @@ export const google_drive = {
 	 * Initialize GAPI and GIS
 	 */
 	init: async function () {
+		this.initLocalStores();
+
 		// Listen for sign in or data change and check for possible sync needed
 		configSyncIsSignedIn.subscribe(google_drive.maybeShowSyncNeededAlert);
 		configData.subscribe(google_drive.maybeShowSyncNeededAlert);
@@ -96,11 +98,8 @@ export const google_drive = {
 
 		// See if we have a token saved in local storage already
 		try {
-			const tokenJson = await get(this.tokenLocalStore);
-			if (!tokenJson) throw new Error('No Google account token saved in local storage');
-
-			const token = JSON.parse(tokenJson);
-			if (!token) throw new Error('Invalid JSON saved for Google account token');
+			const token = await get(this.tokenLocalStore);
+			if (!token) throw new Error('No Google account token saved in local storage');
 
 			google_drive.gapi.client.setToken(token);
 			configSyncIsSignedIn.set(true);
@@ -160,7 +159,9 @@ export const google_drive = {
 						// GIS has automatically updated gapi.client with the newly issued access token.
 						const token = google_drive.gapi.client.getToken();
 						// We save it into local storage for next time
-						this.tokenLocalStore.set(JSON.stringify(token));
+						this.tokenLocalStore.set(token);
+						return;
+
 						// Note when the token will expire
 						const token_expires = Math.floor(Date.now() / 1000) + token.expires_in;
 						this.tokenExpiresLocalStore.set(token_expires);
