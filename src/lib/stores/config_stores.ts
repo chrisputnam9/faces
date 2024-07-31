@@ -9,12 +9,12 @@ export const configSyncIsSignedIn = writable(false);
  **/
 export const CONFIG_SYNC_SAVE_STATE = {
 	PENDING_LOGIN: 0,
-	PENDING: 1,
-	SAVING: 2,
+	PENDING_SYNC: 1,
+	IN_PROGRESS: 2,
 	SUCCESS: 3,
 	ERROR: 4
 };
-export const configSyncSaveState = writable(CONFIG_SYNC_SAVE_STATE.PENDING);
+export const configSyncSaveState = writable(CONFIG_SYNC_SAVE_STATE.PENDING_LOGIN);
 
 /** Messages **/
 // Whether to show the alert message

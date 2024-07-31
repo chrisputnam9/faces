@@ -487,5 +487,9 @@ export const dataInterface = {
 		}
 
 		return explain;
+	},
+
+  syncToGoogleDrive: async function () {
+		alert('not yet implemented');
 	}
 };

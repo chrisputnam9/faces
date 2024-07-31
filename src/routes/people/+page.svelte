@@ -5,6 +5,15 @@
 	import { utilsFrontend } from '$lib/utilsFrontend';
 	import { PersonDetails, PersonImage } from '$lib/components';
 	import { PeopleStore } from '$lib/stores';
+	import {
+		CONFIG_SYNC_SAVE_STATE,
+		configSyncAlert,
+		configSyncIsAvailableForSignIn,
+		configSyncIsSignedIn,
+		configSyncSaveState,
+		configSyncMessageShow
+	} from '$lib/stores/config_stores';
+	import { google_drive } from '$lib/google_drive';
 
 	let state_guess = 'correct';
 	let el_input_search;
@@ -153,6 +162,38 @@
 		bind:files={files_tracking_json_import}
 	/>
 	<button on:click={importTrackingJSONClick}>Import Tracking from JSON File</button>
+</nav>
+
+<nav>
+	{#if $configSyncIsSignedIn}
+		<button
+			disabled={$configSyncSaveState != CONFIG_SYNC_SAVE_STATE.PENDING}
+			on:click={dataInterface.syncToGoogleDrive}
+		>
+			{#if $configSyncSaveState == CONFIG_SYNC_SAVE_STATE.PENDING}
+				Sync with Google Drive
+			{:else if $configSyncSaveState == CONFIG_SYNC_SAVE_STATE.PENDING_LOGIN}
+				Pending Login - This shouldn't show...
+			{:else if $configSyncSaveState == CONFIG_SYNC_SAVE_STATE.SAVING}
+				Syncing...
+			{:else if $configSyncSaveState == CONFIG_SYNC_SAVE_STATE.SUCCESS}
+				Sync Complete
+			{:else if $configSyncSaveState == CONFIG_SYNC_SAVE_STATE.ERROR}
+				Sync Failed
+			{:else}
+				Sync Save State Error
+			{/if}
+		</button>
+		<button on:click={google_drive.logOut}> Log Out of Google Drive </button>
+	{:else}
+		<button disabled={!$configSyncIsAvailableForSignIn} on:click={google_drive.logIn}>
+			{#if $configSyncIsAvailableForSignIn}
+				Log In - Sync to Google Drive
+			{:else}
+				Loading...
+			{/if}
+		</button>
+	{/if}
 </nav>
 
 <main>

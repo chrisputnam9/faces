@@ -1,5 +1,3 @@
-/* global GOOGLE_DRIVE_API_KEY GOOGLE_DRIVE_CLIENT_ID */
-//import MultiPartBuilder from 'multipart.js';
 import { get } from 'svelte/store';
 import { syncData, didSyncResultInChange } from './sync_logic';
 import { util } from './util';
@@ -15,6 +13,8 @@ import {
 } from './stores/config_stores';
 import MultiPartBuilder from './multipart';
 
+import { PUBLIC_GOOGLE_DRIVE_API_KEY, PUBLIC_GOOGLE_DRIVE_CLIENT_ID } from '$env/static/public';
+
 /**
  * Workflow:
  * On Config Screen:
@@ -24,9 +24,8 @@ import MultiPartBuilder from './multipart';
  * 4. When sync clicked, run sync function
  *
  * On All Screens:
- * 1. (after check for query params)
- * 2. If logged in, check last sync time
- * 3. If synced more than 1 day ago, run sync
+ * 1. If logged in, check last sync time
+ * 2. If not synced less than 1 day ago, run sync
  */
 
 export const google_drive = {
@@ -65,7 +64,7 @@ export const google_drive = {
 		});
 		await google_drive.gapi.client
 			.init({
-				apiKey: GOOGLE_DRIVE_API_KEY
+				apiKey: PUBLIC_GOOGLE_DRIVE_API_KEY
 			})
 			.then(function () {
 				google_drive.gapi.client.load(
@@ -81,7 +80,7 @@ export const google_drive = {
 		await new Promise((resolve, reject) => {
 			try {
 				google_drive.tokenClient = google_drive.google.accounts.oauth2.initTokenClient({
-					client_id: GOOGLE_DRIVE_CLIENT_ID,
+					client_id: PUBLIC_GOOGLE_DRIVE_CLIENT_ID,
 					scope:
 						'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file',
 					hint: email,
@@ -447,7 +446,7 @@ export const google_drive = {
 			metadata.parents = ['appDataFolder'];
 		}
 
-		var multipart = new MultiPartBuilder()
+		const multipart = new MultiPartBuilder()
 			.append('application/json', JSON.stringify(metadata))
 			.append(metadata.mimeType, jsonData)
 			.finish();

@@ -36,9 +36,9 @@ Face / name learning tool - practice & quizzing.
  1. Run `mkcert -install` to set up local CA
  1. Go to dev/ssl - eg. `cd dev/ssl`
  1. Run `mkcert -cert-file faces.dev.pem -key-file faces.dev-key.pem faces.dev localhost`
- 1. Copy .env.sample to .env and fill in details as needed
+ 1. Copy .env.sample to .env.local and fill in details as needed
     - Go to [Google Dev Console](https://console.cloud.google.com/apis/credentials)
-    - Create a new Google Drive API project for yourself - "Faces DEV" to use in development - keep the API key secret, fill in details in .env file
+    - Create a new Google Drive API project for yourself - "Faces DEV" to use in development - keep the API key secret, fill in details in .env.local file
  1. Run `npm install`
  1. Follow the Development Workflow steps below
 
