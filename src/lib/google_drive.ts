@@ -160,7 +160,6 @@ export const google_drive = {
 						const token = google_drive.gapi.client.getToken();
 						// We save it into local storage for next time
 						google_drive.tokenLocalStore.set(token);
-						return;
 
 						// Note when the token will expire
 						const token_expires = Math.floor(Date.now() / 1000) + token.expires_in;
