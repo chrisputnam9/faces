@@ -51,6 +51,8 @@ export const google_drive = {
 
 	/**
 	 * Initialize GAPI and GIS
+	 * - Run by the Data Interface's init
+	 * - So, it will init as soon as people are loaded on any page
 	 */
 	init: async function () {
 		google_drive.initLocalStores();

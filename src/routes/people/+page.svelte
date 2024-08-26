@@ -7,13 +7,15 @@
 	import { PeopleStore } from '$lib/stores';
 	import {
 		CONFIG_SYNC_SAVE_STATE,
-		configSyncAlert,
+		/*configSyncAlert,*/
 		configSyncIsAvailableForSignIn,
 		configSyncIsSignedIn,
-		configSyncSaveState,
-		configSyncMessageShow
+		configSyncSaveState
+		/*configSyncMessageShow*/
 	} from '$lib/stores/config_stores';
 	import { google_drive } from '$lib/google_drive';
+
+	let emailLocalStore;
 
 	let state_guess = 'correct';
 	let el_input_search;
@@ -103,6 +105,9 @@
 				select(data.filtered[0]);
 			}
 		});
+
+		google_drive.initLocalStores();
+		emailLocalStore = google_drive.emailLocalStore;
 	});
 
 	// TODO
@@ -186,6 +191,11 @@
 		</button>
 		<button on:click={google_drive.logOut}> Log Out of Google Drive </button>
 	{:else}
+		<input
+			bind:value={$emailLocalStore}
+			placeholder="Email (optional)"
+			title="Email (optional 'remember me' for faster logins). This cannot be used to switch accounts - use Google's login interface to switch first."
+		/>
 		<button disabled={!$configSyncIsAvailableForSignIn} on:click={google_drive.logIn}>
 			{#if $configSyncIsAvailableForSignIn}
 				Log In - Sync to Google Drive
