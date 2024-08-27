@@ -6,13 +6,13 @@
 	import { PersonDetails, PersonImage } from '$lib/components';
 	import { PeopleStore } from '$lib/stores';
 	import {
-		CONFIG_SYNC_SAVE_STATE,
-		/*configSyncAlert,*/
-		configSyncIsAvailableForSignIn,
-		configSyncIsSignedIn,
-		configSyncSaveState
-		/*configSyncMessageShow*/
-	} from '$lib/stores/config_stores';
+		DATA_SYNC_SAVE_STATE,
+		/*dataSyncAlert,*/
+		dataSyncIsAvailableForSignIn,
+		dataSyncIsSignedIn,
+		dataSyncSaveState
+		/*dataSyncMessageShow*/
+	} from '$lib/stores/data_stores';
 	import { google_drive } from '$lib/google_drive';
 
 	let emailLocalStore;
@@ -170,20 +170,20 @@
 </nav>
 
 <nav>
-	{#if $configSyncIsSignedIn}
+	{#if $dataSyncIsSignedIn}
 		<button
-			disabled={$configSyncSaveState != CONFIG_SYNC_SAVE_STATE.PENDING}
+			disabled={$dataSyncSaveState != DATA_SYNC_SAVE_STATE.PENDING}
 			on:click={dataInterface.syncToGoogleDrive}
 		>
-			{#if $configSyncSaveState == CONFIG_SYNC_SAVE_STATE.PENDING}
+			{#if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.PENDING}
 				Sync with Google Drive
-			{:else if $configSyncSaveState == CONFIG_SYNC_SAVE_STATE.PENDING_LOGIN}
+			{:else if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.PENDING_LOGIN}
 				Pending Login - This shouldn't show...
-			{:else if $configSyncSaveState == CONFIG_SYNC_SAVE_STATE.SAVING}
+			{:else if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.SAVING}
 				Syncing...
-			{:else if $configSyncSaveState == CONFIG_SYNC_SAVE_STATE.SUCCESS}
+			{:else if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.SUCCESS}
 				Sync Complete
-			{:else if $configSyncSaveState == CONFIG_SYNC_SAVE_STATE.ERROR}
+			{:else if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.ERROR}
 				Sync Failed
 			{:else}
 				Sync Save State Error
@@ -196,8 +196,8 @@
 			placeholder="Email (optional)"
 			title="Email (optional 'remember me' for faster logins). This cannot be used to switch accounts - use Google's login interface to switch first."
 		/>
-		<button disabled={!$configSyncIsAvailableForSignIn} on:click={google_drive.logIn}>
-			{#if $configSyncIsAvailableForSignIn}
+		<button disabled={!$dataSyncIsAvailableForSignIn} on:click={google_drive.logIn}>
+			{#if $dataSyncIsAvailableForSignIn}
 				Log In - Sync to Google Drive
 			{:else}
 				Loading...
