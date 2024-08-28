@@ -25,13 +25,9 @@ export const dataInterface = {
 		this.peopleIndexedDBStore = await createIndexedDBStore('people');
 		this.trackingIndexedDBStore = await createIndexedDBStore('tracking');
 
-		this.peopleAutoincrementLocalStore.subscribe(new_people_autoincrement => {
-			if (get(dataSyncable).people_autoincrement ?? null === new_people_autoincrement) return;
-			dataSyncable.update(_dataSyncable => {
-				_dataSyncable.people_autoincrement = new_people_autoincrement;
-				return _dataSyncable;
-			});
-		});
+		dataSyncable.syncWith(this.peopleAutoincrementLocalStore, 'people_autoincrement');
+		dataSyncable.syncWith(this.peopleIndexedDBStore, 'people');
+		dataSyncable.syncWith(this.trackingIndexedDBStore, 'tracking');
 	},
 
 	state_guess_weights: {
