@@ -6,6 +6,9 @@ import { createIndexedDBStore } from '$lib/stores';
 import { createLocalStore } from '$lib/stores';
 import { get } from 'svelte/store';
 import { google_drive } from '$lib/google_drive';
+import {
+	dataSyncable
+} from './stores/data_stores';
 
 export const dataInterface = {
 
@@ -21,6 +24,14 @@ export const dataInterface = {
 		this.peopleAutoincrementLocalStore = createLocalStore('people_autoincrement', 0);
 		this.peopleIndexedDBStore = await createIndexedDBStore('people');
 		this.trackingIndexedDBStore = await createIndexedDBStore('tracking');
+
+		this.peopleAutoincrementLocalStore.subscribe(new_people_autoincrement => {
+			if (get(dataSyncable).people_autoincrement ?? null === new_people_autoincrement) return;
+			dataSyncable.update(_dataSyncable => {
+				_dataSyncable.people_autoincrement = new_people_autoincrement;
+				return _dataSyncable;
+			});
+		});
 	},
 
 	state_guess_weights: {

@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 /** Boolean states - either is or is not **/
 export const dataSyncIsAvailableForSignIn = writable(false);
@@ -43,4 +43,30 @@ export const dataSyncAlert = function (message, type = 'info') {
 };
 
 /** Syncable Data **/
-export const dataSyncable = writable({});
+const _dataSyncable = writable({});
+export const dataSyncable = {
+	subscribe: _dataSyncable.subscribe,
+	set: _dataSyncable.set,
+	update: _dataSyncable.update,
+	syncWith: function (store, key) {
+		dataSyncable.syncFrom(store, key);
+		dataSyncable.syncTo(store, key);
+	},
+	syncTo: function (store, key) {
+		dataSyncable.subscribe(new_ds_value => {
+			// If no change, no need to trigger updates
+			if (get(store)[key] ?? null === new_ds_value) return;
+			store.set(new_ds_value[key]);
+		});
+	},
+	syncFrom: function (store, key) {
+		store.subscribe(new_store_value => {
+			// If no change, no need to trigger updates
+			if (get(dataSyncable)[key] ?? null === new_store_value) return;
+			dataSyncable.update(ds => {
+				ds[key] = new_store_value;
+				return ds;
+			});
+		});
+	},
+};
