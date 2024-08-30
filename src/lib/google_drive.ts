@@ -239,8 +239,10 @@ export const google_drive = {
 		const is_signed_in =
 			typeof changed_data == 'boolean' ? changed_data : get(dataSyncIsSignedIn);
 
+
 		// Local Data
 		const syncable_data = util.isObject(changed_data) ? changed_data : get(dataSyncable);
+		console.log(syncable_data);
 		const local_updated_at = syncable_data.updated_at ?? 0;
 		const local_synced_at = syncable_data.sync?.google_drive?.synced_at ?? 0;
 		const local_updated_after_sync = local_updated_at > local_synced_at;

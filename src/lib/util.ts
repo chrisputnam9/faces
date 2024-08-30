@@ -25,5 +25,10 @@ export const util = {
 				}
 			}, millisecondsPerInterval);
 		});
-	}
+	},
+
+	/**
+	 * Get a timestamp
+	 */
+	timestamp: () => new Date().getTime()
 };

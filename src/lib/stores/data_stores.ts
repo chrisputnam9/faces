@@ -1,4 +1,5 @@
 import { writable, get } from 'svelte/store';
+import { util } from '$lib/util';
 
 /** Boolean states - either is or is not **/
 export const dataSyncIsAvailableForSignIn = writable(false);
@@ -43,11 +44,21 @@ export const dataSyncAlert = function (message, type = 'info') {
 };
 
 /** Syncable Data **/
-const _dataSyncable = writable({});
+const _dataSyncable = writable({'updated_at': 0});
 export const dataSyncable = {
 	subscribe: _dataSyncable.subscribe,
-	set: _dataSyncable.set,
-	update: _dataSyncable.update,
+	set: function (value) {
+		value.updated_at = util.timestamp();
+		_dataSyncable.set(value);
+	},
+	setWithoutTimestampChange: _dataSyncable.set,
+	update: function(callback) {
+		_dataSyncable.update(function(value) {
+			const new_value = callback(value);
+			new_value.updated_at = util.timestamp();
+		});
+	},
+	updateWithoutTimestampChange: _dataSyncable.update,
 	syncWith: function (store, key) {
 		dataSyncable.syncFrom(store, key);
 		dataSyncable.syncTo(store, key);
