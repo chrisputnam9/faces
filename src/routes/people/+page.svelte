@@ -157,23 +157,27 @@
 
 <main>
 	<section>
-		<div class="section-inner">
-			{#if $PeopleStore.filtered.length === 0}
+		{#if $PeopleStore.filtered.length === 0}
+			<div class="section-inner">
 				<p>No people...</p>
-			{/if}
-			{#each $PeopleStore.filtered as person (person.id)}
-				<div class="person">
-					<button class="a11y" on:click={select(person)}>
-						<PersonImage {person} show_buttons={false} bind:state_guess />
-					</button>
-					<div class="btn-container">
-						<button class="name" title={person.name} on:click={select(person)}>
-							<span>✏️ {person.name}</span>
+			</div>
+		{:else}
+			<p style="margin:0"><b>People Found:</b> {$PeopleStore.filtered.length}</p>
+			<div class="section-inner">
+				{#each $PeopleStore.filtered as person (person.id)}
+					<div class="person">
+						<button class="a11y" on:click={select(person)}>
+							<PersonImage {person} show_buttons={false} bind:state_guess />
 						</button>
+						<div class="btn-container">
+							<button class="name" title={person.name} on:click={select(person)}>
+								<span>✏️ {person.name}</span>
+							</button>
+						</div>
 					</div>
-				</div>
-			{/each}
-		</div>
+				{/each}
+			</div>
+		{/if}
 	</section>
 	{#if person_selected}
 		<section class="edit">
@@ -214,9 +218,9 @@
 		min-width: 300px;
 		width: 49%;
 		height: calc(100vh - 170px);
+		flex-direction: column;
 	}
 	section.edit {
-		flex-direction: column;
 		gap: 20px;
 		flex-wrap: nowrap;
 	}
