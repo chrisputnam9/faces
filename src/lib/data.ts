@@ -19,8 +19,6 @@ export const dataInterface = {
 	init: async function () {
 		if (this.peopleIndexedDBStore !== null) return;
 
-		google_drive.init();
-
 		this.peopleAutoincrementLocalStore = createLocalStore('people_autoincrement', 0);
 		this.peopleIndexedDBStore = await createIndexedDBStore('people');
 		this.trackingIndexedDBStore = await createIndexedDBStore('tracking');
@@ -28,6 +26,8 @@ export const dataInterface = {
 		dataSyncable.syncWith(this.peopleAutoincrementLocalStore, 'people_autoincrement');
 		dataSyncable.syncWith(this.peopleIndexedDBStore, 'people');
 		dataSyncable.syncWith(this.trackingIndexedDBStore, 'tracking');
+
+		google_drive.init();
 	},
 
 	state_guess_weights: {

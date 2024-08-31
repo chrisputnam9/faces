@@ -60,9 +60,17 @@ export const dataSyncable = {
 	},
 	updateWithoutTimestampChange: _dataSyncable.update,
 	syncWith: function (store, key) {
+		// Initialize dataSyncable with the store's value
+		dataSyncable.update(ds => {
+			ds[key] = store[key];
+			return ds;
+		});
+		// Update dataSyncable when store changes
 		dataSyncable.syncFrom(store, key);
+		// Update store when dataSyncable changes
 		dataSyncable.syncTo(store, key);
 	},
+	// Update store when dataSyncable changes
 	syncTo: function (store, key) {
 		dataSyncable.subscribe(new_ds_value => {
 			// If no change, no need to trigger updates
@@ -70,10 +78,12 @@ export const dataSyncable = {
 			store.set(new_ds_value[key]);
 		});
 	},
+	// Update dataSyncable when store changes
 	syncFrom: function (store, key) {
 		store.subscribe(new_store_value => {
 			// If no change, no need to trigger updates
-			if (get(dataSyncable)[key] ?? null === new_store_value) return;
+			const dsValue = get(dataSyncable);
+			if (dsValue[key] ?? null === new_store_value) return;
 			dataSyncable.update(ds => {
 				ds[key] = new_store_value;
 				return ds;
