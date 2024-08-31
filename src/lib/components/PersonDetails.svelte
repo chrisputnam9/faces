@@ -17,6 +17,9 @@
 		{#each person.facts as fact}
 			<br /><b>{fact.name}:</b> {fact.value}
 		{/each}
+		{#each person.emails as email}
+			<br /><b>Email:</b> <a href="mailto:{email}" target="_blank">{email}</a>
+		{/each}
 	</p>
 
 	<p>
