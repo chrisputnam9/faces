@@ -170,13 +170,14 @@
 </nav>
 
 <nav>
+	Google Drive:
 	{#if $dataSyncIsSignedIn}
 		<button
-			disabled={$dataSyncSaveState != DATA_SYNC_SAVE_STATE.PENDING}
-			on:click={dataInterface.syncToGoogleDrive}
+			disabled={$dataSyncSaveState != DATA_SYNC_SAVE_STATE.PENDING_SYNC}
+			on:click={google_drive.sync}
 		>
-			{#if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.PENDING}
-				Sync with Google Drive
+			{#if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.PENDING_SYNC}
+				Sync
 			{:else if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.PENDING_LOGIN}
 				Pending Login - This shouldn't show...
 			{:else if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.SAVING}
@@ -189,7 +190,7 @@
 				Sync Save State Error
 			{/if}
 		</button>
-		<button on:click={google_drive.logOut}> Log Out of Google Drive </button>
+		<button on:click={google_drive.logOut}> Log Out</button>
 	{:else}
 		<input
 			bind:value={$emailLocalStore}
@@ -198,7 +199,7 @@
 		/>
 		<button disabled={!$dataSyncIsAvailableForSignIn} on:click={google_drive.logIn}>
 			{#if $dataSyncIsAvailableForSignIn}
-				Log In - Sync to Google Drive
+				Log In
 			{:else}
 				Loading...
 			{/if}

@@ -49,6 +49,7 @@ export const dataSyncable = {
 	subscribe: _dataSyncable.subscribe,
 	set: function (value) {
 		value.updated_at = util.timestamp();
+		console.info(' - dataSyncable updated:', value);
 		_dataSyncable.set(value);
 	},
 	setWithoutTimestampChange: _dataSyncable.set,
@@ -56,6 +57,8 @@ export const dataSyncable = {
 		_dataSyncable.update(function(value) {
 			const new_value = callback(value);
 			new_value.updated_at = util.timestamp();
+			console.info(' - dataSyncable updated:', new_value);
+			return new_value;
 		});
 	},
 	updateWithoutTimestampChange: _dataSyncable.update,
@@ -74,7 +77,10 @@ export const dataSyncable = {
 	syncTo: function (store, key) {
 		dataSyncable.subscribe(new_ds_value => {
 			// If no change, no need to trigger updates
-			if (get(store)[key] ?? null === new_ds_value) return;
+			const store_value = get(store);
+			const new_ds_key_value = new_ds_value[key] ?? null;
+			if (store_value ?? null === new_ds_key_value) return;
+			console.info(`updating store based on change to dataSyncable[${key}] - from ${store_value} to ${new_ds_key_value}`);
 			store.set(new_ds_value[key]);
 		});
 	},
@@ -82,8 +88,10 @@ export const dataSyncable = {
 	syncFrom: function (store, key) {
 		store.subscribe(new_store_value => {
 			// If no change, no need to trigger updates
-			const dsValue = get(dataSyncable);
-			if (dsValue[key] ?? null === new_store_value) return;
+			const ds_value = get(_dataSyncable);
+			const ds_key_value = ds_value[key] ?? null;
+			if (ds_key_value === new_store_value) return;
+			console.info(`updating dataSyncable[${key}] based on change to store - from ${ds_key_value} to ${new_store_value}`);
 			dataSyncable.update(ds => {
 				ds[key] = new_store_value;
 				return ds;

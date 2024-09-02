@@ -27,6 +27,9 @@ export const util = {
 		});
 	},
 
+	// Clone an object
+	objectClone: object => JSON.parse(JSON.stringify(object)),
+
 	/**
 	 * Get a timestamp
 	 */

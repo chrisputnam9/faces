@@ -47,6 +47,14 @@ export const google_drive = {
 		google_drive.emailLocalStore = createLocalStore('google_drive_user_login_email', '');
 		google_drive.tokenLocalStore = createLocalStore('google_drive_gapi_client_token', '');
 		google_drive.tokenExpiresLocalStore = createLocalStore('google_drive_gapi_client_token_expires', '');
+
+		const sync = createLocalStore('sync', {
+			google_drive: {
+				synced_at: 0,
+				file_id: 0,
+			}
+		});
+		dataSyncable.syncWith(sync, 'sync');
 	},
 
 	/**
@@ -105,6 +113,7 @@ export const google_drive = {
 
 			google_drive.gapi.client.setToken(token);
 			dataSyncIsSignedIn.set(true);
+			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_SYNC);
 
 			// See if the token has expired
 			// - if so, we'll try to get a new one right away
@@ -125,6 +134,7 @@ export const google_drive = {
 		}
 
 		dataSyncIsSignedIn.set(false);
+		dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_LOGIN);
 	},
 
 	/**
@@ -147,8 +157,8 @@ export const google_drive = {
 	getToken: async function (error) {
 		if (
 			typeof error === 'undefined' ||
-			error.result.error.code == 401 ||
-			(error.result.error.code == 403 && error.result.error.status == 'PERMISSION_DENIED')
+			(error.result?.error?.code ?? 0) == 401 ||
+			((error.result?.error?.code ?? 0) == 403 && error.result.error.status == 'PERMISSION_DENIED')
 		) {
 			// The access token is missing, invalid, or expired, prompt for user consent to obtain one.
 			await new Promise((resolve, reject) => {
@@ -166,7 +176,10 @@ export const google_drive = {
 						// Note when the token will expire
 						const token_expires = Math.floor(Date.now() / 1000) + token.expires_in;
 						google_drive.tokenExpiresLocalStore.set(token_expires);
+
 						dataSyncIsSignedIn.set(true);
+						dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_SYNC);
+
 						resolve(resp);
 					};
 
@@ -197,7 +210,7 @@ export const google_drive = {
 			});
 		} else {
 			// Errors unrelated to authorization: server errors, exceeding quota, bad requests, and so on.
-			throw new Error(error.body);
+			throw error;
 		}
 	},
 
@@ -302,12 +315,19 @@ export const google_drive = {
 		return remote_updated_at;
 	},
 
+	// Sync syncableData with GoogleDrive
+	sync: async function () {
+		const local_data = get(dataSyncable);
+		const synced_data = await google_drive._sync(local_data);
+		dataSyncable.setWithoutTimestampChange(synced_data);
+	},
+
 	/**
 	 * Sync Google Drive syncable data with passed data param
 	 *  - Save merged data
 	 *  - Return merged data
 	 */
-	sync: async function (local_data) {
+	_sync: async function (local_data) {
 		if (!get(dataSyncIsSignedIn)) {
 			dataSyncAlert(
 				'<a href="/people">Sign in to your Google Drive account</a> to back up and sync your data.',
@@ -327,6 +347,8 @@ export const google_drive = {
 		// Note data before sync
 		const drive_data = await google_drive.readData();
 		const local_data_before = util.objectClone(local_data);
+
+		console.log({ drive_data, local_data_before });
 
 		// Make note of sync time before starting
 		const local_synced_at = local_data.sync?.google_drive?.synced_at ?? 0;
@@ -352,7 +374,7 @@ export const google_drive = {
 		// - Set here so that it syncs to remote data
 		// - See below for check if local data changed
 		if (remote_data_changed) {
-			local_data.updated_at = local_data.sync.google_drive.synced_at;
+			local_data.updated_at = local_data?.sync?.google_drive?.synced_at ?? 0;
 		}
 
 		// Write the synced data to Google Drive
@@ -362,7 +384,7 @@ export const google_drive = {
 			dataSyncAlert('Writing to Google Drive...');
 			const file_id = await google_drive.writeData(
 				local_data,
-				local_data.sync.google_drive.file_id
+				local_data?.sync?.google_drive?.file_id ?? 0
 			);
 			if (file_id !== 0) {
 				successful = true;
@@ -374,7 +396,7 @@ export const google_drive = {
 		// - Set here so it *doesn't* sync to remote data
 		// - See above for check if remote data changed
 		if (local_data_changed) {
-			local_data.updated_at = local_data.sync.google_drive.synced_at;
+			local_data.updated_at = local_data?.sync?.google_drive?.synced_at ?? 0;
 		}
 
 		// As long as everything has worked out so far...
@@ -382,6 +404,7 @@ export const google_drive = {
 		if (successful) {
 			// Show success, wait a bit, then show pending again
 			dataSyncAlert('Sync Successful!', 'success');
+			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SUCCESS);
 		} else {
 			local_data.sync.google_drive.synced_at = local_synced_at;
 		}
@@ -408,6 +431,7 @@ export const google_drive = {
 					// Then try again to read data
 					.then(google_drive._readData)
 					.catch(function (error) {
+						console.error(error);
 						dataSyncAlert('CS504 - ' + JSON.stringify(error), 'error');
 					})
 			);
@@ -489,13 +513,15 @@ export const google_drive = {
 		// See if we already have the ID stored on this object
 		let data_file_id = google_drive.dataFileId;
 		if (data_file_id !== 0) {
+			console.info(`Data file ID already found this session: ${data_file_id}`)
 			return data_file_id;
 		}
 
 		// See if we have the ID in local data
 		const local_data = get(dataSyncable);
-		data_file_id = local_data.sync.google_drive.file_id;
+		data_file_id = local_data?.sync?.google_drive?.file_id ?? 0;
 		if (data_file_id !== 0) {
+			console.info(`Data file ID found in local storage: ${data_file_id}`)
 			google_drive.dataFileId = data_file_id;
 			return data_file_id;
 		}
@@ -507,13 +533,13 @@ export const google_drive = {
 				.getToken(error)
 				// Then try again to find data
 				.then(google_drive._findData)
-				.catch(function (error) {
+				.catch(function () {
 					dataSyncAlert(
-						'CS507 - Error finding data file ' + JSON.stringify(error),
-						'error'
+						'CS507 - No remote data - sync to create it.'
 					);
 				});
 		});
+		console.info(`Data file attempted to be found remotely - result: ${google_drive.dataFileId}`);
 
 		// Return the file ID (or 0 if not found)
 		// - will be set by _processFindData
@@ -521,6 +547,7 @@ export const google_drive = {
 	},
 
 	_findData: async function () {
+		console.info('_findData running...')
 		return google_drive.gapi.client.drive.files
 			.list({
 				spaces: 'appDataFolder',
