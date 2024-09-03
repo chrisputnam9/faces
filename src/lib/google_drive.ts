@@ -65,10 +65,6 @@ export const google_drive = {
 	init: async function () {
 		google_drive.initLocalStores();
 
-		// Listen for sign in or data change and check for possible sync needed
-		dataSyncIsSignedIn.subscribe(google_drive.maybeShowSyncNeededAlert);
-		dataSyncable.subscribe(google_drive.maybeShowSyncNeededAlert);
-
 		// Load and initialize gapi.client
 		google_drive.gapi = await util.newWindowVarPromise('gapi');
 		await new Promise((resolve, reject) => {
@@ -103,6 +99,11 @@ export const google_drive = {
 				reject(err);
 			}
 		});
+
+		// Listen for sign in or data change and check for possible sync needed
+		// - Needs to happen after Google SDK is fully loaded
+		dataSyncIsSignedIn.subscribe(google_drive.maybeShowSyncNeededAlert);
+		dataSyncable.subscribe(google_drive.maybeShowSyncNeededAlert);
 
 		dataSyncIsAvailableForSignIn.set(true);
 
@@ -528,6 +529,9 @@ export const google_drive = {
 
 		// Try and find the data file
 		await google_drive._findData().catch(error => {
+
+			console.warn('Error while trying to find data file:', error);
+
 			// If token expired or was invalidated, try getting a fresh one
 			google_drive
 				.getToken(error)
