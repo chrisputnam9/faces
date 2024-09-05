@@ -74,8 +74,8 @@ export const google_drive = {
 			.init({
 				apiKey: PUBLIC_GOOGLE_DRIVE_API_KEY
 			})
-			.then(function () {
-				google_drive.gapi.client.load(
+			.then(async function () {
+				await google_drive.gapi.client.load(
 					'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
 				);
 			});
@@ -252,7 +252,6 @@ export const google_drive = {
 		// Whether signed into Google Drive
 		const is_signed_in =
 			typeof changed_data == 'boolean' ? changed_data : get(dataSyncIsSignedIn);
-
 
 		// Local Data
 		const syncable_data = util.isObject(changed_data) ? changed_data : get(dataSyncable);
@@ -552,6 +551,12 @@ export const google_drive = {
 
 	_findData: async function () {
 		console.info('_findData running...')
+
+		if ( ! (google_drive?.gapi?.client?.drive?.files) ) {
+			console.warn('Tried to find data, but gapi client not yet ready');
+			return;
+		}
+
 		return google_drive.gapi.client.drive.files
 			.list({
 				spaces: 'appDataFolder',
