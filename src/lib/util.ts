@@ -31,6 +31,13 @@ export const util = {
 	objectClone: object => JSON.parse(JSON.stringify(object)),
 
 	/**
+	 * Compare two objects by converting to JSON
+	 */
+	objectsSame: (object, otherObject) =>
+		JSON.stringify(object) === JSON.stringify(otherObject),
+	objectsDiffer: (object, otherObject) => !util.objectsSame(object, otherObject),
+
+	/**
 	 * Get a timestamp
 	 */
 	timestamp: () => new Date().getTime()

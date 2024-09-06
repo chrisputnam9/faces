@@ -448,8 +448,8 @@ export const google_drive = {
 			.request({
 				path:
 					'https://www.googleapis.com/drive/v3/files/' +
-					encodeURIComponent(data_file_id +
-					'?alt=media'),
+					encodeURIComponent(data_file_id) +
+					'?alt=media',
 				method: 'GET'
 			})
 			.then(google_drive._processReadData);
