@@ -7,11 +7,9 @@
 	import { PeopleStore } from '$lib/stores';
 	import {
 		DATA_SYNC_SAVE_STATE,
-		/*dataSyncAlert,*/
 		dataSyncIsAvailableForSignIn,
 		dataSyncIsSignedIn,
 		dataSyncSaveState
-		/*dataSyncMessageShow*/
 	} from '$lib/stores/data_stores';
 	import { google_drive } from '$lib/google_drive';
 

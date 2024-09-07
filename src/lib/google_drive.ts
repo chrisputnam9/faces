@@ -229,7 +229,7 @@ export const google_drive = {
 			dataSyncAlert(
 				'There have been ' +
 					syncNeeded +
-					' changes made since the last sync.<br><b>You may wish to sync now.</b>'
+					' changes made since the last sync. You may wish to <a href="/people">sync now</a>.'
 			);
 		}
 	},
@@ -338,7 +338,7 @@ export const google_drive = {
 		}
 
 		dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SAVING);
-		dataSyncAlert('Syncing data to Google Drive');
+		dataSyncAlert('Syncing data to Google Drive...');
 
 		let successful = false;
 		let local_data_changed = false;

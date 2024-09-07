@@ -1,3 +1,12 @@
+<script lang="ts">
+	import { Alert } from '$lib/components';
+	import {
+		dataSyncMessage,
+		dataSyncMessageShow,
+		dataSyncMessageType
+	} from '$lib/stores/data_stores';
+</script>
+
 <svelte:head>
 	<script async defer src="https://apis.google.com/js/api.js" onerror="console.err"></script>
 
@@ -21,9 +30,15 @@
 </svelte:head>
 
 <div class="background">
-	<nav data-sveltekit-reload>
-		<a href="/">Quiz</a> | <a href="/metrics">Metrics</a> | <a href="/people">Manage People</a>
-	</nav>
+	<section>
+		<nav data-sveltekit-reload>
+			<a href="/">Quiz</a> | <a href="/metrics">Metrics</a> | <a href="/people">Manage People</a>
+		</nav>
+
+		{#if $dataSyncMessageShow}
+			<Alert type={$dataSyncMessageType} message={$dataSyncMessage} />
+		{/if}
+	</section>
 
 	<slot />
 </div>
@@ -32,6 +47,14 @@
 	.background {
 		display: flex;
 		padding: 20px;
+		align-items: start;
+		gap: 20px;
+		flex-wrap: wrap;
+	}
+
+	section {
+		width: 100%;
+		display: flex;
 		align-items: start;
 		gap: 20px;
 		flex-wrap: wrap;

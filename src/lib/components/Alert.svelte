@@ -2,19 +2,37 @@
 	export let type, message;
 </script>
 
-<div class="alert {type}" role="contentinfo">
+<nav class="alert {type}" role="contentinfo">
 	<!-- Trusted messages from app -->
 	<!-- eslint-disable svelte/no-at-html-tags -->
-	<p>{@html message}</p>
-</div>
+	{@html message}
+</nav>
 
 <style>
 	.alert {
-		position: fixed;
-		bottom: 0;
-		right: 0;
-		box-sizing: border-box;
-		padding: 0 10px;
-		border-radius: 5px 0 0 0;
+		display: block;
+		width: auto;
+		background-color: #eee;
+		padding: 10px;
+		border-radius: 10px;
+	}
+
+	.alert.info,
+	.alert.information,
+	.alert.informational {
+		background: #8db5ff;
+	}
+
+	.alert.success {
+		background: #99ff8d;
+	}
+
+	.alert.error {
+		background: #ff8d8d;
+	}
+
+	.alert.warning,
+	.alert.warn {
+		background: #ffd18d;
 	}
 </style>
