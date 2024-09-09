@@ -79,7 +79,7 @@ export const dataSyncable = {
 			// If no change, no need to trigger updates
 			const store_value = get(store);
 			const new_ds_key_value = new_ds_value[key] ?? null;
-			if (store_value ?? null === new_ds_key_value) return;
+			if (util.areSamish(store_value, new_ds_key_value)) return;
 			console.info(`updating store based on change to dataSyncable[${key}] - from ${store_value} to ${new_ds_key_value}`);
 			store.set(new_ds_value[key]);
 		});
@@ -90,7 +90,7 @@ export const dataSyncable = {
 			// If no change, no need to trigger updates
 			const ds_value = get(_dataSyncable);
 			const ds_key_value = ds_value[key] ?? null;
-			if (ds_key_value === new_store_value) return;
+			if (util.areSamish(ds_key_value, new_store_value)) return;
 			console.info(`updating dataSyncable[${key}] based on change to store - from ${ds_key_value} to ${new_store_value}`);
 			dataSyncable.update(ds => {
 				ds[key] = new_store_value;

@@ -1,5 +1,7 @@
 export const util = {
 
+	areSamish: (a, b) => JSON.stringify(a) === JSON.stringify(b),
+
 	isObject: thing => thing && typeof thing === 'object' && thing.constructor === Object,
 
 	/**

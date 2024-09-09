@@ -544,6 +544,13 @@ export const google_drive = {
 		});
 		console.info(`Data file attempted to be found remotely - result: ${google_drive.dataFileId}`);
 
+		// Save found data to local storage
+		local_data.sync.google_drive.file_id = google_drive.dataFileId;
+		dataSyncable.updateWithoutTimestampChange(function (ds) {
+			ds.sync.google_drive.file_id = google_drive.dataFileId;
+			return ds;
+		});
+
 		// Return the file ID (or 0 if not found)
 		// - will be set by _processFindData
 		return google_drive.dataFileId;
