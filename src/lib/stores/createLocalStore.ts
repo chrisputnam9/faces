@@ -19,22 +19,35 @@ export function createLocalStore (key, default_value=null) {
 	const local_value = localStorage.getItem(key);
 	if (local_value !== null) {
 		set(JSON.parse(local_value));
+		if (key === 'sync') {
+			console.log('Localstore sync loaded from local storage:', local_value);
+		}
 	} else {
 		// If nothing in local storage, set the default value
 		localStorage.setItem(key, JSON.stringify(default_value));
+		if (key === 'sync') {
+			console.log('Localstore sync set local storage:', local_value);
+		}
 	}
 
-	// Register this store for updates to local storage
+	// Register this store for updates to local storage?
+	// In theory this could allow for useful multi-tab behaviors
+	// Might need a lot of testing
 	// TODO
 
 	return {
 		subscribe,
 		set: function (value) {
-			console.log('LocalStore.set:', key, value);
+			if (key === 'sync') {
+				console.log('LocalStore.set:', key, value);
+			}
 			localStorage.setItem(key, JSON.stringify(value));
 			set(value);
 		},
 		update: function (callback) {
+			if (key === 'sync') {
+				console.log('LocalStore.update:', key, value);
+			}
 			const local_value = localStorage.getItem(key);
 			const updated_value = callback(JSON.parse(local_value));
 			this.set(updated_value);
