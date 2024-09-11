@@ -55,8 +55,11 @@ export const google_drive = {
 				file_id: 0,
 			}
 		});
+		const store_value = get(sync);
+		console.log('Sync local store created with value:', store_value);
 		console.log('Linking sync store with dataSyncable key');
 		dataSyncable.syncWith(sync, 'sync');
+		console.log('Done linking sync store');
 	},
 
 	/**

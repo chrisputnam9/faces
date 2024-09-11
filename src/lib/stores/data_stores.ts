@@ -63,7 +63,11 @@ export const dataSyncable = {
 	syncWith: function (store, key) {
 		// Initialize dataSyncable with the store's value
 		dataSyncable.update(ds => {
-			ds[key] = store[key];
+			const store_value = get(store);
+			if (key === 'sync') {
+				console.log('Initializing dataSyncable.sync with store:', store_value);
+			}
+			ds[key] = store_value;
 			return ds;
 		});
 		// Update dataSyncable when store changes
@@ -79,14 +83,14 @@ export const dataSyncable = {
 			const new_ds_key_value = new_ds_value[key] ?? null;
 			if (util.areSamish(store_value, new_ds_key_value)) {
 				if (key === 'sync') {
-					console.info(`No change to store based on update to dataSyncable[${key}] - from`, store_value, 'to', new_ds_key_value);
+					console.info(`dataSyncable.subscribe: No change to store based on update to dataSyncable[${key}] - from`, store_value, 'to', new_ds_key_value);
 				}
 				return;
 			}
-				if (key === 'sync') {
-					console.info(`Updating store based on change to dataSyncable[${key}] - from ${store_value} to ${new_ds_key_value}`);
-				}
-			// store.set(new_ds_value[key]);
+			if (key === 'sync') {
+				console.info(`dataSyncable.subscribe: Updating store based on change to dataSyncable[${key}] - from ${store_value} to ${new_ds_key_value}`);
+			}
+			store.set(new_ds_value[key]);
 		});
 	},
 	// Update dataSyncable when store changes
@@ -95,10 +99,15 @@ export const dataSyncable = {
 			// If no change, no need to trigger updates
 			const ds_value = get(_dataSyncable);
 			const ds_key_value = ds_value[key] ?? null;
-			if (util.areSamish(ds_key_value, new_store_value)) return;
-				if (key === 'sync') {
-					console.info(`updating dataSyncable[${key}] based on change to store - from `,  ds_key_value, 'to', new_store_value);
-				}
+			if (util.areSamish(ds_key_value, new_store_value)) {
+			if (key === 'sync') {
+				console.info(`store.subscribe: No change to dataSyncable based on update to store - from`, ds_key_value, 'to', new_store_value);
+			}
+				return;
+			}
+			if (key === 'sync') {
+				console.info(`store.subscribe: updating dataSyncable[${key}] based on change to store - from `,  ds_key_value, 'to', new_store_value);
+			}
 			dataSyncable.update(ds => {
 				ds[key] = new_store_value;
 				return ds;
