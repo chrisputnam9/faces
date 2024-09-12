@@ -3,6 +3,7 @@
  */
 
 import { writable } from 'svelte/store';
+import { util } from '$lib/util';
 
 // Listen for changes to local storage and update registered stores
 // TODO
@@ -16,7 +17,7 @@ export function createLocalStore (key, default_value=null) {
 	}
 
 	const store_interface = {
-		subscribe: function (callback, invalidate=null) {
+		subscribe: function (callback, invalidate=util.noop) {
 			return subscribe(function (value_string) {
 				// Parse the JSON since that's how we store the value - see '.set'
 				const value = JSON.parse(value_string);

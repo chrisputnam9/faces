@@ -29,6 +29,8 @@ export const util = {
 		});
 	},
 
+	noop: () => {},
+
 	// Clone an object
 	objectClone: object => JSON.parse(JSON.stringify(object)),
 
