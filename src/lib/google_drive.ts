@@ -48,7 +48,6 @@ export const google_drive = {
 		google_drive.tokenLocalStore = createLocalStore('google_drive_gapi_client_token', '');
 		google_drive.tokenExpiresLocalStore = createLocalStore('google_drive_gapi_client_token_expires', '');
 
-		console.log('Creating sync local store');
 		const sync = createLocalStore('sync', {
 			google_drive: {
 				synced_at: 0,
@@ -56,10 +55,7 @@ export const google_drive = {
 			}
 		});
 		const store_value = get(sync);
-		console.log('Sync local store created with value:', store_value);
-		console.log('Linking sync store with dataSyncable key');
 		dataSyncable.syncWith(sync, 'sync');
-		console.log('Done linking sync store');
 	},
 
 	/**
@@ -268,7 +264,6 @@ export const google_drive = {
 		const remote_updated_at = await google_drive.getRemoteUpdatedAt();
 
 		// Debugging output
-		/*
 		console.log('isSyncNeeded - fresh check:', {
 			is_signed_in,
 			syncable_data,
@@ -277,7 +272,6 @@ export const google_drive = {
 			local_updated_after_sync,
 			remote_updated_at
 		});
-		*/
 
 		// If not currently signed in and never synced before, don't show any warnings
 		// - wait for them to log in before we let them know sync is needed
@@ -353,8 +347,6 @@ export const google_drive = {
 		// Note data before sync
 		const drive_data = await google_drive.readData();
 		const local_data_before = util.objectClone(local_data);
-
-		console.log({ drive_data, local_data_before });
 
 		// Make note of sync time before starting
 		const local_synced_at = local_data.sync?.google_drive?.synced_at ?? 0;
@@ -554,7 +546,6 @@ export const google_drive = {
 		local_data.sync.google_drive.file_id = google_drive.dataFileId;
 		dataSyncable.updateWithoutTimestampChange(function (ds) {
 			ds.sync.google_drive.file_id = google_drive.dataFileId;
-			console.log(' - Should be updating dataSyncable.sync to ', ds.sync);
 			return ds;
 		});
 

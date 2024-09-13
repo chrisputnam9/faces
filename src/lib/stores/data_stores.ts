@@ -44,14 +44,36 @@ export const dataSyncAlert = function (message, type = 'info') {
 };
 
 /** Syncable Data **/
-const _dataSyncable = writable({'updated_at': 0});
+// Store for data that is syncable to remote sources and other app stores
+// - We store the value as a JSON string in the store
+//   to avoid issues with updates via other references to the object
+// - We keep an updated_at timestamp based on when data actually changes
+// - We store data in it's own key to allow easy change comparison
+const _dataSyncable = writable('{"updated_at": 0, "data": {}');
 export const dataSyncable = {
-	subscribe: _dataSyncable.subscribe,
-	set: function (value) {
-		value.updated_at = util.timestamp();
-		_dataSyncable.set(value);
+	subscribe: function (callback, invalidate=util.noop) {
+		return _dataSyncable.subscribe(function (value_string) {
+			// Parse the JSON since that's how we store the value
+			const value = JSON.parse(value_string);
+			return callback(value);
+		}, invalidate);
 	},
-	setWithoutTimestampChange: _dataSyncable.set,
+	set: function (value_new, initial_load=false) {
+		const value_before = get(dataSyncable);
+
+		if ( ! util.areSamish(value_new.data, value_before.data)) {
+			return;
+		}
+
+		// As long as this isn't just an initial load of data...
+		if (!initial_load) {
+			// Update the updated_at timestamp
+			value_new.updated_at = util.timestamp();
+		}
+
+		// Store as JSON to avoid issues with mutations
+		_dataSyncable.set(JSON.stringify(value_new));
+	},
 	update: function(callback) {
 		_dataSyncable.update(function(value) {
 			const new_value = callback(value);
@@ -59,14 +81,10 @@ export const dataSyncable = {
 			return new_value;
 		});
 	},
-	updateWithoutTimestampChange: _dataSyncable.update,
 	syncWith: function (store, key) {
 		// Initialize dataSyncable with the store's value
 		dataSyncable.update(ds => {
 			const store_value = get(store);
-			if (key === 'sync') {
-				console.log('Initializing dataSyncable.sync with store:', store_value);
-			}
 			ds[key] = store_value;
 			return ds;
 		});
@@ -82,13 +100,7 @@ export const dataSyncable = {
 			const store_value = get(store);
 			const new_ds_key_value = new_ds_value[key] ?? null;
 			if (util.areSamish(store_value, new_ds_key_value)) {
-				if (key === 'sync') {
-					console.info(`dataSyncable.subscribe: No change to store based on update to dataSyncable[${key}] - from`, store_value, 'to', new_ds_key_value);
-				}
 				return;
-			}
-			if (key === 'sync') {
-				console.info(`dataSyncable.subscribe: Updating store based on change to dataSyncable[${key}] - from ${store_value} to ${new_ds_key_value}`);
 			}
 			store.set(new_ds_value[key]);
 		});
@@ -100,13 +112,7 @@ export const dataSyncable = {
 			const ds_value = get(_dataSyncable);
 			const ds_key_value = ds_value[key] ?? null;
 			if (util.areSamish(ds_key_value, new_store_value)) {
-			if (key === 'sync') {
-				console.info(`store.subscribe: No change to dataSyncable based on update to store - from`, ds_key_value, 'to', new_store_value);
-			}
 				return;
-			}
-			if (key === 'sync') {
-				console.info(`store.subscribe: updating dataSyncable[${key}] based on change to store - from `,  ds_key_value, 'to', new_store_value);
 			}
 			dataSyncable.update(ds => {
 				ds[key] = new_store_value;
