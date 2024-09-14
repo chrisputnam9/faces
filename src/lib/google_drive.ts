@@ -54,7 +54,6 @@ export const google_drive = {
 				file_id: 0,
 			}
 		});
-		const store_value = get(sync);
 		dataSyncable.syncWith(sync, 'sync');
 	},
 

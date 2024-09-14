@@ -49,37 +49,52 @@ export const dataSyncAlert = function (message, type = 'info') {
 //   to avoid issues with updates via other references to the object
 // - We keep an updated_at timestamp based on when data actually changes
 // - We store data in it's own key to allow easy change comparison
-const _dataSyncable = writable('{"updated_at": 0, "data": {}');
+const _dataSyncable = writable(JSON.stringify({"updated_at": 0, "data": {}}));
 export const dataSyncable = {
 	subscribe: function (callback, invalidate=util.noop) {
 		return _dataSyncable.subscribe(function (value_string) {
 			// Parse the JSON since that's how we store the value
 			const value = JSON.parse(value_string);
-			return callback(value);
+			return callback(value.data);
 		}, invalidate);
 	},
-	set: function (value_new, initial_load=false) {
-		const value_before = get(dataSyncable);
+	/**
+	 * Internal set logic - used by both set and update
+	 */
+	_maybeSet: function (ds_value, data_new, initial_load=false) {
 
-		if ( ! util.areSamish(value_new.data, value_before.data)) {
+		/* If there's no actual change, then we don't do anything */
+		if ( util.areSamish(data_new, ds_value.data)) {
 			return;
 		}
+
+		ds_value.data = data_new;
 
 		// As long as this isn't just an initial load of data...
 		if (!initial_load) {
 			// Update the updated_at timestamp
-			value_new.updated_at = util.timestamp();
+			ds_value.updated_at = util.timestamp();
 		}
 
 		// Store as JSON to avoid issues with mutations
-		_dataSyncable.set(JSON.stringify(value_new));
+		const ds_value_string = JSON.stringify(ds_value);
+		console.info('_maybeSet: Setting new value', ds_value_string);
+		_dataSyncable.set(ds_value_string);
 	},
-	update: function(callback) {
-		_dataSyncable.update(function(value) {
-			const new_value = callback(value);
-			new_value.updated_at = util.timestamp();
-			return new_value;
-		});
+	/**
+	 * Internal get logic - get parsed JSON value of _dataSyncable
+	 */
+	_getParsed: function () {
+		return JSON.parse(get(_dataSyncable));
+	},
+	set: function (data_new, initial_load=false) {
+		const ds_value = dataSyncable._getParsed();
+		dataSyncable._maybeSet(ds_value, data_new, initial_load);
+	},
+	update: function(callback, initial_load=false) {
+		const ds_value = dataSyncable._getParsed();
+		const data_new = callback(util.objectClone(ds_value.data));
+		dataSyncable._maybeSet(ds_value, data_new, initial_load);
 	},
 	syncWith: function (store, key) {
 		// Initialize dataSyncable with the store's value
@@ -87,9 +102,11 @@ export const dataSyncable = {
 			const store_value = get(store);
 			ds[key] = store_value;
 			return ds;
-		});
+		}, true); // true=initial_load
+
 		// Update dataSyncable when store changes
 		dataSyncable.syncFrom(store, key);
+
 		// Update store when dataSyncable changes
 		dataSyncable.syncTo(store, key);
 	},
@@ -102,6 +119,7 @@ export const dataSyncable = {
 			if (util.areSamish(store_value, new_ds_key_value)) {
 				return;
 			}
+			console.info('Syncing dataSyncable to store', key, new_ds_key_value);
 			store.set(new_ds_value[key]);
 		});
 	},
