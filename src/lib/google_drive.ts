@@ -275,6 +275,9 @@ export const google_drive = {
 		// If not currently signed in and never synced before, don't show any warnings
 		// - wait for them to log in before we let them know sync is needed
 		if (!is_signed_in && !local_synced_at) {
+			dataSyncAlert(
+				'Log in and refresh <a href="/people">people</a> page to keep data synced to Google Drive.'
+			);
 			return google_drive.syncNeeded;
 		}
 
@@ -318,7 +321,7 @@ export const google_drive = {
 	sync: async function () {
 		const local_data = get(dataSyncable);
 		const synced_data = await google_drive._sync(local_data);
-		dataSyncable.setWithoutTimestampChange(synced_data);
+		dataSyncable.set(synced_data);
 	},
 
 	/**
@@ -535,15 +538,16 @@ export const google_drive = {
 				.then(google_drive._findData)
 				.catch(function () {
 					dataSyncAlert(
-						'CS507 - No remote data - sync to create it.'
+						'CS507 - No remote data yet - sync to create it.'
 					);
 				});
 		});
 		console.info(`Data file attempted to be found remotely - result: ${google_drive.dataFileId}`);
 
 		// Save found data to local storage
+		console.log(local_data);
 		local_data.sync.google_drive.file_id = google_drive.dataFileId;
-		dataSyncable.updateWithoutTimestampChange(function (ds) {
+		dataSyncable.update(function (ds) {
 			ds.sync.google_drive.file_id = google_drive.dataFileId;
 			return ds;
 		});

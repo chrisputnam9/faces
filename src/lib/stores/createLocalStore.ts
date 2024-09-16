@@ -47,15 +47,15 @@ export function createLocalStore (key, default_value=null) {
 		}
 	};
 
-	// Prime the store with the value from local storage, if any
+	// Prime the store with either:
+	//  - The value from local storage, if there is one set
+	//  - The default value otherwise
+	let initial_value = default_value;
 	const local_value_raw = localStorage.getItem(key);
-
 	if ( ! util.isNullorUndefined(local_value_raw)) {
-		store_interface.set(local_value_raw);
-	} else {
-		// If nothing in local storage, set the default value
-		localStorage.setItem(key, JSON.stringify(default_value));
+		initial_value = JSON.parse(local_value_raw);
 	}
+	store_interface.set(initial_value);
 
 	// TODO - Register this store for updates to local storage?
 	// In theory this could allow for useful multi-tab behaviors
