@@ -48,7 +48,7 @@ export const dataSyncAlert = function (message, type = 'info') {
 // - We store the value as a JSON string in the store
 //   to avoid issues with updates via other references to the object
 // - We keep an updated_at timestamp based on when data actually changes
-// - We store data in it's own key to allow easy change comparison
+// - We store actual data in its own key to allow easy change comparison
 const _dataSyncable = writable(JSON.stringify({"updated_at": 0, "data": {}}));
 export const dataSyncable = {
 	subscribe: function (callback, invalidate=util.noop) {
@@ -58,6 +58,18 @@ export const dataSyncable = {
 			return callback(value.data);
 		}, invalidate);
 	},
+	/*
+	 * TODO - is this really worth it? Overly complex?
+	getUpdatedAt: function () {
+		const ds_value = dataSyncable._getParsed();
+		return ds_value.updated_at ?? 0;
+	},
+	setUpdatedAt: function (timestamp) {
+		const ds_value = dataSyncable._getParsed();
+		ds_value.updated_at = timestamp;
+		_dataSyncable.set(JSON.stringify(ds_value));
+	},
+	*/
 	/**
 	 * Internal set logic - used by both set and update
 	 */
@@ -74,6 +86,7 @@ export const dataSyncable = {
 		if (!initial_load) {
 			// Update the updated_at timestamp
 			ds_value.updated_at = util.timestamp();
+			console.info('_maybeSet: Upating timestamp', ds_value.updated_at);
 		}
 
 		// Store as JSON to avoid issues with mutations
