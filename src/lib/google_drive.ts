@@ -256,7 +256,7 @@ export const google_drive = {
 		// Local Data
 		const syncable_data = util.isObject(changed_data) ? changed_data : get(dataSyncable);
 		const local_updated_at = syncable_data.updated_at ?? 0;
-		const local_synced_at = syncable_data.sync?.google_drive?.synced_at ?? 0;
+		const local_synced_at = syncable_data.data.sync?.google_drive?.synced_at ?? 0;
 		const local_updated_after_sync = local_updated_at > local_synced_at;
 
 		// Remote sync data - (will return 0 if not signed in)
@@ -368,13 +368,14 @@ export const google_drive = {
 		}
 
 		// Set new sync time assuming success
-		local_data.sync.google_drive.synced_at = util.timestamp();
+		console.log({local_data});
+		local_data.data.sync.google_drive.synced_at = util.timestamp();
 
 		// Set updated date to match synced date if data changed significantly from prior *remote*
 		// - Set here so that it syncs to remote data
 		// - See below for check if local data changed
 		if (remote_data_changed) {
-			local_data.updated_at = local_data?.sync?.google_drive?.synced_at ?? 0;
+			local_data.updated_at = local_data?.data?.sync?.google_drive?.synced_at ?? 0;
 		}
 
 		// Write the synced data to Google Drive
@@ -384,11 +385,11 @@ export const google_drive = {
 			dataSyncAlert('Writing to Google Drive...');
 			const file_id = await google_drive.writeData(
 				local_data,
-				local_data?.sync?.google_drive?.file_id ?? 0
+				local_data?.data?.sync?.google_drive?.file_id ?? 0
 			);
 			if (file_id !== 0) {
 				successful = true;
-				local_data.sync.google_drive.file_id = file_id;
+				local_data.data.sync.google_drive.file_id = file_id;
 			}
 		}
 
@@ -396,7 +397,7 @@ export const google_drive = {
 		// - Set here so it *doesn't* sync to remote data
 		// - See above for check if remote data changed
 		if (local_data_changed) {
-			local_data.updated_at = local_data?.sync?.google_drive?.synced_at ?? 0;
+			local_data.updated_at = local_data?.data?.sync?.google_drive?.synced_at ?? 0;
 		}
 
 		// As long as everything has worked out so far...
@@ -406,7 +407,7 @@ export const google_drive = {
 			dataSyncAlert('Sync Successful!', 'success');
 			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SUCCESS);
 		} else {
-			local_data.sync.google_drive.synced_at = local_synced_at;
+			local_data.data.sync.google_drive.synced_at = local_synced_at;
 		}
 
 		window.setTimeout(function () {
@@ -519,7 +520,7 @@ export const google_drive = {
 
 		// See if we have the ID in local data
 		const local_data = get(dataSyncable);
-		data_file_id = local_data?.sync?.google_drive?.file_id ?? 0;
+		data_file_id = local_data?.data?.sync?.google_drive?.file_id ?? 0;
 		if (data_file_id !== 0) {
 			console.info(`Data file ID found in local storage: ${data_file_id}`)
 			google_drive.dataFileId = data_file_id;
@@ -546,9 +547,9 @@ export const google_drive = {
 
 		// Save found data to local storage
 		console.log(local_data);
-		local_data.sync.google_drive.file_id = google_drive.dataFileId;
+		local_data.data.sync.google_drive.file_id = google_drive.dataFileId;
 		dataSyncable.update(function (ds) {
-			ds.sync.google_drive.file_id = google_drive.dataFileId;
+			ds.data.sync.google_drive.file_id = google_drive.dataFileId;
 			return ds;
 		});
 

@@ -55,32 +55,20 @@ export const dataSyncable = {
 		return _dataSyncable.subscribe(function (value_string) {
 			// Parse the JSON since that's how we store the value
 			const value = JSON.parse(value_string);
-			return callback(value.data);
+			return callback(value);
 		}, invalidate);
 	},
-	/*
-	 * TODO - is this really worth it? Overly complex?
-	getUpdatedAt: function () {
-		const ds_value = dataSyncable._getParsed();
-		return ds_value.updated_at ?? 0;
-	},
-	setUpdatedAt: function (timestamp) {
-		const ds_value = dataSyncable._getParsed();
-		ds_value.updated_at = timestamp;
-		_dataSyncable.set(JSON.stringify(ds_value));
-	},
-	*/
 	/**
 	 * Internal set logic - used by both set and update
 	 */
-	_maybeSet: function (ds_value, data_new, initial_load=false) {
+	_maybeSet: function (ds_value, value_new, initial_load=false) {
 
-		/* If there's no actual change, then we don't do anything */
-		if ( util.areSamish(data_new, ds_value.data)) {
+		/* If there's no actual change of data, then we don't do anything */
+		if ( util.areSamish(value_new.data, ds_value.data)) {
 			return;
 		}
 
-		ds_value.data = data_new;
+		ds_value.data = value_new.data;
 
 		// As long as this isn't just an initial load of data...
 		if (!initial_load) {
@@ -100,20 +88,20 @@ export const dataSyncable = {
 	_getParsed: function () {
 		return JSON.parse(get(_dataSyncable));
 	},
-	set: function (data_new, initial_load=false) {
+	set: function (value_new, initial_load=false) {
 		const ds_value = dataSyncable._getParsed();
-		dataSyncable._maybeSet(ds_value, data_new, initial_load);
+		dataSyncable._maybeSet(ds_value, value_new, initial_load);
 	},
 	update: function(callback, initial_load=false) {
 		const ds_value = dataSyncable._getParsed();
-		const data_new = callback(util.objectClone(ds_value.data));
-		dataSyncable._maybeSet(ds_value, data_new, initial_load);
+		const value_new = callback(util.objectClone(ds_value));
+		dataSyncable._maybeSet(ds_value, value_new, initial_load);
 	},
 	syncWith: function (store, key) {
 		// Initialize dataSyncable with the store's value
 		dataSyncable.update(ds => {
 			const store_value = get(store);
-			ds[key] = store_value;
+			ds.data[key] = store_value;
 			return ds;
 		}, true); // true=initial_load
 
@@ -128,25 +116,25 @@ export const dataSyncable = {
 		dataSyncable.subscribe(new_ds_value => {
 			// If no change, no need to trigger updates
 			const store_value = get(store);
-			const new_ds_key_value = new_ds_value[key] ?? null;
+			const new_ds_key_value = new_ds_value.data[key] ?? null;
 			if (util.areSamish(store_value, new_ds_key_value)) {
 				return;
 			}
 			console.info('Syncing dataSyncable to store', key, new_ds_key_value);
-			store.set(new_ds_value[key]);
+			store.set(new_ds_key_value);
 		});
 	},
 	// Update dataSyncable when store changes
 	syncFrom: function (store, key) {
 		store.subscribe(new_store_value => {
 			// If no change, no need to trigger updates
-			const ds_value = get(_dataSyncable);
-			const ds_key_value = ds_value[key] ?? null;
+			const ds_value = dataSyncable._getParsed();
+			const ds_key_value = ds_value.data[key] ?? null;
 			if (util.areSamish(ds_key_value, new_store_value)) {
 				return;
 			}
 			dataSyncable.update(ds => {
-				ds[key] = new_store_value;
+				ds.data[key] = new_store_value;
 				return ds;
 			});
 		});
