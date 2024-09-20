@@ -261,6 +261,7 @@ export const google_drive = {
 
 		// Remote sync data - (will return 0 if not signed in)
 		const remote_updated_at = await google_drive.getRemoteUpdatedAt();
+		const remote_updated_after_sync = local_updated_at > remote_updated_at;
 
 		// Debugging output
 		console.log('isSyncNeeded - fresh check:', {
@@ -268,8 +269,9 @@ export const google_drive = {
 			syncable_data,
 			local_updated_at,
 			local_synced_at,
+			remote_updated_at,
 			local_updated_after_sync,
-			remote_updated_at
+			remote_updated_after_sync
 		});
 
 		// If not currently signed in and never synced before, don't show any warnings
@@ -285,7 +287,7 @@ export const google_drive = {
 		if (local_updated_after_sync) {
 			syncNeeded.push('local');
 		}
-		if (remote_updated_at > local_synced_at) {
+		if (remote_updated_after_sync) {
 			syncNeeded.push('remote');
 		}
 		google_drive.syncNeeded = syncNeeded.join(' & ');
@@ -321,7 +323,7 @@ export const google_drive = {
 	sync: async function () {
 		const local_data = get(dataSyncable);
 		const synced_data = await google_drive._sync(local_data);
-		dataSyncable.set(synced_data);
+		dataSyncable.set(synced_data, false); // false to avoid updating timestamp
 	},
 
 	/**
@@ -412,7 +414,7 @@ export const google_drive = {
 
 		window.setTimeout(function () {
 			dataSyncMessageShow.set(false);
-			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING);
+			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_SYNC);
 		}, 2000);
 
 		return local_data;
@@ -551,7 +553,7 @@ export const google_drive = {
 		dataSyncable.update(function (ds) {
 			ds.data.sync.google_drive.file_id = google_drive.dataFileId;
 			return ds;
-		});
+		}, false); // false to avoid updating timestamp
 
 		// Return the file ID (or 0 if not found)
 		// - will be set by _processFindData

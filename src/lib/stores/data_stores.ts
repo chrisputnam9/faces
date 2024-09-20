@@ -61,7 +61,7 @@ export const dataSyncable = {
 	/**
 	 * Internal set logic - used by both set and update
 	 */
-	_maybeSet: function (ds_value, value_new, initial_load=false) {
+	_maybeSet: function (ds_value, value_new, update_timestamp=true) {
 
 		/* If there's no actual change of data, then we don't do anything */
 		if ( util.areSamish(value_new.data, ds_value.data)) {
@@ -70,16 +70,14 @@ export const dataSyncable = {
 
 		ds_value.data = value_new.data;
 
-		// As long as this isn't just an initial load of data...
-		if (!initial_load) {
+		// Update timestamp unless specified otherwise
+		if (update_timestamp) {
 			// Update the updated_at timestamp
 			ds_value.updated_at = util.timestamp();
-			console.info('_maybeSet: Upating timestamp', ds_value.updated_at);
 		}
 
 		// Store as JSON to avoid issues with mutations
 		const ds_value_string = JSON.stringify(ds_value);
-		console.info('_maybeSet: Setting new value', ds_value_string);
 		_dataSyncable.set(ds_value_string);
 	},
 	/**
@@ -88,14 +86,14 @@ export const dataSyncable = {
 	_getParsed: function () {
 		return JSON.parse(get(_dataSyncable));
 	},
-	set: function (value_new, initial_load=false) {
+	set: function (value_new, update_timestamp=true) {
 		const ds_value = dataSyncable._getParsed();
-		dataSyncable._maybeSet(ds_value, value_new, initial_load);
+		dataSyncable._maybeSet(ds_value, value_new, update_timestamp);
 	},
-	update: function(callback, initial_load=false) {
+	update: function(callback, update_timestamp=true) {
 		const ds_value = dataSyncable._getParsed();
 		const value_new = callback(util.objectClone(ds_value));
-		dataSyncable._maybeSet(ds_value, value_new, initial_load);
+		dataSyncable._maybeSet(ds_value, value_new, update_timestamp);
 	},
 	syncWith: function (store, key) {
 		// Initialize dataSyncable with the store's value
@@ -103,7 +101,7 @@ export const dataSyncable = {
 			const store_value = get(store);
 			ds.data[key] = store_value;
 			return ds;
-		}, true); // true=initial_load
+		}, false); // false to avoid updating timestamp
 
 		// Update dataSyncable when store changes
 		dataSyncable.syncFrom(store, key);
@@ -120,7 +118,6 @@ export const dataSyncable = {
 			if (util.areSamish(store_value, new_ds_key_value)) {
 				return;
 			}
-			console.info('Syncing dataSyncable to store', key, new_ds_key_value);
 			store.set(new_ds_key_value);
 		});
 	},
