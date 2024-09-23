@@ -112,10 +112,6 @@ export const google_drive = {
 			const token = await get(google_drive.tokenLocalStore);
 			if (!token) throw new Error('No Google account token saved in local storage');
 
-			google_drive.gapi.client.setToken(token);
-			dataSyncIsSignedIn.set(true);
-			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_SYNC);
-
 			// See if the token has expired
 			// - if so, we'll try to get a new one right away
 			// - as opposed to waiting for a failed request
@@ -125,10 +121,13 @@ export const google_drive = {
 					console.warn(
 						'The Google account token in local storage has expired - attempting to get a new one'
 					);
-					google_drive.getToken();
+					await google_drive.getToken();
 				}
 			}
 
+			google_drive.gapi.client.setToken(token);
+			dataSyncIsSignedIn.set(true);
+			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_SYNC);
 			return;
 		} catch (error) {
 			console.warn('NOT logged in due to invalid local Google account token\n', error);
@@ -261,7 +260,7 @@ export const google_drive = {
 
 		// Remote sync data - (will return 0 if not signed in)
 		const remote_updated_at = await google_drive.getRemoteUpdatedAt();
-		const remote_updated_after_sync = local_updated_at > remote_updated_at;
+		const remote_updated_after_sync = remote_updated_at > local_synced_at;
 
 		// Debugging output
 		console.log('isSyncNeeded - fresh check:', {

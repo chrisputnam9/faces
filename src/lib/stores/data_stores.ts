@@ -49,7 +49,14 @@ export const dataSyncAlert = function (message, type = 'info') {
 //   to avoid issues with updates via other references to the object
 // - We keep an updated_at timestamp based on when data actually changes
 // - We store actual data in its own key to allow easy change comparison
-const _dataSyncable = writable(JSON.stringify({"updated_at": 0, "data": {}}));
+let updated_at = 0;
+if (typeof window !== 'undefined') {
+	const _updated_at = localStorage.getItem('updated_at');
+	if (_updated_at !== null) {
+		updated_at = parseInt(_updated_at);
+	}
+}
+const _dataSyncable = writable(JSON.stringify({updated_at, "data": {}}));
 export const dataSyncable = {
 	subscribe: function (callback, invalidate=util.noop) {
 		return _dataSyncable.subscribe(function (value_string) {
@@ -74,6 +81,7 @@ export const dataSyncable = {
 		if (update_timestamp) {
 			// Update the updated_at timestamp
 			ds_value.updated_at = util.timestamp();
+			localStorage.setItem('updated_at', ds_value.updated_at);
 		}
 
 		// Store as JSON to avoid issues with mutations
