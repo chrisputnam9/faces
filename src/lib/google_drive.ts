@@ -36,6 +36,7 @@ export const google_drive = {
 	dataFileId: 0,
 
 	syncNeeded: null,
+	isSyncing: false,
 
 	emailLocalStore: null,
 	tokenLocalStore: null,
@@ -102,8 +103,8 @@ export const google_drive = {
 
 		// Listen for sign in or data change and check for possible sync needed
 		// - Needs to happen after Google SDK is fully loaded
-		dataSyncIsSignedIn.subscribe(google_drive.maybeShowSyncNeededAlert);
-		dataSyncable.subscribe(google_drive.maybeShowSyncNeededAlert);
+		dataSyncIsSignedIn.subscribe(google_drive.maybeSync);
+		dataSyncable.subscribe(google_drive.maybeSync);
 
 		dataSyncIsAvailableForSignIn.set(true);
 
@@ -187,11 +188,11 @@ export const google_drive = {
 					google_drive.tokenClient.error_callback = error => {
 						switch (error.type) {
 							case 'popup_closed':
-								reject('Google login canceled by closing popup');
+								reject('Google login canceled by closing popup. Refresh and try again.');
 								break;
 							case 'popup_failed_to_open':
 								reject(
-									'Google account connection failed because popup window did not open.<br>Check browser settings for popups on this site.'
+									'Google account connection failed because popup window did not open.<br>Check browser settings for popups on this site, then refresh.'
 								);
 								break;
 							default:
@@ -217,7 +218,13 @@ export const google_drive = {
 	/**
 	 * Check if a sync is needed and show alert if so
 	 */
-	maybeShowSyncNeededAlert: async function (changed_data) {
+	maybeSync: async function (changed_data) {
+
+		// Don't sync if already syncing
+		if (google_drive.isSyncing) {
+			return;
+		}
+
 		const saveState = get(dataSyncSaveState);
 		if (saveState === DATA_SYNC_SAVE_STATE.ERROR) {
 			// Don't override an error alert
@@ -228,8 +235,9 @@ export const google_drive = {
 			dataSyncAlert(
 				'There have been ' +
 					syncNeeded +
-					' changes made since the last sync. You may wish to <a href="/people">sync now</a>.'
+					' changes made since the last sync. Will sync now...'
 			);
+			google_drive.sync();
 		}
 	},
 
@@ -263,6 +271,7 @@ export const google_drive = {
 		const remote_updated_after_sync = remote_updated_at > local_synced_at;
 
 		// Debugging output
+		/*
 		console.log('isSyncNeeded - fresh check:', {
 			is_signed_in,
 			syncable_data,
@@ -272,6 +281,7 @@ export const google_drive = {
 			local_updated_after_sync,
 			remote_updated_after_sync
 		});
+		*/
 
 		// If not currently signed in and never synced before, don't show any warnings
 		// - wait for them to log in before we let them know sync is needed
@@ -320,9 +330,12 @@ export const google_drive = {
 
 	// Sync syncableData with GoogleDrive
 	sync: async function () {
+		google_drive.isSyncing = true;
 		const local_data = get(dataSyncable);
 		const synced_data = await google_drive._sync(local_data);
+		google_drive.syncNeeded = false;
 		dataSyncable.set(synced_data, false); // false to avoid updating timestamp
+		google_drive.isSyncing = false;
 	},
 
 	/**
@@ -369,7 +382,6 @@ export const google_drive = {
 		}
 
 		// Set new sync time assuming success
-		console.log({local_data});
 		local_data.data.sync.google_drive.synced_at = util.timestamp();
 
 		// Set updated date to match synced date if data changed significantly from prior *remote*
@@ -515,7 +527,6 @@ export const google_drive = {
 		// See if we already have the ID stored on this object
 		let data_file_id = google_drive.dataFileId;
 		if (data_file_id !== 0) {
-			console.info(`Data file ID already found this session: ${data_file_id}`)
 			return data_file_id;
 		}
 
@@ -523,7 +534,6 @@ export const google_drive = {
 		const local_data = get(dataSyncable);
 		data_file_id = local_data?.data?.sync?.google_drive?.file_id ?? 0;
 		if (data_file_id !== 0) {
-			console.info(`Data file ID found in local storage: ${data_file_id}`)
 			google_drive.dataFileId = data_file_id;
 			return data_file_id;
 		}
@@ -544,10 +554,8 @@ export const google_drive = {
 					);
 				});
 		});
-		console.info(`Data file attempted to be found remotely - result: ${google_drive.dataFileId}`);
 
 		// Save found data to local storage
-		console.log(local_data);
 		local_data.data.sync.google_drive.file_id = google_drive.dataFileId;
 		dataSyncable.update(function (ds) {
 			ds.data.sync.google_drive.file_id = google_drive.dataFileId;
