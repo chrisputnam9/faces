@@ -10,29 +10,29 @@
 
 <style>
 	.alert {
-		display: block;
+		display: inline;
 		width: auto;
-		background-color: #eee;
-		padding: 10px;
-		border-radius: 10px;
+		float: right;
+		text-align: right;
+		opacity: 0.5;
 	}
 
 	.alert.info,
 	.alert.information,
 	.alert.informational {
-		background: #8db5ff;
+		color: #8db5ff;
 	}
 
 	.alert.success {
-		background: #99ff8d;
+		color: #99ff8d;
 	}
 
 	.alert.error {
-		background: #ff8d8d;
+		color: #ff8d8d;
 	}
 
 	.alert.warning,
 	.alert.warn {
-		background: #ffd18d;
+		color: #ffd18d;
 	}
 </style>

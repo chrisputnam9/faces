@@ -101,13 +101,16 @@ export const google_drive = {
 			}
 		});
 
+		google_drive.initTokenCheck();
+
 		// Listen for sign in or data change and check for possible sync needed
 		// - Needs to happen after Google SDK is fully loaded
 		dataSyncIsSignedIn.subscribe(google_drive.maybeSync);
 		dataSyncable.subscribe(google_drive.maybeSync);
 
-		dataSyncIsAvailableForSignIn.set(true);
+	},
 
+	initTokenCheck: async function () {
 		// See if we have a token saved in local storage already
 		try {
 			const token = await get(google_drive.tokenLocalStore);
@@ -134,6 +137,8 @@ export const google_drive = {
 			console.warn('NOT logged in due to invalid local Google account token\n', error);
 		}
 
+		// If we don't have a token saved, or it's expired, we're not logged in
+		dataSyncIsAvailableForSignIn.set(true);
 		dataSyncIsSignedIn.set(false);
 		dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_LOGIN);
 	},
@@ -238,6 +243,8 @@ export const google_drive = {
 					' changes made since the last sync. Will sync now...'
 			);
 			google_drive.sync();
+		} else {
+			console.info('No sync needed');
 		}
 	},
 
@@ -271,7 +278,6 @@ export const google_drive = {
 		const remote_updated_after_sync = remote_updated_at > local_synced_at;
 
 		// Debugging output
-		/*
 		console.log('isSyncNeeded - fresh check:', {
 			is_signed_in,
 			syncable_data,
@@ -281,13 +287,12 @@ export const google_drive = {
 			local_updated_after_sync,
 			remote_updated_after_sync
 		});
-		*/
 
 		// If not currently signed in and never synced before, don't show any warnings
 		// - wait for them to log in before we let them know sync is needed
 		if (!is_signed_in && !local_synced_at) {
 			dataSyncAlert(
-				'Log in and refresh <a href="/people">people</a> page to keep data synced to Google Drive.'
+				'Log in on manage page to keep data synced to Google Drive.'
 			);
 			return google_drive.syncNeeded;
 		}
@@ -346,7 +351,7 @@ export const google_drive = {
 	_sync: async function (local_data) {
 		if (!get(dataSyncIsSignedIn)) {
 			dataSyncAlert(
-				'<a href="/people">Sign in to your Google Drive account</a> to back up and sync your data.',
+				'Log in on manage page to keep data synced to Google Drive.',
 				'warning'
 			);
 			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_LOGIN);
