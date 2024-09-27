@@ -34,3 +34,27 @@
 		</p>
 	</section>
 </main>
+
+<style>
+	main {
+		width: 100vw;
+		display: flex;
+		gap: 20px;
+		flex-wrap: nowrap;
+	}
+	section {
+		width: auto;
+		height: auto;
+		background-color: #eee;
+		padding: 10px;
+		border-radius: 10px;
+		display: flex;
+		gap: 10px;
+		padding: 20px;
+		display: flex;
+		min-width: 300px;
+		width: 49%;
+		height: calc(100vh - 170px);
+		flex-direction: column;
+	}
+</style>
