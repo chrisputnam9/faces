@@ -8,6 +8,14 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Faces - Metrics</title>
+	<meta
+		name="description"
+		content="Faces Metrics - gauge your progress learning the names of your contacts"
+	/>
+</svelte:head>
+
 <div class="container">
 	<h1>Metrics</h1>
 

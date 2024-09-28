@@ -127,29 +127,50 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Faces</title>
+	<meta name="description" content="Faces - match the face to the name!" />
+</svelte:head>
+
 <section>
 	<div class="quiz-container">
 		<div class="quiz-content">
-			<PersonImage bind:person keys_available="1" bind:state_guess bind:this={personImage} />
-			<input
-				type="text"
-				placeholder="Type name and press enter"
-				on:keyup={handleInputKeys}
-				bind:value={name_entered_by_user}
-				bind:this={el_input_name}
-			/>
 			{#if person}
+				<PersonImage bind:person keys_available="1" bind:state_guess bind:this={personImage} />
+				<input
+					type="text"
+					placeholder="Type name and press enter"
+					on:keyup={handleInputKeys}
+					bind:value={name_entered_by_user}
+					bind:this={el_input_name}
+				/>
 				<!-- Static HTML - safe to use -->
 				<!-- eslint-disable svelte/no-at-html-tags -->
 				<div class="feedback">{@html html_feedback}</div>
 				<PersonDetails {person} {state_guess} />
 			{:else}
-				<p>Loading...</p>
+				<h1>Faces</h1>
+
+				<p>
+					Faces (faces.onl) helps you manage your contacts and learn their names. Import data on the <a
+						href="/people">Manage People</a
+					>
+					page to get started or read <a href="/about">more about the application</a>.
+				</p>
+
+				<p>
+					Faces does not collect or share any of your personal data. If you choose, you can backup
+					and sync your data via Google Drive. See <a href="/terms-privacy"
+						>Terms & Privacy Policy</a
+					> for more information.
+				</p>
 			{/if}
 		</div>
 	</div>
 
-	<QuizSessionMetrics bind:this={quizSessionmetrics} />
+	{#if person}
+		<QuizSessionMetrics bind:this={quizSessionmetrics} />
+	{/if}
 </section>
 
 <style>

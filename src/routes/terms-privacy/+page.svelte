@@ -1,3 +1,10 @@
+<svelte:head>
+	<title>Faces - Terms & Privacy Policy</title>
+	<meta
+		name="description"
+		content="Faces - you have control of your personal data; we will not collect or share it."
+	/>
+</svelte:head>
 <main>
 	<section>
 		<h1>Faces - Privacy Policy</h1>
@@ -21,8 +28,12 @@
 			</li>
 			<li>
 				<b>In the future Faces may:</b> track anonymized usage data in order to improve the application,
-				enable additional third-party integrations, or provide other features to help improve the experience
-				of using the application. In any case where data privacy is impacted, this policy will be updated.
+				enable additional optional third-party integrations, or provide other features to help improve
+				the experience of using the application. In any case where data privacy is impacted, this policy
+				will be updated.
+			</li>
+			<li>
+				<b>Faces will <em>never</em> intentionaly collect, sell or share your personal data.</b>
 			</li>
 		</ul>
 

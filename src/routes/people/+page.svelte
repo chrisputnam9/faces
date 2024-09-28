@@ -113,6 +113,11 @@
 	 */
 </script>
 
+<svelte:head>
+	<title>Faces - Manage People</title>
+	<meta name="description" content="Faces - Manage your contacts on this page" />
+</svelte:head>
+
 <nav>
 	<input
 		bind:value={$filter_keywords}
