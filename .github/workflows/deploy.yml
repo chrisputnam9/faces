@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: 'master'
+env:
+  TEST_VAR: ${{ vars.TEST_VAR }}
+  TEST_SECRET: ${{ secrets.TEST_SECRET }}
 
 jobs:
   build_site:
