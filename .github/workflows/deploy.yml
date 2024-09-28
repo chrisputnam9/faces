@@ -31,6 +31,9 @@ jobs:
           BASE_PATH: '/${{ github.event.repository.name }}'
         run: |
           npm run build
+        env:
+          PUBLIC_GOOGLE_DRIVE_API_KEY: ${{ secrets.PUBLIC_GOOGLE_DRIVE_API_KEY }}
+          PUBLIC_GOOGLE_DRIVE_CLIENT_ID: ${{ secrets.PUBLIC_GOOGLE_DRIVE_CLIENT_ID }}
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
