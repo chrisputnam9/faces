@@ -33,6 +33,7 @@
 	<section>
 		<nav data-sveltekit-reload>
 			<a href="/">Quiz</a> | <a href="/metrics">Metrics</a> | <a href="/people">Manage People</a> |
+			<a href="/about">About</a>
 			<a href="/terms-privacy">Terms & Privacy</a>
 		</nav>
 
