@@ -7,9 +7,16 @@ env:
   TEST_VAR: ${{ vars.TEST_VAR }}
   TEST_SECRET: ${{ secrets.TEST_SECRET }}
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   build_site:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
