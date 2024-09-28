@@ -29,8 +29,8 @@ jobs:
       - name: build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
-          PUBLIC_GOOGLE_DRIVE_API_KEY: ${{ secrets.PUBLIC_GOOGLE_DRIVE_API_KEY }}
-          PUBLIC_GOOGLE_DRIVE_CLIENT_ID: ${{ secrets.PUBLIC_GOOGLE_DRIVE_CLIENT_ID }}
+          PUBLIC_GOOGLE_DRIVE_API_KEY: ${{ vars.PUBLIC_GOOGLE_DRIVE_API_KEY }}
+          PUBLIC_GOOGLE_DRIVE_CLIENT_ID: ${{ vars.PUBLIC_GOOGLE_DRIVE_CLIENT_ID }}
         run: |
           npm run build
 
