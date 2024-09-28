@@ -98,24 +98,37 @@
 
 <style>
 	main {
-		width: 100vw;
-		display: flex;
-		gap: 20px;
-		flex-wrap: nowrap;
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 20px;
 	}
 	section {
-		width: auto;
-		height: auto;
-		background-color: #eee;
-		padding: 10px;
+		background-color: #fff;
+		padding: 30px;
 		border-radius: 10px;
-		display: flex;
-		gap: 10px;
-		padding: 20px;
-		display: flex;
-		min-width: 300px;
-		width: 49%;
-		height: calc(100vh - 170px);
-		flex-direction: column;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	}
+	h1 {
+		color: #333;
+		margin-bottom: 20px;
+	}
+	h2 {
+		color: #444;
+		margin-top: 30px;
+		margin-bottom: 15px;
+	}
+	p, ul {
+		color: #666;
+		line-height: 1.6;
+	}
+	ul {
+		padding-left: 20px;
+	}
+	a {
+		color: #0066cc;
+		text-decoration: none;
+	}
+	a:hover {
+		text-decoration: underline;
 	}
 </style>
