@@ -152,15 +152,14 @@
 				<h1>Faces</h1>
 
 				<p>
-					Faces (faces.onl) helps you manage your contacts and learn their names. Import data on the <a
-						href="/people">Manage People</a
-					>
-					page to get started or read <a href="/about">more about the application</a>.
+					Faces (faces.onl) helps you manage your contacts and learn their names. <a href="/about"
+						>Read more about the application and how to get started here</a
+					>.
 				</p>
 
 				<p>
-					Faces does not collect or share any of your personal data. If you choose, you can backup
-					and sync your data via Google Drive. See <a href="/terms-privacy"
+					Faces does not collect or share any of your personal data outside the application. If you
+					choose, you can backup and sync your data via Google Drive. See <a href="/terms-privacy"
 						>Terms & Privacy Policy</a
 					> for more information.
 				</p>

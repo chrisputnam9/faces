@@ -11,7 +11,7 @@
 
 		<p><a href="/">Return to Faces App</a></p>
 
-		<p>Last updated: 2024-09-28</p>
+		<p>Last updated: 2024-09-30</p>
 
 		<h2>1. Introduction</h2>
 		<p>
@@ -40,7 +40,7 @@
 		</ul>
 
 		<h2>4. Data Sharing and Disclosure</h2>
-		<p><b>Faces does not share your data with anyone:</b></p>
+		<p><b>Faces does not share your data with anyone outside the application:</b></p>
 		<ul>
 			<li>We do not use, store, or share any of your Google user data.</li>
 			<li>
@@ -117,7 +117,8 @@
 		margin-top: 30px;
 		margin-bottom: 15px;
 	}
-	p, ul {
+	p,
+	ul {
 		color: #666;
 		line-height: 1.6;
 	}
