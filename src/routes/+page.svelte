@@ -148,21 +148,6 @@
 				<!-- eslint-disable svelte/no-at-html-tags -->
 				<div class="feedback">{@html html_feedback}</div>
 				<PersonDetails {person} {state_guess} />
-			{:else}
-				<h1>Faces</h1>
-
-				<p>
-					Faces (faces.onl) helps you manage your contacts and learn their names. <a href="/about"
-						>Read more about the application and how to get started here</a
-					>.
-				</p>
-
-				<p>
-					Faces does not collect or share any of your personal data outside the application. If you
-					choose, you can backup and sync your data via Google Drive. See <a href="/terms-privacy"
-						>Terms & Privacy Policy</a
-					> for more information.
-				</p>
 			{/if}
 		</div>
 	</div>
@@ -171,6 +156,28 @@
 		<QuizSessionMetrics bind:this={quizSessionmetrics} />
 	{/if}
 </section>
+
+{#if person.is_demo}
+	<section>
+		<div class="quiz-container">
+			<div class="quiz-content">
+				<h1>Welcome to Faces!</h1>
+
+				<p>
+					Faces (faces.onl) helps you manage your contacts and learn their names.
+					<br /><a href="/about">Read more about the application and how to get started here</a>.
+				</p>
+
+				<p>
+					Faces does not collect or share any of your personal data outside the application.
+					<br />If you choose, you can backup and sync your data via Google Drive.
+					<br />See
+					<a href="/terms-privacy">Terms & Privacy Policy</a> for more information.
+				</p>
+			</div>
+		</div>
+	</section>
+{/if}
 
 <style>
 	section {
@@ -196,6 +203,10 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+	}
+
+	.quiz-content p {
+		text-align: center;
 	}
 
 	input {

@@ -4,6 +4,7 @@
 
 import { createIndexedDBStore } from '$lib/stores';
 import { createLocalStore } from '$lib/stores';
+import { demo_people } from '$lib/demo_data';
 import { get } from 'svelte/store';
 import { google_drive } from '$lib/google_drive';
 import {
@@ -41,9 +42,13 @@ export const dataInterface = {
 	},
 
 	loadPeopleOrdered: async function () {
-		const people = await this.loadPeople();
+		let people = await this.loadPeople();
 		const tracking_data = await this.loadTracking();
 		const tracking = tracking_data.tracking;
+
+		if (people.length === 0) {
+			people = demo_people;
+		}
 
 		// Set order weights based on tracking data
 		for (const person of people) {
