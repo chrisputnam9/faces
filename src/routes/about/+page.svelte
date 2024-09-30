@@ -19,9 +19,28 @@
 			doing at learning names.
 		</p>
 
-		<p><a href="/">Faces App</a></p>
+		<p>
+			On the Manage People page or while quizzing, you can add new images by URL (the image must be
+			hosted elsewhere). You can re-add an existing image to push it to the front - eg. make it the
+			first image you see while quizzing.
+		</p>
 
-		<p><a href="/terms-privacy">Terms & Privacy Policy</a></p>
+		<p><a href="/">Faces App</a> | <a href="/terms-privacy">Terms & Privacy Policy</a></p>
+
+		<h1>Helpful Resources</h1>
+
+		<p>
+			<a href="https://artofmemory.com/wiki/Memorizing_Names_and_Faces/" target="_blank"
+				>Memorizing Names and Faces - Art of Memory</a
+			>
+		</p>
+
+		<p>
+			<a
+				href="https://duolingo.fandom.com/wiki/Guide_to_keyboard_layouts_and_input_methods"
+				target="_blank">Entering Special Characters - Duolingo</a
+			>
+		</p>
 	</section>
 </main>
 
