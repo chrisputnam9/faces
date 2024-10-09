@@ -37,6 +37,7 @@ export const google_drive = {
 
 	syncNeeded: null,
 	isSyncing: false,
+	isLoggingIn: false,
 
 	emailLocalStore: null,
 	tokenLocalStore: null,
@@ -166,6 +167,7 @@ export const google_drive = {
 			(error.result?.error?.code ?? 0) == 401 ||
 			((error.result?.error?.code ?? 0) == 403 && error.result.error.status == 'PERMISSION_DENIED')
 		) {
+			google_drive.isLoggingIn = true;
 			// The access token is missing, invalid, or expired, prompt for user consent to obtain one.
 			await new Promise((resolve, reject) => {
 				try {
@@ -214,6 +216,7 @@ export const google_drive = {
 			}).catch(error => {
 				dataSyncAlert(error, 'error');
 			});
+			google_drive.isLoggingIn = false;
 		} else {
 			// Errors unrelated to authorization: server errors, exceeding quota, bad requests, and so on.
 			throw error;
@@ -225,8 +228,8 @@ export const google_drive = {
 	 */
 	maybeSync: async function (changed_data) {
 
-		// Don't sync if already syncing
-		if (google_drive.isSyncing) {
+		// Don't sync if already syncing or logging in
+		if (google_drive.isSyncing || google_drive.isLoggingIn) {
 			return;
 		}
 
@@ -242,6 +245,7 @@ export const google_drive = {
 					syncNeeded +
 					' changes made since the last sync. Will sync now...'
 			);
+			// Autosync
 			google_drive.sync();
 		} else {
 			console.info('No sync needed');
@@ -339,7 +343,11 @@ export const google_drive = {
 		const local_data = get(dataSyncable);
 		const synced_data = await google_drive._sync(local_data);
 		google_drive.syncNeeded = false;
-		dataSyncable.set(synced_data, false); // false to avoid updating timestamp
+		// Update local data only if remote changes were detected
+		if (typeof google_drive.syncNeeded === 'string' && google_drive.syncNeeded.contains('remote')) {
+			// false to avoid updating timestamp (and another sync)
+			dataSyncable.set(synced_data, false);
+		}
 		google_drive.isSyncing = false;
 	},
 

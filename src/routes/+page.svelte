@@ -4,6 +4,9 @@
 	import { PersonDetails, PersonImage, QuizSessionMetrics } from '$lib/components';
 	import { PeopleStore } from '$lib/stores';
 
+	let quizRunning = false;
+	let showContent = true;
+
 	let personImage;
 	let quizSessionmetrics;
 
@@ -115,15 +118,21 @@
 		});
 	}
 
+	function startQuiz() {
+		quizRunning = true;
+		showNextPerson();
+		handleInputKeys();
+		el_input_name.focus();
+	}
+
 	// Update tracking data if state changes
 	$: trackGuess(state_guess);
+
+	$: showContent = !quizRunning || person?.is_demo;
 
 	onMount(async () => {
 		PeopleStore.alphabetical = false;
 		await PeopleStore.load();
-		showNextPerson();
-		handleInputKeys();
-		el_input_name.focus();
 	});
 </script>
 
@@ -132,32 +141,34 @@
 	<meta name="description" content="Faces - match the face to the name!" />
 </svelte:head>
 
-<section>
-	<div class="quiz-container">
-		<div class="quiz-content">
-			{#if person}
-				<PersonImage bind:person keys_available="1" bind:state_guess bind:this={personImage} />
-				<input
-					type="text"
-					placeholder="Type name and press enter"
-					on:keyup={handleInputKeys}
-					bind:value={name_entered_by_user}
-					bind:this={el_input_name}
-				/>
-				<!-- Static HTML - safe to use -->
-				<!-- eslint-disable svelte/no-at-html-tags -->
-				<div class="feedback">{@html html_feedback}</div>
-				<PersonDetails {person} {state_guess} />
-			{/if}
+{#if quizRunning}
+	<section>
+		<div class="quiz-container">
+			<div class="quiz-content">
+				{#if person}
+					<PersonImage bind:person keys_available="1" bind:state_guess bind:this={personImage} />
+					<input
+						type="text"
+						placeholder="Type name and press enter"
+						on:keyup={handleInputKeys}
+						bind:value={name_entered_by_user}
+						bind:this={el_input_name}
+					/>
+					<!-- Static HTML - safe to use -->
+					<!-- eslint-disable svelte/no-at-html-tags -->
+					<div class="feedback">{@html html_feedback}</div>
+					<PersonDetails {person} {state_guess} />
+				{/if}
+			</div>
 		</div>
-	</div>
+	</section>
 
 	{#if person}
 		<QuizSessionMetrics bind:this={quizSessionmetrics} />
 	{/if}
-</section>
+{/if}
 
-{#if person.is_demo}
+{#if showContent}
 	<section>
 		<div class="quiz-container">
 			<div class="quiz-content">
@@ -174,6 +185,10 @@
 					<br />See
 					<a href="/terms-privacy">Terms & Privacy Policy</a> for more information.
 				</p>
+
+				{#if !quizRunning}
+					<button on:click={startQuiz}>Start Quiz</button>
+				{/if}
 			</div>
 		</div>
 	</section>

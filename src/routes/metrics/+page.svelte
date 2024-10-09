@@ -126,10 +126,22 @@
 		font-size: 0.8em;
 		color: #666;
 	}
-	.total { background-color: #e3f2fd; }
-	.new { background-color: #e8f5e9; }
-	.need-photo { background-color: #fff3e0; }
-	.unknown { background-color: #ffebee; }
-	.learning { background-color: #e0f2f1; }
-	.known { background-color: #f3e5f5; }
+	.total {
+		background-color: #e3f2fd;
+	}
+	.new {
+		background-color: #e8f5e9;
+	}
+	.need-photo {
+		background-color: #fff3e0;
+	}
+	.unknown {
+		background-color: #ffebee;
+	}
+	.learning {
+		background-color: #e0f2f1;
+	}
+	.known {
+		background-color: #f3e5f5;
+	}
 </style>
