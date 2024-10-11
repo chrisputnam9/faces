@@ -56,6 +56,7 @@ if (typeof window !== 'undefined') {
 		updated_at = parseInt(_updated_at);
 	}
 }
+// console.log('updated_at initialized as:', updated_at);
 const _dataSyncable = writable(JSON.stringify({updated_at, "data": {}}));
 export const dataSyncable = {
 	subscribe: function (callback, invalidate=util.noop) {
@@ -70,8 +71,18 @@ export const dataSyncable = {
 	 */
 	_maybeSet: function (ds_value, value_new, update_timestamp=true) {
 
+		const are_samish =  util.areSamish(value_new.data, ds_value.data);
+
+		//console.log({
+			//'method': 'dataSyncable._maybeSet',
+			//ds_data: ds_value.data,
+			//new_data: value_new.data,
+			//are_samish,
+			//update_timestamp,
+		//});
+
 		/* If there's no actual change of data, then we don't do anything */
-		if ( util.areSamish(value_new.data, ds_value.data)) {
+		if (are_samish) {
 			return;
 		}
 
@@ -82,6 +93,7 @@ export const dataSyncable = {
 			// Update the updated_at timestamp
 			ds_value.updated_at = util.timestamp();
 			localStorage.setItem('updated_at', ds_value.updated_at);
+			//console.log('updated_at set to:', ds_value.updated_at);
 		}
 
 		// Store as JSON to avoid issues with mutations
@@ -95,15 +107,29 @@ export const dataSyncable = {
 		return JSON.parse(get(_dataSyncable));
 	},
 	set: function (value_new, update_timestamp=true) {
+		//console.log({
+			//'method': 'dataSyncable.set',
+			//value_new,
+			//update_timestamp,
+		//});
 		const ds_value = dataSyncable._getParsed();
 		dataSyncable._maybeSet(ds_value, value_new, update_timestamp);
 	},
 	update: function(callback, update_timestamp=true) {
 		const ds_value = dataSyncable._getParsed();
 		const value_new = callback(util.objectClone(ds_value));
+		//console.log({
+			//'method': 'dataSyncable.update',
+			//value_new,
+			//update_timestamp,
+		//});
 		dataSyncable._maybeSet(ds_value, value_new, update_timestamp);
 	},
 	syncWith: function (store, key) {
+		//console.log({
+			//'method': 'dataSyncable.syncWith',
+			//key,
+		//});
 		// Initialize dataSyncable with the store's value
 		dataSyncable.update(ds => {
 			const store_value = get(store);
@@ -123,7 +149,15 @@ export const dataSyncable = {
 			// If no change, no need to trigger updates
 			const store_value = get(store);
 			const new_ds_key_value = new_ds_value.data[key] ?? null;
-			if (util.areSamish(store_value, new_ds_key_value)) {
+			const are_samish = util.areSamish(store_value, new_ds_key_value);
+			//console.log({
+				//'method': 'dataSyncable.syncTo',
+				//key,
+				//store_value,
+				//new_ds_key_value,
+				//are_samish,
+			//});
+			if (are_samish) {
 				return;
 			}
 			store.set(new_ds_key_value);
@@ -135,7 +169,15 @@ export const dataSyncable = {
 			// If no change, no need to trigger updates
 			const ds_value = dataSyncable._getParsed();
 			const ds_key_value = ds_value.data[key] ?? null;
-			if (util.areSamish(ds_key_value, new_store_value)) {
+			const are_samish = util.areSamish(ds_key_value, new_store_value);
+			//console.log({
+				//'method': 'dataSyncable.syncFrom',
+				//key,
+				//ds_key_value,
+				//new_store_value,
+				//are_samish,
+			//});
+			if (are_samish) {
 				return;
 			}
 			dataSyncable.update(ds => {

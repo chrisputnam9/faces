@@ -17,8 +17,10 @@ export const dataInterface = {
 	peopleIndexedDBStore: null,
 	trackingIndexedDBStore: null,
 
+	initRan: false,
 	init: async function () {
-		if (this.peopleIndexedDBStore !== null) return;
+		if (this.initRan) return;
+		this.initRan = true;
 
 		this.peopleAutoincrementLocalStore = createLocalStore('people_autoincrement', 0);
 		this.peopleIndexedDBStore = await createIndexedDBStore('people');

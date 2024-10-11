@@ -43,8 +43,10 @@ export const google_drive = {
 	tokenLocalStore: null,
 	tokenExpiresLocalStore: null,
 
+	initLocalStoresRan: false,
 	initLocalStores: async function () {
-		if (google_drive.emailLocalStore !== null) return;
+		if (this.initLocalStoresRan) return;
+		this.initLocalStoresRan = true;
 
 		google_drive.emailLocalStore = createLocalStore('google_drive_user_login_email', '');
 		google_drive.tokenLocalStore = createLocalStore('google_drive_gapi_client_token', '');
@@ -64,7 +66,11 @@ export const google_drive = {
 	 * - Run by the Data Interface's init
 	 * - So, it will init as soon as people are loaded on any page
 	 */
+	initRan: false,
 	init: async function () {
+		if (this.initRan) return;
+		this.initRan = true;
+
 		google_drive.initLocalStores();
 
 		// Load and initialize gapi.client
@@ -239,17 +245,22 @@ export const google_drive = {
 			return;
 		}
 		const syncNeeded = await google_drive.isSyncNeeded(changed_data);
-		if (syncNeeded) {
-			dataSyncAlert(
-				'There have been ' +
-					syncNeeded +
-					' changes made since the last sync. Will sync now...'
-			);
-			// Autosync
-			google_drive.sync();
-		} else {
+		if (google_drive.isSyncing) {
+			console.info('Already Syncing');
+			return;
+		} else if (! syncNeeded) {
 			console.info('No sync needed');
+			return;
 		}
+
+		google_drive.isSyncing = true;
+		dataSyncAlert(
+			'There have been ' +
+				syncNeeded +
+				' changes made since the last sync. Will sync now...'
+		);
+		// Autosync
+		google_drive.sync();
 	},
 
 	/**
@@ -260,7 +271,7 @@ export const google_drive = {
 	isSyncNeeded: async function (changed_data) {
 		// If we already know sync is needed, no need to check again
 		// until after a sync is done
-		if (google_drive.syncNeeded) {
+		if (google_drive.syncNeeded || google_drive.isSyncing) {
 			return google_drive.syncNeeded;
 		}
 
@@ -289,15 +300,13 @@ export const google_drive = {
 			local_synced_at,
 			remote_updated_at,
 			local_updated_after_sync,
-			remote_updated_after_sync
+			remote_updated_after_sync,
 		});
 
-		// If not currently signed in and never synced before, don't show any warnings
-		// - wait for them to log in before we let them know sync is needed
-		if (!is_signed_in && !local_synced_at) {
-			dataSyncAlert(
-				'Log in on manage page to keep data synced to Google Drive.'
-			);
+		// If not currently signed in - wait for them to log in before we let them know sync is needed
+		if (!is_signed_in) {
+			const message = local_synced_at ?  'Login pending...' : 'Log in on manage page to keep data synced to Google Drive.';
+			dataSyncAlert(message);
 			return google_drive.syncNeeded;
 		}
 
