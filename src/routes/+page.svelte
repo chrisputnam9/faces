@@ -15,6 +15,7 @@
 	let person = false;
 	let name_entered_by_user = '';
 	let el_input_name;
+	let el_start_quiz_button;
 
 	// State of guess input
 	// Must be one of the values defined in dataInterface.state_guess_weights
@@ -122,7 +123,9 @@
 		quizRunning = true;
 		showNextPerson();
 		handleInputKeys();
-		el_input_name.focus();
+		window.setTimeout(() => {
+			el_input_name.focus();
+		}, 500);
 	}
 
 	// Update tracking data if state changes
@@ -133,6 +136,7 @@
 	onMount(async () => {
 		PeopleStore.alphabetical = false;
 		await PeopleStore.load();
+		el_start_quiz_button.focus();
 	});
 </script>
 
@@ -187,7 +191,7 @@
 				</p>
 
 				{#if !quizRunning}
-					<button on:click={startQuiz}>Start Quiz</button>
+					<button bind:this={el_start_quiz_button} on:click={startQuiz}>Start Quiz</button>
 				{/if}
 			</div>
 		</div>

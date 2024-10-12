@@ -71,30 +71,37 @@ export const dataSyncable = {
 	 */
 	_maybeSet: function (ds_value, value_new, update_timestamp=true) {
 
-		const are_samish =  util.areSamish(value_new.data, ds_value.data);
+		const data_samish = util.areSamish(value_new.data, ds_value.data);
+		const time_samish = value_new.updated_at === ds_value.updated_at;
 
 		//console.log({
 			//'method': 'dataSyncable._maybeSet',
-			//ds_data: ds_value.data,
-			//new_data: value_new.data,
-			//are_samish,
+			//data_samish,
+			//time_samish,
 			//update_timestamp,
+			//ds_value,
+			//value_new,
 		//});
 
 		/* If there's no actual change of data, then we don't do anything */
-		if (are_samish) {
+		if (data_samish && time_samish) {
 			return;
 		}
 
-		ds_value.data = value_new.data;
-
-		// Update timestamp unless specified otherwise
-		if (update_timestamp) {
+		// Update timestamp for data change unless specified otherwise
+		if (update_timestamp && !data_samish) {
 			// Update the updated_at timestamp
-			ds_value.updated_at = util.timestamp();
-			localStorage.setItem('updated_at', ds_value.updated_at);
-			//console.log('updated_at set to:', ds_value.updated_at);
+			value_new.updated_at = util.timestamp();
 		}
+
+		// Save updated timestamp to local storage if it changed
+		if (value_new.updated_at !== ds_value.updated_at) {
+			localStorage.setItem('updated_at', value_new.updated_at);
+		}
+
+		// Update data & time on store value
+		ds_value.data = value_new.data;
+		ds_value.updated_at = value_new.updated_at;
 
 		// Store as JSON to avoid issues with mutations
 		const ds_value_string = JSON.stringify(ds_value);

@@ -249,7 +249,13 @@ export const google_drive = {
 			console.info('Already Syncing');
 			return;
 		} else if (! syncNeeded) {
-			console.info('No sync needed');
+			dataSyncAlert('No sync needed - all up-to-date', 'success');
+			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SUCCESS);
+
+			window.setTimeout(function () {
+				dataSyncMessageShow.set(false);
+				dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_SYNC);
+			}, 500);
 			return;
 		}
 
@@ -305,8 +311,10 @@ export const google_drive = {
 
 		// If not currently signed in - wait for them to log in before we let them know sync is needed
 		if (!is_signed_in) {
-			const message = local_synced_at ?  'Login pending...' : 'Log in on manage page to keep data synced to Google Drive.';
-			dataSyncAlert(message);
+			// Show a message if they ever synced before - so they know they're logged out
+			if (local_synced_at) {
+				dataSyncAlert('Log in on manage page to keep data synced to Google Drive.');
+			}
 			return google_drive.syncNeeded;
 		}
 
@@ -351,12 +359,12 @@ export const google_drive = {
 		google_drive.isSyncing = true;
 		const local_data = get(dataSyncable);
 		const synced_data = await google_drive._sync(local_data);
-		google_drive.syncNeeded = false;
 		// Update local data only if remote changes were detected
-		if (typeof google_drive.syncNeeded === 'string' && google_drive.syncNeeded.contains('remote')) {
+		if (typeof google_drive.syncNeeded === 'string' && google_drive.syncNeeded.includes('remote')) {
 			// false to avoid updating timestamp (and another sync)
 			dataSyncable.set(synced_data, false);
 		}
+		google_drive.syncNeeded = false;
 		google_drive.isSyncing = false;
 	},
 
@@ -385,16 +393,14 @@ export const google_drive = {
 		// Note data before sync
 		const drive_data = await google_drive.readData();
 		const local_data_before = util.objectClone(local_data);
-
-		// Make note of sync time before starting
-		const local_synced_at = local_data.sync?.google_drive?.synced_at ?? 0;
+		let merged_data = util.objectClone(local_data);
 
 		// Attempt to read in remote data file
 		if (util.isObject(drive_data)) {
 			dataSyncAlert('Existing remote data found - reading & syncing...');
-			local_data = syncData(local_data, drive_data);
-			local_data_changed = didSyncResultInChange(local_data, local_data_before);
-			remote_data_changed = didSyncResultInChange(local_data, drive_data);
+			merged_data = syncData(local_data, drive_data);
+			local_data_changed = didSyncResultInChange(merged_data, local_data_before);
+			remote_data_changed = didSyncResultInChange(merged_data, drive_data);
 			successful = true;
 		} else if (drive_data === false) {
 			dataSyncAlert('No existing remote data file found - it will be created');
@@ -403,14 +409,16 @@ export const google_drive = {
 			dataSyncAlert('CS506 - Remote data file found, but failed to read it', 'error');
 		}
 
-		// Set new sync time assuming success
-		local_data.data.sync.google_drive.synced_at = util.timestamp();
+		// Mark the time of sync and assume success (will revert later if it fails)
+		const synced_at = util.timestamp();
+		merged_data.data.sync.google_drive.synced_at = synced_at;
 
 		// Set updated date to match synced date if data changed significantly from prior *remote*
-		// - Set here so that it syncs to remote data
+		// - Set here so that it syncs to remote dat
 		// - See below for check if local data changed
 		if (remote_data_changed) {
-			local_data.updated_at = local_data?.data?.sync?.google_drive?.synced_at ?? 0;
+			// Mark that the merged data changed at time of sync
+			merged_data.updated_at = synced_at;
 		}
 
 		// Write the synced data to Google Drive
@@ -418,13 +426,10 @@ export const google_drive = {
 		if (successful) {
 			successful = false;
 			dataSyncAlert('Writing to Google Drive...');
-			const file_id = await google_drive.writeData(
-				local_data,
-				local_data?.data?.sync?.google_drive?.file_id ?? 0
-			);
+			const file_id = await google_drive.writeData(merged_data);
 			if (file_id !== 0) {
 				successful = true;
-				local_data.data.sync.google_drive.file_id = file_id;
+				merged_data.data.sync.google_drive.file_id = file_id;
 			}
 		}
 
@@ -432,7 +437,8 @@ export const google_drive = {
 		// - Set here so it *doesn't* sync to remote data
 		// - See above for check if remote data changed
 		if (local_data_changed) {
-			local_data.updated_at = local_data?.data?.sync?.google_drive?.synced_at ?? 0;
+			// Mark that local data changed at time of sync
+			merged_data.updated_at = merged_data?.data?.sync?.google_drive?.synced_at ?? 0;
 		}
 
 		// As long as everything has worked out so far...
@@ -442,7 +448,7 @@ export const google_drive = {
 			dataSyncAlert('Sync Successful!', 'success');
 			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SUCCESS);
 		} else {
-			local_data.data.sync.google_drive.synced_at = local_synced_at;
+			merged_data.data.sync.google_drive.synced_at = local_data_before.sync?.google_drive?.synced_at ?? 0;
 		}
 
 		window.setTimeout(function () {
@@ -450,7 +456,7 @@ export const google_drive = {
 			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_SYNC);
 		}, 2000);
 
-		return local_data;
+		return merged_data;
 	},
 
 	/**
@@ -499,7 +505,8 @@ export const google_drive = {
 	 * Write data file contents to Google Drive
 	 *  - Return ID of file
 	 */
-	writeData: async function (data, file_id = 0) {
+	writeData: async function (data) {
+		let file_id = data?.data?.sync?.google_drive?.file_id ?? 0;
 		const jsonData = JSON.stringify(data);
 		const metadata = {
 			name: 'data.json',
@@ -535,6 +542,7 @@ export const google_drive = {
 				dataSyncAlert('Data saved successfully (ID ' + file_id + ')');
 			})
 			.catch(error => {
+				console.error(error);
 				dataSyncAlert('CS505 - ' + JSON.stringify(error), 'error');
 			});
 
