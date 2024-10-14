@@ -1,3 +1,12 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { dataSyncLoading } from '$lib/stores/data_stores';
+
+	onMount(() => {
+		dataSyncLoading.set(false);
+	});
+</script>
+
 <svelte:head>
 	<title>Faces - About</title>
 	<meta name="description" content="Faces - manage your contacts and learn their names" />

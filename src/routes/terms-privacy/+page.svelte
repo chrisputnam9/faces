@@ -1,3 +1,12 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { dataSyncLoading } from '$lib/stores/data_stores';
+
+	onMount(() => {
+		dataSyncLoading.set(false);
+	});
+</script>
+
 <svelte:head>
 	<title>Faces - Privacy Policy and Terms of Service</title>
 	<meta

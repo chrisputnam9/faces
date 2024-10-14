@@ -5,6 +5,8 @@ import { util } from '$lib/util';
 export const dataSyncIsAvailableForSignIn = writable(false);
 export const dataSyncIsSignedIn = writable(false);
 
+export const dataSyncLoading = writable(true);
+
 /**
  * Success state of current action:
  **/

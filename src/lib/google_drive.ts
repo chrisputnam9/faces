@@ -8,6 +8,7 @@ import {
 	dataSyncIsAvailableForSignIn,
 	dataSyncIsSignedIn,
 	dataSyncSaveState,
+	dataSyncLoading,
 	dataSyncMessageShow,
 	dataSyncable
 } from './stores/data_stores';
@@ -218,6 +219,7 @@ export const google_drive = {
 					google_drive.tokenClient.requestAccessToken({ prompt: '' });
 				} catch (error) {
 					reject(error);
+					dataSyncLoading.set(false);
 				}
 			}).catch(error => {
 				dataSyncAlert(error, 'error');
@@ -255,7 +257,7 @@ export const google_drive = {
 			window.setTimeout(function () {
 				dataSyncMessageShow.set(false);
 				dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_SYNC);
-			}, 500);
+			}, 2000);
 			return;
 		}
 
@@ -325,6 +327,19 @@ export const google_drive = {
 		if (remote_updated_after_sync) {
 			syncNeeded.push('remote');
 		}
+
+		/*
+		 * Loading can be considered complete if either
+		 *  - No sync needed
+		 *  - Or only local changes (one-way saving to remote)
+		 */
+		if (
+			syncNeeded.length === 0
+			|| (syncNeeded.length === 1 && syncNeeded[0] === 'local')
+		) {
+			dataSyncLoading.set(false);
+		}
+
 		google_drive.syncNeeded = syncNeeded.join(' & ');
 
 		return google_drive.syncNeeded;
@@ -447,6 +462,8 @@ export const google_drive = {
 			// Show success, wait a bit, then show pending again
 			dataSyncAlert('Sync Successful!', 'success');
 			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SUCCESS);
+			// Loading considered complete; we've synced
+			dataSyncLoading.set(false);
 		} else {
 			merged_data.data.sync.google_drive.synced_at = local_data_before.sync?.google_drive?.synced_at ?? 0;
 		}

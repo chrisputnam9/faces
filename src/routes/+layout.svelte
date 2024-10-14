@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Alert } from '$lib/components';
 	import {
+		dataSyncLoading,
 		dataSyncMessage,
 		dataSyncMessageShow,
 		dataSyncMessageType
@@ -30,6 +31,9 @@
 </svelte:head>
 
 <div class="background">
+	{#if $dataSyncLoading}
+		<div class="loading-cover"><p>Loading, please wait...</p></div>
+	{/if}
 	<section>
 		<nav data-sveltekit-reload>
 			<a href="/">Quiz</a>
@@ -48,6 +52,22 @@
 </div>
 
 <style>
+	.loading-cover {
+		background: rgba(0, 0, 0, 0.8);
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		color: #aaa;
+		font-size: 2em;
+		font-weight: bold;
+		z-index: 1000;
+	}
+
 	.background {
 		display: flex;
 		padding: 20px;
