@@ -1,22 +1,22 @@
 <script>
-	export let type, message;
+	import {
+		dataSyncMessage,
+		dataSyncMessageShow,
+		dataSyncMessageType
+	} from '$lib/stores/data_stores';
+
+	let message = '&nbsp;';
+
+	$: message = $dataSyncMessageShow ? $dataSyncMessage : '&nbsp;';
 </script>
 
-<nav class="alert {type}" role="contentinfo">
+<span class="alert {$dataSyncMessageType}" role="contentinfo">
 	<!-- Trusted messages from app -->
 	<!-- eslint-disable svelte/no-at-html-tags -->
 	{@html message}
-</nav>
+</span>
 
 <style>
-	.alert {
-		display: inline;
-		width: auto;
-		float: right;
-		text-align: right;
-		opacity: 0.5;
-	}
-
 	.alert.info,
 	.alert.information,
 	.alert.informational {

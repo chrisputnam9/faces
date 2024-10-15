@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { Alert } from '$lib/components';
-	import {
-		dataSyncLoading,
-		dataSyncMessage,
-		dataSyncMessageShow,
-		dataSyncMessageType
-	} from '$lib/stores/data_stores';
+	import { dataSyncLoading } from '$lib/stores/data_stores';
 </script>
 
 <svelte:head>
@@ -32,7 +27,14 @@
 
 <div class="background">
 	{#if $dataSyncLoading}
-		<div class="loading-cover"><p>Loading, please wait...</p></div>
+		<div class="loading-cover">
+			<div class="loading-content">
+				<p>Loading, please wait...</p>
+				<p>
+					<Alert />
+				</p>
+			</div>
+		</div>
 	{/if}
 	<section>
 		<nav data-sveltekit-reload>
@@ -43,9 +45,9 @@
 			| <a href="/terms-privacy">Terms & Privacy</a>
 		</nav>
 
-		{#if $dataSyncMessageShow}
-			<Alert type={$dataSyncMessageType} message={$dataSyncMessage} />
-		{/if}
+		<div class="alert-container">
+			<Alert />
+		</div>
 	</section>
 
 	<slot />
@@ -66,6 +68,18 @@
 		font-size: 2em;
 		font-weight: bold;
 		z-index: 1000;
+	}
+
+	.loading-content {
+		text-align: center;
+	}
+
+	.alert-container {
+		float: right;
+		text-align: right;
+		opacity: 0.5;
+		display: inline;
+		width: auto;
 	}
 
 	.background {

@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { PeopleStore } from '$lib/stores';
+	import { dataSyncLoading } from '$lib/stores/data_stores';
 
-	onMount(() => {
+	onMount(async () => {
 		PeopleStore.alphabetical = false;
-		PeopleStore.load();
+		await PeopleStore.load();
+		dataSyncLoading.set(false);
 	});
 </script>
 

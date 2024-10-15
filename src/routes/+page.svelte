@@ -3,6 +3,7 @@
 	import { dataInterface } from '$lib/data';
 	import { PersonDetails, PersonImage, QuizSessionMetrics } from '$lib/components';
 	import { PeopleStore } from '$lib/stores';
+	import { dataSyncLoading } from '$lib/stores/data_stores';
 
 	let quizRunning = false;
 	let showContent = true;
@@ -135,8 +136,14 @@
 
 	onMount(async () => {
 		PeopleStore.alphabetical = false;
-		await PeopleStore.load();
-		el_start_quiz_button.focus();
+		PeopleStore.load();
+		// Wait for loading to finish, then auto-focus on start quiz button
+		const unSubLoad = dataSyncLoading.subscribe((value) => {
+			if (!value) {
+				el_start_quiz_button.focus();
+				unSubLoad();
+			}
+		});
 	});
 </script>
 

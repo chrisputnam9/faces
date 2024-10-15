@@ -250,6 +250,8 @@ export const google_drive = {
 		if (google_drive.isSyncing) {
 			console.info('Already Syncing');
 			return;
+		} else if (! get(dataSyncIsSignedIn)) {
+			return;
 		} else if (! syncNeeded) {
 			dataSyncAlert('No sync needed - all up-to-date', 'success');
 			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SUCCESS);
@@ -317,6 +319,7 @@ export const google_drive = {
 			if (local_synced_at) {
 				dataSyncAlert('Log in on manage page to keep data synced to Google Drive.');
 			}
+			dataSyncLoading.set(false);
 			return google_drive.syncNeeded;
 		}
 
