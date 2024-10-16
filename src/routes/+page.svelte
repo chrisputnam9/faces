@@ -3,7 +3,7 @@
 	import { dataInterface } from '$lib/data';
 	import { PersonDetails, PersonImage, QuizSessionMetrics } from '$lib/components';
 	import { PeopleStore } from '$lib/stores';
-	import { dataSyncLoading } from '$lib/stores/data_stores';
+	import { dataSyncLoading, dataSyncIsSignedIn } from '$lib/stores/data_stores';
 
 	let quizRunning = false;
 	let showContent = true;
@@ -184,6 +184,14 @@
 		<div class="quiz-container">
 			<div class="quiz-content">
 				<h1>Welcome to Faces!</h1>
+
+				{#if !$dataSyncIsSignedIn}
+					<p style="font-weight: bold; color: red;">
+						You are not signed in to Google Drive - sign in on the <a href="/people"
+							>Manage People</a
+						> page to keep your data backed up.
+					</p>
+				{/if}
 
 				<p>
 					Faces (faces.onl) helps you manage your contacts and learn their names.
