@@ -20,6 +20,8 @@ let url_keywords = '';
 let filter_keywords = '';
 
 export const PeopleStore = {
+	count_imageless: 0,
+	remove_imageless: false,
 	alphabetical: false,
 	subscribe: people_subscribe,
 	load: async function () {

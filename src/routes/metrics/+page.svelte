@@ -5,6 +5,7 @@
 
 	onMount(async () => {
 		PeopleStore.alphabetical = false;
+		PeopleStore.remove_imageless = true;
 		await PeopleStore.load();
 		dataSyncLoading.set(false);
 	});

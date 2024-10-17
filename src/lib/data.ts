@@ -40,7 +40,7 @@ export const dataInterface = {
 		partially_correct: 10,
 		incorrect: -5,
 		gave_up: -200,
-		impossible_no_images: -10 // Because ideally want to find images
+		impossible_no_images: -100, // First in order, but won't show them in quiz mode
 	},
 
 	loadPeopleOrdered: async function () {
@@ -52,10 +52,23 @@ export const dataInterface = {
 			people = demo_people;
 		}
 
+		// Current time formatted
+		const now = new Date().toISOString();
+
 		// Set order weights based on tracking data
 		for (const person of people) {
 			const id = person.id;
-			const guesses = tracking[id]?.guesses ?? {};
+			let guesses = tracking[id]?.guesses ?? {};
+
+			// Override guesses if no images
+			if (person.images.length === 0) {
+				guesses = {
+					impossible_no_images: [now],
+				};
+			} else {
+				// Override guesses if ARE images now
+				delete guesses.impossible_no_images
+			}
 
 			const fact_object = {};
 			for (const fact of person.facts) {
@@ -68,6 +81,7 @@ export const dataInterface = {
 				totals: [],
 				totalsObject: {}
 			};
+
 			for (const guess in this.state_guess_weights) {
 				const guessCount = guesses[guess]?.length ?? 0;
 				const weight = this.state_guess_weights[guess];
