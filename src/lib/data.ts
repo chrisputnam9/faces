@@ -61,7 +61,7 @@ export const dataInterface = {
 			let guesses = tracking[id]?.guesses ?? {};
 
 			// Override guesses if no images
-			if (person.images.length === 0) {
+			if (person.images.length < 1) {
 				guesses = {
 					impossible_no_images: [now],
 				};

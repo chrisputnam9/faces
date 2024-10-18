@@ -27,6 +27,17 @@ export const PeopleStore = {
 	load: async function () {
 		const all = await dataInterface.loadPeopleOrdered();
 
+		// Count and maybe remove imageless
+		all.filter((person) => {
+			if (person.images.length < 1) {
+				PeopleStore.count_imageless++;
+				if (PeopleStore.remove_imageless) {
+					return false;
+				}
+			}
+			return true;
+		});
+
 		if (this.alphabetical) {
 			all.sort((a, b) => a.name.localeCompare(b.name));
 		}
@@ -81,6 +92,6 @@ export const PeopleStore = {
 
 				return data;
 			});
-		},
+		}
 	}
 };

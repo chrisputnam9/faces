@@ -136,6 +136,7 @@
 
 	onMount(async () => {
 		PeopleStore.alphabetical = false;
+		PeopleStore.remove_imageless = true;
 		PeopleStore.load();
 		// Wait for loading to finish, then auto-focus on start quiz button
 		const unSubLoad = dataSyncLoading.subscribe((value) => {
@@ -187,9 +188,15 @@
 
 				{#if !$dataSyncIsSignedIn}
 					<p style="font-weight: bold; color: red;">
-						You are not signed in to Google Drive - sign in on the <a href="/people"
-							>Manage People</a
-						> page to keep your data backed up.
+						Sign in to Google Drive on the <a href="/people">Manage People</a> page to keep your data
+						backed up.
+					</p>
+				{/if}
+
+				{#if PeopleStore.count_imageless}
+					<p style="font-weight: bold; color: orange;">
+						{PeopleStore.count_imageless} people are missing images and won't appear in quiz.
+						<a href="/people?pq=&#34;images&#34;%3A%5C%5B%5C%5D">View and resolve them here.</a>
 					</p>
 				{/if}
 
