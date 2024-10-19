@@ -114,6 +114,18 @@ export const csvInterface = {
 					}
 				}
 
+				// Check IDs
+				const id_map = {};
+				results.data.forEach((person, index) => {
+					person.id = person.id.trim();
+					if (person.id === '') {
+						errors.push(`Person at row ${index + 1} has no ID`);
+					} else if (person.id in id_map) {
+						errors.push(`Duplicate ID at row ${index + 1}: ${person.id}`);
+					}
+					id_map[person.id] = true;
+				});
+
 				if (errors.length > 0) {
 					alert('Error 105: Issues with some CSV data need to be resolved - see console');
 

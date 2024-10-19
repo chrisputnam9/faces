@@ -25,12 +25,13 @@ export const PeopleStore = {
 	alphabetical: false,
 	subscribe: people_subscribe,
 	load: async function () {
-		const all = await dataInterface.loadPeopleOrdered();
+		let all = await dataInterface.loadPeopleOrdered();
 
 		// Count and maybe remove imageless
-		all.filter((person) => {
+		all = all.filter((person) => {
 			if (person.images.length < 1) {
 				PeopleStore.count_imageless++;
+				console.log('imageless person, remove_imageless:', PeopleStore.remove_imageless);
 				if (PeopleStore.remove_imageless) {
 					return false;
 				}
