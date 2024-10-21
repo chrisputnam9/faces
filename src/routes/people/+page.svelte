@@ -27,7 +27,6 @@
 	function exportPeopleCSV() {
 		const csv_rows = csvInterface.export($PeopleStore.filtered);
 
-		// TODO
 		utilsFrontend.downloadFile('people.csv', csv_rows, 'text/csv');
 	}
 
@@ -95,7 +94,7 @@
 		el_input_search.focus();
 
 		PeopleStore.alphabetical = true;
-		await PeopleStore.load();
+		PeopleStore.remove_imageless = false;
 
 		PeopleStore.subscribe((data) => {
 			person_selected = false;
@@ -104,13 +103,11 @@
 			}
 		});
 
+		await PeopleStore.load();
+
 		google_drive.initLocalStores();
 		emailLocalStore = google_drive.emailLocalStore;
 	});
-
-	// TODO
-	/*
-	 */
 </script>
 
 <svelte:head>

@@ -2,7 +2,7 @@
  * People Store
  */
 
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import { dataInterface } from '$lib/data';
 import { page } from '$app/stores';
 import { goto } from '$app/navigation';
@@ -25,13 +25,13 @@ export const PeopleStore = {
 	alphabetical: false,
 	subscribe: people_subscribe,
 	load: async function () {
+
 		let all = await dataInterface.loadPeopleOrdered();
 
 		// Count and maybe remove imageless
 		all = all.filter((person) => {
 			if (person.images.length < 1) {
 				PeopleStore.count_imageless++;
-				console.log('imageless person, remove_imageless:', PeopleStore.remove_imageless);
 				if (PeopleStore.remove_imageless) {
 					return false;
 				}
@@ -48,17 +48,20 @@ export const PeopleStore = {
 		people_set({ all, filtered: all, filtered_metrics});
 
 		// Listen for URL change and filter
-		page.subscribe((page) => {
+		page.subscribe(PeopleStore.page_update);
+
+		// Run initial page update
+		// PeopleStore.page_update(get(page));
+	},
+	page_update: function (page) {
 			// Filter on 'pq' query string
 			url_search_params = page.url.searchParams;
 			url_keywords = url_search_params.get('pq');
 			if (url_keywords === null) {
 				url_keywords = '';
 			}
-			if (url_keywords !== filter_keywords) {
-				this.filter_keywords.set(url_keywords);
-			}
-		});
+
+			PeopleStore.filter_keywords.set(url_keywords);
 	},
 	filter_keywords: {
 		subscribe: filter_keywords_subscribe,
