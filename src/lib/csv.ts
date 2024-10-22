@@ -117,13 +117,19 @@ export const csvInterface = {
 				// Check IDs
 				const id_map = {};
 				results.data.forEach((person, index) => {
-					person.id = person.id.trim();
-					if (person.id === '') {
-						errors.push(`Person at row ${index + 1} has no ID`);
-					} else if (person.id in id_map) {
-						errors.push(`Duplicate ID at row ${index + 1}: ${person.id}`);
+					if ('id' in person) {
+						const person_id = person.id.trim();
+						results.data[index].id = person_id;
+
+						if (person_id === '') {
+							// This is ok - we'll generated an ID during dataInterface.importMerge
+							delete person.id
+							// errors.push(`Person at row ${index + 1} has empty ID`);
+						} else if (person_id in id_map) {
+							errors.push(`Duplicate ID at row ${index + 1}: ${person_id}`);
+						}
+						id_map[person_id] = true;
 					}
-					id_map[person.id] = true;
 				});
 
 				if (errors.length > 0) {

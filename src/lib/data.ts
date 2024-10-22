@@ -340,7 +340,7 @@ export const dataInterface = {
 		// Loop through remaining new data (truly new people to add)
 		for (const slug in people_new_by_slug) {
 			const person_new = people_new_by_slug[slug];
-			if ( ! ('id' in person_new)) {
+			if ( ! ('id' in person_new) || person_new.id === '') {
 				autoincrement_id++;
 				person_new.id = `${autoincrement_id}-${slug}`;
 			}
