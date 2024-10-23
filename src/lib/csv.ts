@@ -4,6 +4,7 @@
 
 import Papa from 'papaparse';
 import { dataInterface } from '$lib/data';
+import { PeopleStore } from '$lib/stores';
 
 export const csvInterface = {
 
@@ -193,8 +194,12 @@ export const csvInterface = {
 					return;
 				}
 
-				dataInterface.saveRawPeople(data_merged);
-				console.log('Import complete! Refresh page to see new data.');
+				await dataInterface.saveRawPeople(data_merged);
+				console.log('Import complete!');
+
+				PeopleStore.filter_keywords.set('');
+				await PeopleStore.load();
+				console.log('Reloaded people');
 			},
 
 			error: function (error) {

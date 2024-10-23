@@ -94,8 +94,13 @@ export const dataSyncable = {
 			return;
 		}
 
-		// Update timestamp for data change unless specified otherwise
-		if (update_timestamp && !data_samish) {
+		// Update timestamp for key data change unless specified otherwise
+		if (
+			update_timestamp && ! (
+				util.areSamish(value_new.data.people ?? null, ds_value.data.people ?? null)
+				&& util.areSamish(value_new.data.tracking ?? null, ds_value.data.tracking ?? null)
+			)
+		) {
 			// Update the updated_at timestamp
 			value_new.updated_at = util.timestamp();
 		}

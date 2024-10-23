@@ -44,6 +44,7 @@ export const dataInterface = {
 	},
 
 	loadPeopleOrdered: async function () {
+		console.log('loadPeopleOrdered');
 		let people = await this.loadPeople();
 		const tracking_data = await this.loadTracking();
 		const tracking = tracking_data.tracking;
@@ -242,6 +243,8 @@ export const dataInterface = {
 		// Save to IndexedDB
 		this.peopleIndexedDBStore.set(data_people.people);
 		this.peopleAutoincrementLocalStore.set(data_people._autoincrement_id);
+
+		console.log('saveRawPeople complete');
 	},
 
 	loadTracking: async function () {

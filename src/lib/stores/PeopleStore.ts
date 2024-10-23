@@ -2,7 +2,7 @@
  * People Store
  */
 
-import { get, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { dataInterface } from '$lib/data';
 import { page } from '$app/stores';
 import { goto } from '$app/navigation';
@@ -17,7 +17,6 @@ const { subscribe:filter_keywords_subscribe, set:filter_keywords_set } = writabl
 
 let url_search_params = null;
 let url_keywords = '';
-let filter_keywords = '';
 
 export const PeopleStore = {
 	count_imageless: 0,
@@ -25,8 +24,10 @@ export const PeopleStore = {
 	alphabetical: false,
 	subscribe: people_subscribe,
 	load: async function () {
+		console.log('PeopleStore.load');
 
 		let all = await dataInterface.loadPeopleOrdered();
+		console.log({all_1:all[1]});
 
 		// Count and maybe remove imageless
 		all = all.filter((person) => {
@@ -49,9 +50,6 @@ export const PeopleStore = {
 
 		// Listen for URL change and filter
 		page.subscribe(PeopleStore.page_update);
-
-		// Run initial page update
-		// PeopleStore.page_update(get(page));
 	},
 	page_update: function (page) {
 			// Filter on 'pq' query string
@@ -66,8 +64,6 @@ export const PeopleStore = {
 	filter_keywords: {
 		subscribe: filter_keywords_subscribe,
 		set: function (keywords) {
-			filter_keywords = keywords;
-
 			filter_keywords_set(keywords);
 
 			// Update Page URL if keywords have changed
