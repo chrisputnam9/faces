@@ -24,10 +24,7 @@ export const PeopleStore = {
 	alphabetical: false,
 	subscribe: people_subscribe,
 	load: async function () {
-		console.log('PeopleStore.load');
-
 		let all = await dataInterface.loadPeopleOrdered();
-		console.log({all_1:all[1]});
 
 		// Count and maybe remove imageless
 		all = all.filter((person) => {
@@ -46,7 +43,8 @@ export const PeopleStore = {
 
 		const filtered_metrics = dataInterface.calculateMetrics(all);
 
-		people_set({ all, filtered: all, filtered_metrics});
+		const new_data = { all, filtered: all, filtered_metrics};
+		people_set(new_data);
 
 		// Listen for URL change and filter
 		page.subscribe(PeopleStore.page_update);
