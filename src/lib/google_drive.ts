@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import { syncData, didSyncResultInChange } from './sync_logic';
 import { util } from './util';
-import { createLocalStore } from './stores';
+import { createLocalStore, PeopleStore } from '$lib/stores';
 import {
 	DATA_SYNC_SAVE_STATE,
 	dataSyncAlert,
@@ -384,6 +384,8 @@ export const google_drive = {
 		}
 		google_drive.syncNeeded = false;
 		google_drive.isSyncing = false;
+		// Reload people
+		PeopleStore.load();
 	},
 
 	/**
