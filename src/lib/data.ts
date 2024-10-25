@@ -2,7 +2,7 @@
  * Data Interface
  */
 
-import { createIndexedDBStore } from '$lib/stores';
+import { createIndexedDBStore, PeopleStore } from '$lib/stores';
 import { createLocalStore } from '$lib/stores';
 import { demo_people } from '$lib/demo_data';
 import { get } from 'svelte/store';
@@ -29,6 +29,11 @@ export const dataInterface = {
 		dataSyncable.syncWith(this.peopleAutoincrementLocalStore, 'people_autoincrement');
 		dataSyncable.syncWith(this.peopleIndexedDBStore, 'people');
 		dataSyncable.syncWith(this.trackingIndexedDBStore, 'tracking');
+
+		// Reload people store whenever data changes
+		this.peopleIndexedDBStore.subscribe(() => {
+			PeopleStore.load();
+		});
 
 		google_drive.init();
 	},

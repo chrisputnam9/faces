@@ -194,12 +194,11 @@ export const csvInterface = {
 					return;
 				}
 
+				// Reset filter if any before reload
+				PeopleStore.filter_keywords.set('');
+
 				await dataInterface.saveRawPeople(data_merged);
 				console.log('Import complete!');
-
-				PeopleStore.filter_keywords.set('');
-				await PeopleStore.load();
-				console.log('Reloaded people');
 			},
 
 			error: function (error) {

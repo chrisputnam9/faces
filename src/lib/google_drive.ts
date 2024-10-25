@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import { syncData, didSyncResultInChange } from './sync_logic';
 import { util } from './util';
-import { createLocalStore, PeopleStore } from '$lib/stores';
+import { createLocalStore } from '$lib/stores';
 import {
 	DATA_SYNC_SAVE_STATE,
 	dataSyncAlert,
@@ -380,12 +380,10 @@ export const google_drive = {
 		// Update local data only if remote changes were detected
 		if (typeof google_drive.syncNeeded === 'string' && google_drive.syncNeeded.includes('remote')) {
 			// false to avoid updating timestamp (and another sync)
-			dataSyncable.set(synced_data, false);
+			await dataSyncable.set(synced_data, false);
 		}
 		google_drive.syncNeeded = false;
 		google_drive.isSyncing = false;
-		// Reload people
-		PeopleStore.load();
 	},
 
 	/**
@@ -443,6 +441,7 @@ export const google_drive = {
 
 		// Write the synced data to Google Drive
 		// - as long as we've been successful so far
+		// - and if there were local changes
 		if (successful) {
 			successful = false;
 			dataSyncAlert('Writing to Google Drive...');
