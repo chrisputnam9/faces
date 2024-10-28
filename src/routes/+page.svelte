@@ -17,6 +17,7 @@
 	let name_entered_by_user = '';
 	let el_input_name;
 	let el_start_quiz_button;
+	let start_quiz_text = 'Start Quiz';
 
 	// State of guess input
 	// Must be one of the values defined in dataInterface.state_guess_weights
@@ -120,8 +121,14 @@
 		});
 	}
 
-	function startQuiz() {
+	async function startQuiz() {
+		start_quiz_text = 'Starting...';
+
+		// Reload people - may have synced at this point
+		await PeopleStore.load();
+
 		quizRunning = true;
+
 		showNextPerson();
 		handleInputKeys();
 		window.setTimeout(() => {
@@ -213,7 +220,7 @@
 				</p>
 
 				{#if !quizRunning}
-					<button bind:this={el_start_quiz_button} on:click={startQuiz}>Start Quiz</button>
+					<button bind:this={el_start_quiz_button} on:click={startQuiz}>{start_quiz_text}</button>
 				{/if}
 			</div>
 		</div>

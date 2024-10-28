@@ -30,11 +30,6 @@ export const dataInterface = {
 		dataSyncable.syncWith(this.peopleIndexedDBStore, 'people');
 		dataSyncable.syncWith(this.trackingIndexedDBStore, 'tracking');
 
-		// Reload people store whenever data changes
-		this.peopleIndexedDBStore.subscribe(() => {
-			PeopleStore.load();
-		});
-
 		google_drive.init();
 	},
 

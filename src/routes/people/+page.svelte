@@ -107,6 +107,13 @@
 
 		google_drive.initLocalStores();
 		emailLocalStore = google_drive.emailLocalStore;
+
+		// Reload people store whenever data changes
+		// - eg. after import or sync
+		// - just for this page - for others this doesn't work as well
+		dataInterface.peopleIndexedDBStore.subscribe(() => {
+			PeopleStore.load();
+		});
 	});
 </script>
 
