@@ -7,6 +7,7 @@
 
 	let quizRunning = false;
 	let showContent = true;
+	let showEnd = false;
 
 	let personImage;
 	let quizSessionmetrics;
@@ -17,6 +18,7 @@
 	let name_entered_by_user = '';
 	let el_input_name;
 	let el_start_quiz_button;
+	let el_restart_quiz_button;
 	let start_quiz_text = 'Start Quiz';
 
 	// State of guess input
@@ -29,6 +31,17 @@
 			throw new Error('No people data available.');
 		}
 		person_index++;
+
+		if (!(person_index in people)) {
+			person = false;
+			quizRunning = false;
+			showEnd = true;
+			start_quiz_text = 'Restart Quiz';
+			window.setTimeout(() => {
+				el_restart_quiz_button.focus();
+			}, 500);
+		}
+
 		person = people[person_index];
 	}
 
@@ -97,6 +110,12 @@
 	}
 
 	async function trackGuess(state_guess) {
+		// No current person, nothing to track
+		if (!person) {
+			return;
+		}
+
+		// Check if state_guess is valid
 		if (!(state_guess in dataInterface.state_guess_weights)) {
 			throw new Error(
 				'Invalid state_guess value: ' + state_guess,
@@ -128,7 +147,9 @@
 		await PeopleStore.load();
 
 		quizRunning = true;
+		showEnd = false;
 
+		person_index = -1;
 		showNextPerson();
 		handleInputKeys();
 		window.setTimeout(() => {
@@ -139,7 +160,7 @@
 	// Update tracking data if state changes
 	$: trackGuess(state_guess);
 
-	$: showContent = !quizRunning || person?.is_demo;
+	$: showContent = (!quizRunning && !showEnd) || person?.is_demo;
 
 	onMount(async () => {
 		PeopleStore.alphabetical = false;
@@ -181,10 +202,22 @@
 			</div>
 		</div>
 	</section>
+{/if}
 
-	{#if person}
-		<QuizSessionMetrics bind:this={quizSessionmetrics} />
-	{/if}
+{#if showEnd}
+	<section>
+		<div class="quiz-container">
+			<div class="quiz-content">
+				<h1>That's All!</h1>
+				<p>That's everyone - want to start again?</p>
+				<button bind:this={el_restart_quiz_button} on:click={startQuiz}>{start_quiz_text}</button>
+			</div>
+		</div>
+	</section>
+{/if}
+
+{#if quizRunning || showEnd}
+	<QuizSessionMetrics bind:this={quizSessionmetrics} />
 {/if}
 
 {#if showContent}
@@ -228,6 +261,9 @@
 {/if}
 
 <style>
+	h1 {
+		margin: 10px 0 0 0;
+	}
 	section {
 		width: 100%;
 		display: flex;
