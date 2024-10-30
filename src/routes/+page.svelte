@@ -36,7 +36,7 @@
 			person = false;
 			quizRunning = false;
 			showEnd = true;
-			start_quiz_text = 'Restart Quiz';
+			start_quiz_text = 'Start New Quiz Session';
 			window.setTimeout(() => {
 				el_restart_quiz_button.focus();
 			}, 500);
@@ -145,6 +145,9 @@
 
 		// Reload people - may have synced at this point
 		await PeopleStore.load();
+
+		// Reset metrics if loaded (eg. when restarting session)
+		quizSessionmetrics?.reset();
 
 		quizRunning = true;
 		showEnd = false;

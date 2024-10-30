@@ -1,13 +1,17 @@
 <script lang="ts">
+	import { util } from '$lib/util';
+
 	const LEARNING_THRESHOLD = 40;
 
-	let tracked = {
+	const tracked_initial = {
 		known: [],
 		learning: [],
 		unknown: [],
 		no_images: [],
 		total: []
 	};
+
+	let tracked;
 
 	let learning_total = 0;
 
@@ -39,6 +43,12 @@
 
 		learning_total = tracked.learning.length + tracked.unknown.length * 2;
 	}
+
+	export function reset() {
+		tracked = util.objectClone(tracked_initial);
+	}
+
+	reset();
 </script>
 
 <section>
@@ -53,7 +63,7 @@
 	{#if learning_total > LEARNING_THRESHOLD}
 		<p class="learning">
 			You've hit {tracked.unknown.length} unknown, and {tracked.learning.length} learning.
-			<br />Consider refreshing the page to review.
+			<br />Consider refreshing the page to start a new session for re-review.
 		</p>
 	{/if}
 </section>

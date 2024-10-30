@@ -74,17 +74,27 @@ export const PeopleStore = {
 			people_update((data) => {
 				data.filtered = data.all;
 				if (keywords !== '') {
+					let filtered = [];
 					try {
-						const regex = new RegExp(keywords, 'i');
-						data.filtered = data.all.filter((person) => {
+						// Remove start/end "/" if both present
+						const adjusted_keywords = keywords.replace(/^\/(.*)\/$/, '$1');
+						console.log(adjusted_keywords);
+						const regex = new RegExp(adjusted_keywords, 'i');
+						filtered = data.all.filter((person) => {
 							return person.__json.match(regex);
 						});
 					} catch (e) {
-						// Error is probably bad regex - use exact match instead
-						data.filtered = data.all.filter((person) => {
-							return person.__json.match(keywords);
+						// Error is probably bad regex - will use exact match instead
+					}
+
+					// If no results, try exact match
+					if (filtered.length < 1) {
+						filtered = data.all.filter((person) => {
+							return person.__json.includes(keywords);
 						});
 					}
+					
+					data.filtered = filtered;
 				}
 				data.filtered_metrics = dataInterface.calculateMetrics(data.filtered);
 
