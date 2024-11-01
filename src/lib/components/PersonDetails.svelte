@@ -4,6 +4,7 @@
 
 	let person_company_search = '';
 	let person_search = '';
+	let similar_words_by_name = {};
 	let similar_words = [];
 
 	function update_similar_words(name) {
