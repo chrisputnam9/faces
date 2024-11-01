@@ -97,7 +97,7 @@
 		feedback = 'Incorrect.';
 
 		if (name_entered_by_user.trim() === '') {
-			feedback = 'You have to actually enter something, silly!';
+			feedback = 'Nothing entered.';
 		} else if (name_entered_by_user.toLowerCase() === person.name.toLowerCase()) {
 			state_guess = 'partially_correct';
 			feedback = 'Close! But, the case is not quite right.';
