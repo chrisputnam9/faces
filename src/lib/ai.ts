@@ -34,15 +34,30 @@
 export const aiInterface = {
 
 	initialized: false,
-
 	init: async function () {
 		aiInterface.initialized = true;
 	},
 
+	similar_words_map: {},
 	similar_words: async function (word: string) {
+
+		word = word.toLowerCase();
+		word = word.replace(/[^a-zA-Z0-9]*/g, '');
+
+		if (word in aiInterface.similar_words_map) {
+			return aiInterface.similar_words_map[word];
+		}
+
+		aiInterface.similar_words_map[word] = await aiInterface.run_prompt(`List 3-5 english words similar to ${word}`);
+
+		return aiInterface.similar_words_map[word];
+	},
+
+	run_prompt: async function (prompt_string: string) {
 		aiInterface.init();
 
-		return word;
+		// TODO
+
 	}
 
 }
