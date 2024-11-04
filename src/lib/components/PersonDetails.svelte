@@ -13,8 +13,11 @@
 		similar_words = [];
 		for (const word of words) {
 			const new_words = await aiInterface.get_similar_words(word);
-			similar_words = [...similar_words, ...new_words];
+			console.log(new_words);
+			similar_words.push(new_words);
+			console.log(similar_words);
 		}
+		similar_words = similar_words;
 	}
 
 	// Set person search string for social sites
@@ -34,8 +37,8 @@
 		<button on:click={update_similar_words}>Find Similar Words</button>
 	{:else}
 		<ul>
-			{#each similar_words as word}
-				<li>{word}</li>
+			{#each similar_words as line}
+				<li>{line}</li>
 			{/each}
 		</ul>
 	{/if}

@@ -33,13 +33,42 @@
 
 export const aiInterface = {
 
+	languageModel: null,
+
 	initialized: false,
 	init: async function () {
+		if (!('ai' in window)) {
+			throw new Error('AI Interface not available - setup needed');
+		}
+
+		if ('languageModel' in window.ai) {
+			aiInterface.languageModel = window.ai.languageModel;
+		}
+		if ('assistant' in window.ai) {
+			aiInterface.languageModel = window.ai.assistant;
+		}
+
+		if (!aiInterface.languageModel) {
+			throw new Error('AI Language Model not available - setup needed');
+		}
+
+		let capabilities = await aiInterface.languageModel.capabilities();
+
+		if (capabilities.available !== 'readily') {
+			await aiInterface.languageModel.create();
+			capabilities = await aiInterface.languageModel.capabilities();
+		}
+
+		if (capabilities.available !== 'readily') {
+			throw new Error('AI Language Model not available - setup needed');
+		}
+
 		aiInterface.initialized = true;
+		return true;
 	},
 
 	similar_words_map: {},
-	similar_words: async function (word: string) {
+	get_similar_words: async function (word: string) {
 
 		word = word.toLowerCase();
 		word = word.replace(/[^a-zA-Z0-9]*/g, '');
@@ -48,16 +77,24 @@ export const aiInterface = {
 			return aiInterface.similar_words_map[word];
 		}
 
-		aiInterface.similar_words_map[word] = await aiInterface.run_prompt(`List 3-5 english words similar to ${word}`);
+		const response = await aiInterface.run_prompt(`List up to 5 different common english words that look or sound a bit like "${word}."`);
+
+		aiInterface.similar_words_map[word] = response;
+		console.log(aiInterface.similar_words_map);
 
 		return aiInterface.similar_words_map[word];
 	},
 
 	run_prompt: async function (prompt_string: string) {
-		aiInterface.init();
+		await aiInterface.init();
 
-		// TODO
+		console.log('Running prompt: ' + prompt_string);
+		const session = await aiInterface.languageModel.create();
 
+		const result = await session.prompt(prompt_string);
+		console.log(result);
+
+		return result;
 	}
 
 }
