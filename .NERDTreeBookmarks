@@ -1,6 +1,6 @@
 components ~/dev/personal/faces/src/lib/components
+data ~/dev/personal/faces/data
 lib ~/dev/personal/faces/src/lib
 routes ~/dev/personal/faces/src/routes
 static ~/dev/personal/faces/static
 
-data ~/dev/personal/faces/data
