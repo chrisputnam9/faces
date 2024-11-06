@@ -34,6 +34,7 @@
 export const aiInterface = {
 
 	languageModel: null,
+	languageCapabilities: null,
 
 	initialized: false,
 	init: async function () {
@@ -54,6 +55,8 @@ export const aiInterface = {
 
 		let capabilities = await aiInterface.languageModel.capabilities();
 
+		console.log({capabilities});
+
 		if (capabilities.available !== 'readily') {
 			await aiInterface.languageModel.create();
 			capabilities = await aiInterface.languageModel.capabilities();
@@ -64,6 +67,7 @@ export const aiInterface = {
 		}
 
 		aiInterface.initialized = true;
+		aiInterface.languageCapabilities = capabilities;
 		return true;
 	},
 
@@ -77,7 +81,7 @@ export const aiInterface = {
 			return aiInterface.similar_words_map[word];
 		}
 
-		const response = await aiInterface.run_prompt(`List up to 5 different common english words that look or sound a bit like "${word}."`);
+		const response = await aiInterface.run_prompt(word);
 
 		aiInterface.similar_words_map[word] = response;
 		console.log(aiInterface.similar_words_map);
@@ -89,11 +93,33 @@ export const aiInterface = {
 		await aiInterface.init();
 
 		console.log('Running prompt: ' + prompt_string);
-		const session = await aiInterface.languageModel.create();
+		const session = await aiInterface.languageModel.create({
+			systemPrompt: `Given a single word from the user input, list the 3 most similar common English words - based on sound and spelling.
 
+			Responses should look like this:
+
+				<thinking>Output reasoning in thinking tags</thinking>
+
+				<output>similar_word1 similar_word2 similar_word3</output>
+
+			Example 1:
+				Input: "cat"
+			  Response: "<thinking>cat sounds and is spelled like many words, including chat, hat, pat, sat, yacht, attack, and many more.  The most similar 3 might be chat, sat, hat due to spelling and sound being most similar.</thinking>
+				<output>chat sat hat</output>""
+
+			Example 2:
+				Input: "Xander"
+			  Response: "<thinking>Xander is similar to hand, sander, chant, candy, sand - sander, chant and candy are the most similar.</thinking>
+				<output>sander chant candy</output>
+			`,
+			temperature: .8,
+			topK: aiInterface.languageCapabilities.defaultTopK
+			//topK: .9 * aiInterface.languageCapabilities.maxTopK
+		});
 		const result = await session.prompt(prompt_string);
-		console.log(result);
+		session.destroy();
 
+		console.log(result);
 		return result;
 	}
 

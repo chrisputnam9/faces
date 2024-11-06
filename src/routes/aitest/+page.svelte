@@ -3,8 +3,7 @@
 	import { aiInterface } from '$lib/ai';
 	import { dataSyncLoading } from '$lib/stores/data_stores';
 
-	let prompt =
-		'What are 50 common english words that are spelled very similarly to "abulencia"? Put inital response and reasoning in <thinking></thinking> tags.';
+	let prompt = 'abulencia';
 	//'  In the same tags, narrow down the 10 words that are the *most* similar in terms of spelling or pronunciation to "abulencia". Finally, list those 10 words by themselves with no other text in <output></output> tags.';
 	let result = 'Hit enter to send prompt';
 
