@@ -94,27 +94,41 @@ export const aiInterface = {
 
 		console.log('Running prompt: ' + prompt_string);
 		const session = await aiInterface.languageModel.create({
-			systemPrompt: `Given a single word from the user input, list the 3 most similar common English words - based on sound and spelling.
+			systemPrompt: `You are an expert in finding similar common words and short phrases in English to help remember an unfamiliar name. You list one word or phrase at a time and repeat the input word each time.
 
-			Responses should look like this:
+			Example:
+				Input Prompt: What are some common words or phrases to help me remember "xander"?
+				Output:
+				  Xander is similar to "sander."
+				  Xander is similar to "chant her."
+				  Xander is similar to "sad deer."
+				  Xander is similar to "sadder."
+				  Xander is similar to "shadier."
+				  Xander is similar to "hand her."`,
+			/*
+			systemPrompt: `Given input of asingle word, output 3 common similar sounding English words or phrases, list the 3 common English words or phrases that rhyme and have a similar sound to the input word. 
 
-				<thinking>Output reasoning in thinking tags</thinking>
-
-				<output>similar_word1 similar_word2 similar_word3</output>
+			Rules:
+				- The output must be in English.
+				- The output must be 3 words or phrases.
+				- Each word or phrase in the output must be common and easily understood.
+				- Each word or phrase in the output must rhyme or have a similar sound to the input word.
+				- The output must be separated by commas.
+				- The output must be in a single line.
+				- The output must be in a comma-separated list.
 
 			Example 1:
-				Input: "cat"
-			  Response: "<thinking>cat sounds and is spelled like many words, including chat, hat, pat, sat, yacht, attack, and many more.  The most similar 3 might be chat, sat, hat due to spelling and sound being most similar.</thinking>
-				<output>chat sat hat</output>""
+				Input: cat
+			   Output: chat, sat, hat
 
 			Example 2:
-				Input: "Xander"
-			  Response: "<thinking>Xander is similar to hand, sander, chant, candy, sand - sander, chant and candy are the most similar.</thinking>
-				<output>sander chant candy</output>
+				Input: Xander
+			   Output: sander, chant her, sad deer
 			`,
-			temperature: .8,
-			topK: aiInterface.languageCapabilities.defaultTopK
-			//topK: .9 * aiInterface.languageCapabilities.maxTopK
+			*/
+			temperature: .9,
+			//topK: aiInterface.languageCapabilities.defaultTopK
+			topK: .2 * aiInterface.languageCapabilities.maxTopK
 		});
 		const result = await session.prompt(prompt_string);
 		session.destroy();
