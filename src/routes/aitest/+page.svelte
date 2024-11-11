@@ -3,10 +3,44 @@
 	import { aiInterface } from '$lib/ai';
 	import { dataSyncLoading } from '$lib/stores/data_stores';
 
-	let systemPrompt = `You are a cheerful assistant who helps come up with ways to remember names`;
-	let temperature = 0.5;
-	let topK = 40;
-	let prompt = `What are some common words or short phrases with many of the same letters as "abulencia" to help me remember it?`;
+	let systemPrompt = `You are an expert in finding similar common words and short phrases in English to help remember an unfamiliar name. You list one word or phrase at a time and repeat the input word each time.
+ - Similar single words should ideally NOT be names of people.
+ - Try to generate 6 similar words or phrases.
+ - There should NOT be empty lines in the response; remove any empty lines.
+
+Example 1:
+ Input Prompt: What are some common words or phrases to help me remember "xander"?
+ Output:
+  Xander is similar to "sander."
+  Xander is similar to "chant her."
+  Xander is similar to "sad deer."
+  Xander is similar to "sadder."
+  Xander is similar to "shadier."
+	Xander is similar to "hand her."
+
+Example 2:
+ Input Prompt: What are some common words or phrases to help me remember "isabelle"?
+ Output:
+  Isabelle is similar to "is a bell."
+	Isabelle is similar to "is a belle."
+	Isabelle is similar to "is a basin"
+	Isabelle is similar to "is able."
+	Isabelle is similar to "is apple."
+	Isabelle is similar to "supple."
+
+Example 3:
+ Input Prompt: What are some common words or phrases to help me remember "sarah"?
+ Output:
+  Sarah is similar to "sari."
+	Sarah is similar to "sire."
+	Sarah is similar to "share."
+	Sarah is similar to "sharer."
+	Sarah is similar to "is air."
+	Sarah is similar to "say her."
+`;
+	let temperature = 0.8;
+	let topK = 10;
+	let prompt = `What are some common words or short phrases that sound like "abulencia"?`;
 	let result = `Hit enter to send prompt`;
 	let ai_capabilities = '';
 
@@ -25,7 +59,17 @@
 
 	onMount(async () => {
 		await aiInterface.init();
-		ai_capabilities = JSON.stringify(aiInterface.languageCapabilities, null, 2);
+		let langCap = aiInterface.languageCapabilities;
+		ai_capabilities = JSON.stringify(
+			{
+				available: langCap.available,
+				defaultTopK: langCap.defaultTopK,
+				maxTopK: langCap.maxTopK,
+				defaultTemperature: langCap.defaultTemperature
+			},
+			null,
+			2
+		);
 		console.log('AI capabilities:', aiInterface.languageCapabilities);
 		console.log(ai_capabilities);
 		dataSyncLoading.set(false);
@@ -50,6 +94,7 @@
 		</tr>
 	</table>
 	<h1>System Prompt</h1>
+	<textarea bind:value={systemPrompt}></textarea>
 	<h1>Prompt</h1>
 	<textarea bind:value={prompt}></textarea>
 	<button on:click={sendPrompt}>Enter</button>
@@ -62,13 +107,14 @@
 	}
 	section {
 		background: white;
+		max-width: 700px;
 		width: 100%;
 		padding: 20px;
 		display: flex;
 		flex-direction: column;
 	}
 	textarea {
-		width: 400px;
+		width: 100%;
 		height: 100px;
 	}
 	button {
@@ -84,7 +130,8 @@
 		display: block;
 		background: #ddd;
 		border: 1px solid #aaa;
-		width: 600px;
-		height: 400px;
+		width: 100%;
+		height: 300px;
+		overflow: auto;
 	}
 </style>
