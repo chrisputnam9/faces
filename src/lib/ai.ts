@@ -89,7 +89,21 @@ export const aiInterface = {
 	run_prompt: async function (prompt_string: string, options = {}) {
 		await aiInterface.init();
 		const session = await aiInterface.languageModel.create(options);
-		const result = await session.prompt(prompt_string);
+		let result = false;
+		let tries = 0;
+		while (!result && tries < 5) {
+			try {
+				console.log(`Running prompt "${prompt_string}"`)
+				result = await session.prompt(prompt_string);
+			} catch (e) {
+				tries++;
+				console.warn(`Prompt attempt #${tries} failed:`, e);
+				result = false;
+			}
+		}
+		if (!result) {
+			throw new Error(`Prompt failed through ${tries} tries.`);
+		}
 		session.destroy();
 		return result;
 	}
