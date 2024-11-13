@@ -1,3 +1,11 @@
+Maybe for better AI:
+Steps:
+ - First generate a long list of potential similar words or phrases.
+ - Next, thin out the list based on the rules listed
+ - Finally, select the top 6 words or phrases from the list
+
+---
+
 {
 			systemPrompt: `You are an expert in finding similar common words and short phrases in English to help remember an unfamiliar name. You list one word or phrase at a time and repeat the input word each time.
 
