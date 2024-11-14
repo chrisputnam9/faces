@@ -5,24 +5,34 @@
 
 	let person_company_search = '';
 	let person_search = '';
-	let similar_words = [];
+	let person_name_words = [];
 
-	async function update_similar_words() {
-		console.log('update_similar_words', person.name);
-		const words = person.name.split(' ');
-		similar_words = [];
-		for (const word of words) {
-			const new_words = await aiInterface.get_similar_words(word);
-			console.log(new_words);
-			similar_words.push(new_words);
-			console.log(similar_words);
+	let ai_help_by_word = {};
+	let ai_help_in_progress = false;
+	let ai_help_error = false;
+
+	async function get_ai_help() {
+		ai_help_in_progress = true;
+		for (const word of person_name_words) {
+			const ai_help = await aiInterface.get_similar_words(word);
+			console.log(ai_help);
+			ai_help_by_word[word] = ai_help;
 		}
-		similar_words = similar_words;
+		ai_help_by_word = ai_help_by_word;
+		ai_help_in_progress = false;
 	}
 
 	// Set person search string for social sites
 	$: person_company_search = person ? person.name + ' ' + person.companies.join(' ') : '';
 	$: person_search = person ? person.name : '';
+	$: person_name_words = person
+		? person.name
+				.toLowerCase()
+				.trim()
+				.replace(/\s+/g, '-')
+				.replace(/[^a-z0-9-]+/g, '')
+				.split('-')
+		: [];
 </script>
 
 <div class="details state-guess-{state_guess}">
@@ -32,16 +42,27 @@
 		{#if person.companies.length > 0}<small>({person.companies.join(', ')})</small>{/if}
 	</h1>
 
-	<h2>Similar Words:</h2>
-	{#if similar_words.length === 0}
-		<button on:click={update_similar_words}>Find Similar Words</button>
-	{:else}
-		<ul>
-			{#each similar_words as line}
-				<li>{line}</li>
-			{/each}
-		</ul>
+	<h2>AI Assistance:</h2>
+	<p>{person_name_words.join(', ')}</p>
+	{#each person_name_words as word}
+		{#if word in ai_help_by_word}
+			<p>{ai_help_by_word[word]}</p>
+		{:else}
+			<p>
+				<button on:click={get_ai_help} disabled={ai_help_in_progress}>
+					{#if ai_help_in_progress}
+						Getting help...
+					{:else}
+						Help me remember '{word}'
+					{/if}
+				</button>
+			</p>
+		{/if}
+	{/each}
+	{#if ai_help_error}
+		<p>AI Assistance failed - {ai_help_error}</p>
 	{/if}
+	<hr />
 
 	<p>
 		{#each person.facts as fact}
