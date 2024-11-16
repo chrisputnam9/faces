@@ -13,10 +13,13 @@
 
 	async function get_ai_help() {
 		ai_help_in_progress = true;
+		ai_help_error = false;
 		for (const word of person_name_words) {
-			const ai_help = await aiInterface.get_similar_words(word);
-			console.log(ai_help);
-			ai_help_by_word[word] = ai_help;
+			try {
+				ai_help_by_word[word] = await aiInterface.get_similar_words(word);
+			} catch (e) {
+				ai_help_error = e.message;
+			}
 		}
 		ai_help_by_word = ai_help_by_word;
 		ai_help_in_progress = false;
@@ -60,7 +63,7 @@
 		{/if}
 	{/each}
 	{#if ai_help_error}
-		<p>AI Assistance failed - {ai_help_error}</p>
+		<p><b>AI Assistance error</b> - {ai_help_error}</p>
 	{/if}
 	<hr />
 
