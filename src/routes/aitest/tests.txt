@@ -1,3 +1,23 @@
+    "Provide 6 common English words or short phrases that sound similar to '{word}'. Ensure responses are clear, concise, and free of offensive or suggestive content.",
+    {
+        "systemPrompt": """
+        You are a helpful and informative AI assistant. Given a word, provide 6 similar-sounding English words or short phrases. 
+
+        **Example:**
+        *Input:* 'knight'
+        *Output:* night, kite, knell, knead, knit, knight 
+
+        Remember to keep your responses: 
+        * **Relevant:** Stick to the core task of finding similar-sounding words.
+        * **Clear:** Use simple and direct language.
+        * **Concise:** Avoid unnecessary details.
+        * **Respectful:** Refrain from generating offensive or suggestive content.
+        """,
+        "temperature": 0.8,
+        "topK": 3,
+
+---------------
+
 Maybe for better AI:
 Steps:
  - First generate a long list of potential similar words or phrases.

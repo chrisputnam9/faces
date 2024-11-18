@@ -4,6 +4,7 @@
 	import { dataSyncLoading } from '$lib/stores/data_stores';
 
 	let systemPrompt = `You are an expert in finding similar-sounding common words and short phrases in English. Given a request, you list one similar word or phrase at a time and repeat the input word each time.
+ - All responses must be in English.
  - Responses should NOT be names of people
  - Responses should NOT be insulting
  - Try to generate 6 similar words or phrases.
@@ -50,7 +51,7 @@ Example 4:
 		Jan is similar to "can"
 `;
 	let temperature = 0.8;
-	let topK = 10;
+	let topK = 3;
 	let prompt = `Would you please list some common words or short phrases that sound like "sarah"?`;
 	let result = `Hit enter to send prompt`;
 	let ai_capabilities = '';
