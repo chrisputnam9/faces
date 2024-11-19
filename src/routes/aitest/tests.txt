@@ -16,9 +16,12 @@
         "temperature": 0.8,
         "topK": 3,
 
----------------
+--------------------------------------------------------------------------------------------------
 
-Maybe for better AI:
+
+--------------------------------------------------------------------------------------------------
+
+Maybe for more powerful AI:
 Steps:
  - First generate a long list of potential similar words or phrases.
  - Next, thin out the list based on the rules listed

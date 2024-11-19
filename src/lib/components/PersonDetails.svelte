@@ -11,15 +11,14 @@
 	let ai_help_in_progress = false;
 	let ai_help_error = false;
 
-	async function get_ai_help() {
+	async function get_ai_help(word) {
+		const fresh = !(word in ai_help_by_word);
 		ai_help_in_progress = true;
 		ai_help_error = false;
-		for (const word of person_name_words) {
-			try {
-				ai_help_by_word[word] = await aiInterface.get_similar_words(word);
-			} catch (e) {
-				ai_help_error = e.message;
-			}
+		try {
+			ai_help_by_word[word] = await aiInterface.get_similar_words(word, fresh);
+		} catch (e) {
+			ai_help_error = e.message;
 		}
 		ai_help_by_word = ai_help_by_word;
 		ai_help_in_progress = false;
@@ -45,26 +44,27 @@
 		{#if person.companies.length > 0}<small>({person.companies.join(', ')})</small>{/if}
 	</h1>
 
-	<h2>AI Assistance:</h2>
-	<p>{person_name_words.join(', ')}</p>
-	{#each person_name_words as word}
-		{#if word in ai_help_by_word}
-			<p>{ai_help_by_word[word]}</p>
-		{:else}
-			<p>
-				<button on:click={get_ai_help} disabled={ai_help_in_progress}>
-					{#if ai_help_in_progress}
-						Getting help...
-					{:else}
-						Help me remember '{word}'
-					{/if}
-				</button>
-			</p>
-		{/if}
-	{/each}
+	<h2>AI Help:</h2>
 	{#if ai_help_error}
 		<p><b>AI Assistance error</b> - {ai_help_error}</p>
 	{/if}
+	{#each person_name_words as word}
+		<h3>{word}</h3>
+		{#if word in ai_help_by_word}
+			<p>{ai_help_by_word[word]}</p>
+		{/if}
+		<p>
+			<button on:click={() => get_ai_help(word)} disabled={ai_help_in_progress}>
+				{#if ai_help_in_progress}
+					Getting help for '{word}'...
+				{:else if word in ai_help_by_word}
+					Try again
+				{:else}
+					Help me remember '{word}'
+				{/if}
+			</button>
+		</p>
+	{/each}
 	<hr />
 
 	<p>

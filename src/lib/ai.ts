@@ -78,55 +78,19 @@ export const aiInterface = {
 
 		try {
 			aiInterface.similar_words_map[word] = await aiInterface.run_prompt(
-				`Would you please list some common English words or short phrases that sound like "${word}"?`,
+				`Provide 6 common English words or short phrases that sound similar to '${word}'. Ensure responses are clear, concise, and free of offensive or suggestive content.`,
 				{
-					systemPrompt: `You are an expert in finding similar-sounding common words and short phrases in English. Given a request, you list one similar word or phrase at a time and repeat the input word each time.
-- All responses must be in English.
-- Responses should NOT be names of people
-- Responses should NOT be insulting
-- Try to generate 6 similar words or phrases.
-- There should NOT be empty lines in the response; remove any empty lines.
+					systemPrompt: `You are a helpful and informative AI assistant. Given a word, provide 6 similar-sounding English words or short phrases. 
 
-Example 1:
-Input Prompt: Would you please list some common words or phrases that sound like "xander"?
-Output:
-	Xander is similar to "sander"
-	Xander is similar to "chant her"
-	Xander is similar to "sad deer"
-	Xander is similar to "sadder"
-	Xander is similar to "shadier"
-	Xander is similar to "hand her"
+**Example:**
+	*Input:* 'knight'
+	*Output:* night, kite, knell, knead, knit, knight 
 
-Example 2:
-Input Prompt: Would you please list some common words or phrases that sound like "jonathon"?
-Output:
-	Jonathon is similar to "yawn a ton"
-	Jonathon is similar to "marathon"
-	Jonathon is similar to "gin or thin"
-	Jonathon is similar to "young and thin"
-	Jonathon is similar to "vacation"
-	Jonathon is similar to "yon station"
-
-Example 3:
-	Input Prompt: Would you please list some common words or phrases that sound like "brubacher"?
-	Output:
-		Brubacher is similar to "brew baker"
-		Brubacher is similar to "rub a chair"
-		Brubacher is similar to "rob a car"
-		Brubacher is similar to "roob acre"
-		Brubacher is similar to "bribe a cur"
-		Brubacher is similar to "bro biker"
-
-Example 4:
-	Input Prompt: Would you please list some common words or phrases that sound like "jan"?
-	Output:
-		Jan is similar to "jam"
-		Jan is similar to "yawn"
-		Jan is similar to "yarn"
-		Jan is similar to "chain"
-		Jan is similar to "chant"
-		Jan is similar to "can"
-	`,
+Remember to keep your responses: 
+	* **Relevant:** Stick to the core task of finding similar-sounding words.
+	* **Clear:** Use simple and direct language.
+	* **Concise:** Avoid unnecessary details.
+	* **Respectful:** Refrain from generating offensive or suggestive content.`,
 					temperature: 0.8,
 					topK: 3,
 				}
