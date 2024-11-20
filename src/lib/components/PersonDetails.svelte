@@ -12,7 +12,7 @@
 	let ai_help_error = false;
 
 	async function get_ai_help(word) {
-		const fresh = !(word in ai_help_by_word);
+		const fresh = word in ai_help_by_word;
 		ai_help_in_progress = true;
 		ai_help_error = false;
 		try {
@@ -45,18 +45,19 @@
 	</h1>
 
 	<h2>AI Help:</h2>
+	<p>Use experimental AI built into Chrome to help find associations with a person's name.</p>
 	{#if ai_help_error}
 		<p><b>AI Assistance error</b> - {ai_help_error}</p>
 	{/if}
 	{#each person_name_words as word}
 		<h3>{word}</h3>
 		{#if word in ai_help_by_word}
-			<p>{ai_help_by_word[word]}</p>
+			<pre>{ai_help_by_word[word]}</pre>
 		{/if}
 		<p>
 			<button on:click={() => get_ai_help(word)} disabled={ai_help_in_progress}>
 				{#if ai_help_in_progress}
-					Getting help for '{word}'...
+					Working...
 				{:else if word in ai_help_by_word}
 					Try again
 				{:else}
@@ -132,5 +133,14 @@
 	h1 {
 		font-size: 1.2em;
 		margin: 0;
+	}
+	pre {
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		display: block;
+		background: #ddd;
+		border: 1px solid #aaa;
+		width: 100%;
+		height: auto;
 	}
 </style>

@@ -91,8 +91,8 @@ Remember to keep your responses:
 	* **Clear:** Use simple and direct language.
 	* **Concise:** Avoid unnecessary details.
 	* **Respectful:** Refrain from generating offensive or suggestive content.`,
-					temperature: 0.8,
-					topK: 3,
+					temperature: fresh ? 0.9 : 0.8,
+					topK: fresh ? 30 : 3,
 				}
 			);
 		} catch (e) {
