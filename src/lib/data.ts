@@ -50,6 +50,9 @@ export const dataInterface = {
 
 		if (people.length === 0) {
 			people = demo_people;
+			for (const p in people) {
+				people[p].__json = JSON.stringify(people[p]);
+			}
 		}
 
 		// Current time formatted
