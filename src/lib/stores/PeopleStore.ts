@@ -78,7 +78,6 @@ export const PeopleStore = {
 					try {
 						// Remove start/end "/" if both present
 						const adjusted_keywords = keywords.replace(/^\/(.*)\/$/, '$1');
-						console.log(adjusted_keywords);
 						const regex = new RegExp(adjusted_keywords, 'i');
 						filtered = data.all.filter((person) => {
 							return person.__json.match(regex);
