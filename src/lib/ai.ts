@@ -33,6 +33,20 @@
 
 export const aiInterface = {
 
+	SIMILAR_WORD_PROMPT: `Provide 6 common English words or short phrases that sound similar to '%word%'. Ensure responses are clear, concise, and free of offensive or suggestive content.`,
+
+	SIMILAR_WORD_SYSTEM_PROMPT: `You are a helpful and informative AI assistant. Given a word, provide 6 similar-sounding English words or short phrases. 
+
+		**Example:**
+			*Input:* 'knight'
+		*Output:* night, kite, knell, knead, knit, knight 
+
+		Remember to keep your responses: 
+				* **Relevant:** Stick to the core task of finding similar-sounding words.
+				*		* **Clear:** Use simple and direct language.
+				*				* **Concise:** Avoid unnecessary details.
+				*					* **Respectful:** Refrain from generating offensive or suggestive content.`
+
 	languageModel: null,
 	languageCapabilities: null,
 
@@ -78,19 +92,9 @@ export const aiInterface = {
 
 		try {
 			aiInterface.similar_words_map[word] = await aiInterface.run_prompt(
-				`Provide 6 common English words or short phrases that sound similar to '${word}'. Ensure responses are clear, concise, and free of offensive or suggestive content.`,
+				aiInterface.SIMILAR_WORD_PROMPT.replace('%word%', word),
 				{
-					systemPrompt: `You are a helpful and informative AI assistant. Given a word, provide 6 similar-sounding English words or short phrases. 
-
-**Example:**
-	*Input:* 'knight'
-	*Output:* night, kite, knell, knead, knit, knight 
-
-Remember to keep your responses: 
-	* **Relevant:** Stick to the core task of finding similar-sounding words.
-	* **Clear:** Use simple and direct language.
-	* **Concise:** Avoid unnecessary details.
-	* **Respectful:** Refrain from generating offensive or suggestive content.`,
+					systemPrompt: SIMILAR_WORD_SYSTEM_PROMPT,
 					temperature: fresh ? 0.9 : 0.8,
 					topK: fresh ? 30 : 3,
 				}
