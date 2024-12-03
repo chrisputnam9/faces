@@ -25,7 +25,9 @@
 	}
 
 	onMount(async () => {
-		await aiInterface.init();
+		try {
+			await aiInterface.init();
+		}
 		let langCap = aiInterface.languageCapabilities;
 		ai_capabilities = JSON.stringify(
 			{
