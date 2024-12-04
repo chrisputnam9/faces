@@ -45,7 +45,7 @@ export const aiInterface = {
 				* **Relevant:** Stick to the core task of finding similar-sounding words.
 				*		* **Clear:** Use simple and direct language.
 				*				* **Concise:** Avoid unnecessary details.
-				*					* **Respectful:** Refrain from generating offensive or suggestive content.`
+				*					* **Respectful:** Refrain from generating offensive or suggestive content.`,
 
 	languageModel: null,
 	languageCapabilities: null,
