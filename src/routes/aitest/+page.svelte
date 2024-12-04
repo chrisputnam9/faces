@@ -4,7 +4,7 @@
 	import { dataSyncLoading } from '$lib/stores/data_stores';
 
 	let systemPrompt = aiInterface.SIMILAR_WORD_SYSTEM_PROMPT;
-	let prompt = aiInterface.SIMILAR_WORD_PROMPT;
+	let prompt = aiInterface.SIMILAR_WORD_PROMPT.replace('%word%', 'Emily');
 	let temperature = 0.8;
 	let topK = 3;
 	let result = `Hit enter to send prompt`;

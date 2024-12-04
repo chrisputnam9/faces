@@ -33,19 +33,20 @@
 
 export const aiInterface = {
 
-	SIMILAR_WORD_PROMPT: `Provide 6 common English words or short phrases that sound similar to '%word%'. Ensure responses are clear, concise, and free of offensive or suggestive content.`,
+	SIMILAR_WORD_PROMPT: `Provide 6 common English words or short phrases that sound similar to '%word%'. Ensure responses are clear, concise, free of offensive or suggestive content, and do not include names of people.`,
 
 	SIMILAR_WORD_SYSTEM_PROMPT: `You are a helpful and informative AI assistant. Given a word, provide 6 similar-sounding English words or short phrases. 
 
-		**Example:**
-			*Input:* 'knight'
-		*Output:* night, kite, knell, knead, knit, knight 
+**Example:**
+	*Input:* 'Sarah'
+	*Output:* saw her, share, say her, seer, shear, soar 
 
-		Remember to keep your responses: 
-				* **Relevant:** Stick to the core task of finding similar-sounding words.
-				*		* **Clear:** Use simple and direct language.
-				*				* **Concise:** Avoid unnecessary details.
-				*					* **Respectful:** Refrain from generating offensive or suggestive content.`,
+Remember to keep your responses: 
+	* **Common:** Do not include names of people.
+	* **Relevant:** Stick to the core task of finding similar-sounding words.
+	* **Clear:** Use simple and direct language.
+	* **Concise:** Avoid unnecessary details.
+	* **Respectful:** Refrain from generating offensive or suggestive content.`,
 
 	languageModel: null,
 	languageCapabilities: null,
