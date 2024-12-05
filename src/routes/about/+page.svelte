@@ -36,7 +36,7 @@
 
 		<p><a href="/">Faces App</a> | <a href="/terms-privacy">Terms & Privacy Policy</a></p>
 
-		<h1>Helpful Resources</h1>
+		<h2>Helpful Resources</h2>
 
 		<p>
 			<a href="https://artofmemory.com/wiki/Memorizing_Names_and_Faces/" target="_blank"
@@ -50,6 +50,20 @@
 				target="_blank">Entering Special Characters - Duolingo</a
 			>
 		</p>
+
+		<h2>Support</h2>
+
+		<p>
+			For support, feedback, or feature requests, submit an issue
+			<a href="https://github.com/chrisputnam9/faces/issues" target="_blank">here</a>
+		</p>
+
+		<p>Join others in supporting open source development:</p>
+
+		<ul>
+			<li><a href="https://ko-fi.com/chrisputnam9" target="_blank">Ko-fi</a></li>
+			<li><a href="https://github.com/sponsors/chrisputnam9" target="_blank">Github Sponser</a></li>
+		</ul>
 	</section>
 </main>
 
