@@ -249,8 +249,8 @@
 				</p>
 
 				<p>
-					Faces uses Google Analytics to track usage with the goal of improving the application for
-					all users.
+					Faces uses <b>Google Analytics</b> to track usage with the goal of improving the application
+					for all users.
 				</p>
 
 				<p>
