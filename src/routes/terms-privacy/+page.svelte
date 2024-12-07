@@ -20,7 +20,7 @@
 
 		<p><a href="/">Return to Faces App</a></p>
 
-		<p>Last updated: 2024-09-30</p>
+		<p>Last updated: 2024-12-07</p>
 
 		<h2>1. Introduction</h2>
 		<p>
@@ -37,6 +37,7 @@
 				Google login tokens and IDs (stored in your browser) if you choose to sync your
 				configuration with Google Drive.
 			</li>
+			<li>Google Analytics data to track usage and improve the application.</li>
 		</ul>
 
 		<h2>3. How We Use Your Information</h2>
@@ -49,12 +50,20 @@
 		</ul>
 
 		<h2>4. Data Sharing and Disclosure</h2>
-		<p><b>Faces does not share your data with anyone outside the application:</b></p>
+		<p><b>Faces does not share your private data with anyone outside the application:</b></p>
 		<ul>
-			<li>We do not use, store, or share any of your Google user data.</li>
+			<li>We do not use, store, or share any of your private data.</li>
 			<li>
-				We do not share your configuration, usage, history, or any other data with application
-				developers or any third parties.
+				We do not intentionally share your private configuration, usage, history, or any other data
+				with application developers or any third parties that are not disclosed.
+			</li>
+			<li>Github.io hosts the application.</li>
+			<li>
+				Anonymous Google Analytics data is used only to improve the application for all users.
+			</li>
+			<li>
+				Google Drive (optional) allows you to sync your configuration data between devices if you
+				choose.
 			</li>
 		</ul>
 

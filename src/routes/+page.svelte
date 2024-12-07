@@ -249,6 +249,11 @@
 				</p>
 
 				<p>
+					Faces uses Google Analytics to track usage with the goal of improving the application for
+					all users.
+				</p>
+
+				<p>
 					Faces does not collect or share any of your personal data outside the application.
 					<br />If you choose, you can backup and sync your data via Google Drive.
 					<br />See
