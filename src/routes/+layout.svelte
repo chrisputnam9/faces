@@ -1,6 +1,23 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { Alert } from '$lib/components';
-	import { dataSyncLoading } from '$lib/stores/data_stores';
+	import {
+		dataSyncLoading,
+		dataSyncSaveState,
+		DATA_SYNC_SAVE_STATE
+	} from '$lib/stores/data_stores';
+
+	onMount(() => {
+		window.addEventListener('beforeunload', (event) => {
+			console.log('Save State: ', $dataSyncSaveState);
+			if ($dataSyncSaveState === DATA_SYNC_SAVE_STATE.IN_PROGRESS) {
+				console.log('Sync in progress...');
+			}
+			event.preventDefault();
+			event.returnValue =
+				'WARNING: Sync in progress - closing the window may result in data loss. Close anyway?';
+		});
+	});
 </script>
 
 <svelte:head>
