@@ -40,6 +40,11 @@ export const dataSyncAlert = function (message, type = 'info') {
 			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SUCCESS);
 			console.info(message);
 			break;
+		case 'in_progress':
+			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.IN_PROGRESS);
+			type = 'info';
+			console.info(message);
+			break;
 		default:
 			console.log(message);
 			break;

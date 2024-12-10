@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 	import { Alert } from '$lib/components';
 	import {
 		dataSyncLoading,
@@ -9,8 +10,10 @@
 
 	onMount(() => {
 		window.addEventListener('beforeunload', (event) => {
-			console.log('Save State: ', $dataSyncSaveState);
-			if ($dataSyncSaveState === DATA_SYNC_SAVE_STATE.IN_PROGRESS) {
+			const sync_state = get(dataSyncSaveState);
+			console.log('Save State: ', sync_state);
+			console.log('In Progress: ', DATA_SYNC_SAVE_STATE.IN_PROGRESS);
+			if (sync_state === DATA_SYNC_SAVE_STATE.IN_PROGRESS) {
 				console.log('Sync in progress...');
 			}
 			event.preventDefault();
