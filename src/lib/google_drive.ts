@@ -401,8 +401,7 @@ export const google_drive = {
 			return local_data;
 		}
 
-		dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SAVING);
-		dataSyncAlert('Syncing data to Google Drive...');
+		dataSyncAlert('Syncing data to Google Drive...', 'in_progress');
 
 		let successful = false;
 		let local_data_changed = false;
@@ -415,16 +414,16 @@ export const google_drive = {
 
 		// Attempt to read in remote data file
 		if (util.isObject(drive_data)) {
-			dataSyncAlert('Existing remote data found - reading & syncing...');
+			dataSyncAlert('Existing remote data found - reading & syncing...', 'in_progress');
 			merged_data = syncData(local_data, drive_data);
 			local_data_changed = didSyncResultInChange(merged_data, local_data_before);
 			remote_data_changed = didSyncResultInChange(merged_data, drive_data);
 			successful = true;
 		} else if (drive_data === false) {
-			dataSyncAlert('No existing remote data file found - it will be created');
+			dataSyncAlert('No existing remote data file found - it will be created', 'in_progress');
 			successful = true;
 		} else {
-			dataSyncAlert('CS506 - Remote data file found, but failed to read it', 'error');
+			dataSyncAlert('CS506 - Remote data file found, but failed to read it', 'error', 'in_progress');
 		}
 
 		// Mark the time of sync and assume success (will revert later if it fails)
@@ -444,7 +443,7 @@ export const google_drive = {
 		// - and if there were local changes
 		if (successful) {
 			successful = false;
-			dataSyncAlert('Writing to Google Drive...');
+			dataSyncAlert('Writing to Google Drive...', 'in_progress');
 			const file_id = await google_drive.writeData(merged_data);
 			if (file_id !== 0) {
 				successful = true;
@@ -465,7 +464,6 @@ export const google_drive = {
 		if (successful) {
 			// Show success, wait a bit, then show pending again
 			dataSyncAlert('Sync Successful!', 'success');
-			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SUCCESS);
 			// Loading considered complete; we've synced
 			dataSyncLoading.set(false);
 		} else {

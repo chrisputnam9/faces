@@ -16,9 +16,9 @@
 			if (sync_state === DATA_SYNC_SAVE_STATE.IN_PROGRESS) {
 				console.log('Sync in progress...');
 			}
-			event.preventDefault();
 			event.returnValue =
 				'WARNING: Sync in progress - closing the window may result in data loss. Close anyway?';
+			event.preventDefault();
 		});
 	});
 </script>
