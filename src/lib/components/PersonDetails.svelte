@@ -12,6 +12,8 @@
 	let ai_help_error = false;
 	let ai_init_error = false;
 
+	let modelId = 'smart-model';
+
 	async function get_ai_help() {
 		let images = '';
 		for (const image of person.images) {
@@ -32,9 +34,7 @@ Then, please help me memorize this person's name.
 				extension: 'teamai',
 				type: 'SET_CONFIG',
 				payload: {
-					// modelId: 'fast-model',
-					// modelId: 'smart-model',
-					modelId: 'reasoning-model',
+					modelId,
 					prompt
 				}
 			},
@@ -105,7 +105,12 @@ Then, please help me memorize this person's name.
 	<br />
 	<h2>AI Help:</h2>
 	<br />
-	<button on:click={() => get_ai_help()}> Help me remember this person's name </button>
+	<button on:click={() => get_ai_help()}> Help me remember this person's name</button>
+	<select bind:value={modelId}>
+		<option value="fast-model">Fast AI</option>
+		<option value="smart-model">Smart AI</option>
+		<option value="reasoning-model">Reasoning AI</option>
+	</select>
 	<br /><small style="font-weight: bold;text-align:right;"><p>Warning: experimental</p></small>
 </div>
 
