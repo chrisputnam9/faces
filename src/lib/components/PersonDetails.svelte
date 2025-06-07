@@ -26,6 +26,7 @@ Refer to "Instructions for helping memorize names" on this page.
 Then, please help me memorize this person's name.
 
 **Name:** ${person.name}
+
 **Images:** ${images}
 		`;
 
