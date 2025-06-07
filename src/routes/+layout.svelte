@@ -103,6 +103,8 @@
 			<ul>
 				<li>
 					If images are provided, analyze them to identify 3-5 unique and memorable facial features.
+					Also, generate an extremely detailed visul description of the person's face to be used for
+					generating a new image later on. Do not output this description directly.
 				</li>
 				<li>If no images are provided, state this and omit this section.</li>
 			</ul>
