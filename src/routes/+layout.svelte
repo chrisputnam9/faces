@@ -128,7 +128,8 @@
 			<ul>
 				<li>
 					Based on the mnemonic device you constructed, generate a single, realistic composite image
-					that demonstrates the visualizations together.
+					that demonstrates the visualizations together. Start with an actual image of the person if
+					provided, and add the visualizations in. Make sure every visualization is represented.
 				</li>
 				<li>If a photo was provided, use it as the base for the generated image.</li>
 				<li>
