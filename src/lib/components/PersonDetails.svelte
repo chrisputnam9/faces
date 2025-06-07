@@ -32,7 +32,9 @@ Then, please help me memorize this person's name.
 				extension: 'teamai',
 				type: 'SET_CONFIG',
 				payload: {
-					modelId: 'smart-model',
+					// modelId: 'fast-model',
+					// modelId: 'smart-model',
+					modelId: 'reasoning-model',
 					prompt
 				}
 			},

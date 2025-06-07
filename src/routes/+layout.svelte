@@ -91,7 +91,11 @@
 			<strong>Generate Sound-Alikes:</strong> For <strong>each part</strong> of the name, generate a
 			list of 3 visually distinct words or phrases that sound or look similar.
 			<ul>
-				<li>These should be concrete objects, actions, or concepts that are easy to visualize.</li>
+				<li>
+					These should be concrete objects, animals, very famous people, actions, or symbols that
+					are easy to visualize and create images of. They should also consist of fairly well-known
+					words.
+				</li>
 			</ul>
 		</li>
 		<li>
