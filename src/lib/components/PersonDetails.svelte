@@ -12,17 +12,32 @@
 	let ai_help_error = false;
 	let ai_init_error = false;
 
-	async function get_ai_help(word) {
-		const fresh = word in ai_help_by_word;
-		ai_help_in_progress = true;
-		ai_help_error = false;
-		try {
-			ai_help_by_word[word] = await aiInterface.get_similar_words(word, fresh);
-		} catch (e) {
-			ai_help_error = e.message;
+	async function get_ai_help() {
+		let images = '';
+		for (const image of person.images) {
+			images += '\n - ' + image;
 		}
-		ai_help_by_word = ai_help_by_word;
-		ai_help_in_progress = false;
+
+		let prompt = `
+Refer to "Instructions for helping memorize names" on this page.
+
+Then, please help me memorize this person's name.
+
+**Name:** ${person.name}
+**Images:** ${images}
+		`;
+
+		window.postMessage(
+			{
+				extension: 'teamai',
+				type: 'SET_CONFIG',
+				payload: {
+					modelId: 'smart-model',
+					prompt
+				}
+			},
+			'*'
+		);
 	}
 
 	// Set person search string for social sites
@@ -87,36 +102,9 @@
 	<br />
 	<br />
 	<h2>AI Help:</h2>
-	{#if ai_init_error}
-		<p>
-			{ai_init_error}
-			<br /><a href="/aitest">Click here to learn more and setup AI help</a>
-		</p>
-	{:else}
-		<br />Use experimental AI built into Chrome
-		<br />to help find associations with a person's name.
-		{#if ai_help_error}
-			<p>
-				<b class="error">AI Assistance error</b> - {ai_help_error}
-				<br /><a href="/aitest">Click here for more options</a>
-			</p>
-		{/if}
-		{#each person_name_words as word}
-			<h3>{word}</h3>
-			{#if word in ai_help_by_word}
-				<pre>{ai_help_by_word[word]}</pre>
-			{/if}
-			<button on:click={() => get_ai_help(word)} disabled={ai_help_in_progress}>
-				{#if ai_help_in_progress}
-					Working...
-				{:else if word in ai_help_by_word}
-					Try again
-				{:else}
-					Help me remember '{word}'
-				{/if}
-			</button>
-		{/each}
-	{/if}
+	<br />
+	<button on:click={() => get_ai_help()}> Help me remember this person's name </button>
+	<br /><small style="font-weight: bold;text-align:right;"><p>Warning: experimental</p></small>
 </div>
 
 <style>
