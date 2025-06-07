@@ -54,7 +54,7 @@
 </div>
 
 <details>
-	<summary>Instructions for helping memorize names</summary>
+	<summary>AI Instructions for helping memorize names</summary>
 	<h2>ROLE</h2>
 	<p>
 		You are a mnemonic generation assistant. Your purpose is to help users memorize a person's name

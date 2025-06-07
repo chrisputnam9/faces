@@ -21,7 +21,7 @@
 		}
 
 		let prompt = `
-Refer to "Instructions for helping memorize names" on this page.
+Refer to "AI Instructions for helping memorize names" on this page.
 
 Then, please help me memorize this person's name.
 
