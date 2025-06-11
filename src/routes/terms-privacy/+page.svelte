@@ -37,7 +37,12 @@
 				Google login tokens and IDs (stored in your browser) if you choose to sync your
 				configuration with Google Drive.
 			</li>
-			<li>Google Analytics data to track usage and improve the application.</li>
+			<li>
+				Anonymized activity data via Google Analytics to track usage and improve the application.
+			</li>
+			<li>
+				Anonymized activity data via Sentry to help optimize application stability and performance.
+			</li>
 		</ul>
 
 		<h2>3. How We Use Your Information</h2>
@@ -59,7 +64,8 @@
 			</li>
 			<li>Github.io hosts the application.</li>
 			<li>
-				Anonymous Google Analytics data is used only to improve the application for all users.
+				Anonymous Google Analytics &amp; Sentry data is used only to improve the application for all
+				users.
 			</li>
 			<li>
 				Google Drive (optional) allows you to sync your configuration data between devices if you
