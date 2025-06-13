@@ -37,7 +37,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@sentry/sveltekit": "^9.27.0",
+		"@sentry/sveltekit": "^9.28.1",
 		"papaparse": "^5.4.1"
 	}
 }
