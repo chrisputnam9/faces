@@ -1,16 +1,9 @@
 <script lang="ts">
-	import { aiInterface } from '$lib/ai';
 	export let person = null;
 	export let state_guess = false;
 
 	let person_company_search = '';
 	let person_search = '';
-	let person_name_words = [];
-
-	let ai_help_by_word = {};
-	let ai_help_in_progress = false;
-	let ai_help_error = false;
-	let ai_init_error = false;
 
 	let modelId = 'smart-model';
 
@@ -46,19 +39,6 @@ Then, please help me memorize this person's name.
 	// Set person search string for social sites
 	$: person_company_search = person ? person.name + ' ' + person.companies.join(' ') : '';
 	$: person_search = person ? person.name : '';
-	$: person_name_words = person
-		? person.name
-				.toLowerCase()
-				.trim()
-				.replace(/\s+/g, '-')
-				.replace(/[^a-z0-9-]+/g, '')
-				.split('-')
-		: [];
-
-	// Try to initialize AI
-	aiInterface.init().catch((e) => {
-		ai_init_error = e.message;
-	});
 </script>
 
 <div class="details state-guess-{state_guess}">
@@ -132,20 +112,6 @@ Then, please help me memorize this person's name.
 		margin: 0;
 		padding: 0;
 		display: inline;
-	}
-	h3 {
-		font-size: 1em;
-		margin: 0;
-		padding: 15px 0 0 0;
-	}
-	pre {
-		white-space: pre-wrap;
-		word-wrap: break-word;
-		display: block;
-		background: #ddd;
-		border: 1px solid #aaa;
-		width: 100%;
-		height: auto;
 	}
 	button {
 		margin-top: 10px;
