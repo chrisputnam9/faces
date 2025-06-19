@@ -25,7 +25,7 @@
 	</script>
 </svelte:head>
 
-<div class="background">
+<div class="background" id="sentry-toolbar-mount">
 	{#if $dataSyncLoading}
 		<div class="loading-cover">
 			<div class="loading-content">
@@ -233,6 +233,18 @@
 		>
 	</p>
 </details>
+
+{#if import.meta.env.DEV}
+	<script src="https://browser.sentry-cdn.com/sentry-toolbar/latest/toolbar.min.js"></script>
+	<script>
+		window.SentryToolbar.init({
+			organizationSlug: 'chris-putnam',
+			projectIdOrSlug: 'faces',
+			// placement: 'bottom-right-corner',
+			theme: 'dark'
+		});
+	</script>
+{/if}
 
 <style>
 	.loading-cover {
