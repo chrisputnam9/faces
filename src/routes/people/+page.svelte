@@ -187,7 +187,7 @@
 				Sync
 			{:else if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.PENDING_LOGIN}
 				Pending Login - This shouldn't show...
-			{:else if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.SAVING}
+			{:else if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.IN_PROGRESS}
 				Syncing...
 			{:else if $dataSyncSaveState == DATA_SYNC_SAVE_STATE.SUCCESS}
 				Sync Complete

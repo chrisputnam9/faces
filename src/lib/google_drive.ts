@@ -254,12 +254,12 @@ export const google_drive = {
 			return;
 		} else if (! syncNeeded) {
 			dataSyncAlert('No sync needed - all up-to-date', 'success');
-			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SUCCESS);
+			dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.IN_PROGRESS);
 
 			window.setTimeout(function () {
 				dataSyncMessageShow.set(false);
 				dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.PENDING_SYNC);
-			}, 2000);
+			}, 500);
 			return;
 		}
 
@@ -401,7 +401,7 @@ export const google_drive = {
 			return local_data;
 		}
 
-		dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.SAVING);
+		dataSyncSaveState.set(DATA_SYNC_SAVE_STATE.IN_PROGRESS);
 		dataSyncAlert('Syncing data to Google Drive...');
 
 		let successful = false;
