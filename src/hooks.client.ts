@@ -5,8 +5,8 @@ import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
 	environment: import.meta.env.MODE,
-	//tracesSampleRate: 0.1,
-	//_experiments: { enableLogs: true },
+	tracesSampleRate: 0.1,
+	_experiments: { enableLogs: true },
 	integrations: [
 		Sentry.feedbackIntegration({
 			colorScheme: 'dark',
