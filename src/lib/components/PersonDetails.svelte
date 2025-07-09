@@ -5,7 +5,7 @@
 	let person_company_search = '';
 	let person_search = '';
 
-	let modelId = 'smart-model';
+	let modelId = 'claude-4-sonnet-20250514';
 
 	async function get_ai_help() {
 		let images = '';
@@ -88,6 +88,7 @@ Then, please help me memorize this person's name.
 	<br />
 	<button on:click={() => get_ai_help()}> Help me remember this person's name</button>
 	<select bind:value={modelId}>
+		<option value="claude-4-sonnet-20250514">Claude 4 Sonnet</option>
 		<option value="fast-model">Fast AI</option>
 		<option value="smart-model">Smart AI</option>
 		<option value="reasoning-model">Reasoning AI</option>
