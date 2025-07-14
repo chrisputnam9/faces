@@ -47,9 +47,53 @@
 			<strong>Identify Distinguishing Features:</strong>
 			<ul>
 				<li>
-					If images are provided, generate an extremely detailed visul description of the person's
-					face to be used for generating a new image later on. Next, identify 3-5 unique and
-					memorable facial features. These must be specific and objective details inherent to the
+					If images are provided, then, generate a comprehensive and meticulously detailed visual
+					description of a person's face from a provided image. This description will serve as a
+					high-fidelity prompt for an AI image generator to create a photorealistic alternate image.
+					The description should be broken down into the specific sections outlined below.
+					Instructions:
+					<ol>
+						<li>
+							Part 1: Comprehensive Facial Anatomy
+							<br />Generate a detailed, objective description of the person's face, meticulously
+							cataloging the following features. Use precise and descriptive language, avoiding
+							subjective terms like "beautiful" or "handsome."
+							<br />Face Shape and Structure: Describe the overall shape (e.g., oval, round, square,
+							heart, long), the prominence of the jawline (e.g., sharp, soft, angular), cheekbones
+							(e.g., high, low, prominent, subtle), and chin (e.g., pointed, round, cleft).
+							<br />Skin: Detail the skin's tone and undertone (e.g., fair porcelain with pink
+							undertones, deep brown with warm undertones, olive with cool undertones), texture
+							(e.g., smooth, freckled, weathered, light wrinkles), and any notable marks (e.g.,
+							moles, scars, birthmarks).
+							<br />Eyes: Shape and Set: Describe the shape (e.g., almond, round, monolid, hooded),
+							their setting (e.g., deep-set, wide-set, close-set), and the appearance of the eyelids
+							and creases.
+							<br /> - Color and Detail: Provide a precise description of the iris color and any
+							variations or patterns (e.g., deep chocolate brown, light blue with a darker limbal
+							ring, hazel with flecks of gold).
+							<br /> Eyebrows and Eyelashes: Detail the eyebrow shape (e.g., arched, straight,
+							thick, thin), color, and texture. Describe the eyelashes' length and thickness.
+							<br /> Nose: Describe the nose's shape and size (e.g., Roman, aquiline, button,
+							broad), the bridge (e.g., high, low, straight, convex), and the nostrils (e.g.,
+							narrow, flared).
+							<br /> Mouth and Lips: Detail the shape and size of the mouth and lips (e.g., full,
+							thin, wide, Cupid's bow). Describe the natural color of the lips.
+							<br /> Hair: Describe the hair's color (including any highlights or variations), texture
+							(e.g., straight, wavy, curly, coily), style, and hairline.
+						</li>
+						<li>
+							Part 2: Key Distinguishing Features
+							<br />From your detailed description above, identify and list 3-5 of the most unique,
+							memorable, and defining facial features. These should be the characteristics that are
+							most crucial for capturing the individual's likeness.
+							<br />Example 1: A small, crescent-shaped scar on the left cheekbone.
+
+							<br />Example 2: Distinctly asymmetrical eyes, with the right eye being slightly
+							larger than the left.
+
+							<br />Example 3: A prominent mole just above the right side of the upper lip.
+						</li>
+					</ol>
 					face.
 				</li>
 				<li>If no images are provided, state this and omit this section.</li>
