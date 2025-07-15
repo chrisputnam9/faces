@@ -119,17 +119,10 @@
 			<strong>Generate a Visualization:</strong>
 			<ul>
 				<li>
-					Based on the mnemonic device you constructed, generate a single, realistic composite image
-					that demonstrates the visualizations together. Start with an actual image of the person if
-					provided, and add the visualizations in. Make sure every visualization is represented.
-				</li>
-				<li>
-					If photos were provided, use the first one as the base for the generated image or use the
-					detailed description generated from the images.
-				</li>
-				<li>
-					If no photo was provided, use a generic, androgynous face that reflects the details you
-					have.
+					Based on the mnemonic device you constructed, generate a single, composite image in simple
+					cartoon style that demonstrates the visualizations together. Start with the person, using
+					the detailed description generated (or a generic androgynous face if no photos were
+					provided), and add the visualizations in. Make sure every visualization is represented.
 				</li>
 			</ul>
 		</li>

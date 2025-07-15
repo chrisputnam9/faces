@@ -5,7 +5,7 @@
 	let person_company_search = '';
 	let person_search = '';
 
-	let modelId = 'reasoning-model';
+	let modelId = 'smart-model';
 
 	async function get_ai_help() {
 		let images = '';
